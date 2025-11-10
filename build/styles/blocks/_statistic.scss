@@ -1,0 +1,47 @@
+@import '../base';
+
+.block-statistic {
+    background-color: $black;
+    background-image: url('../textures/alligator-skin-red.png');
+    background-size: cover;
+    position: relative;
+    z-index: 0;
+
+    &::before {
+        content: '';
+        height: 100%;
+        width: 100%;
+        left: 0em;
+        top: 0em;
+        position: absolute;
+        background-color: transparentize($black, 0.25);
+        z-index: -1;
+    }
+
+    &__container {
+        @include container {
+            text-align: center;
+
+            [block-before="image-with-text"] & {
+                padding-top: 14em;
+
+                @include breakpoint(760px) {
+                    padding-top: 8em;
+                }
+            }
+        }
+    }
+
+    &__title {
+        @include h1 {
+            color: $white;
+            margin-bottom: 0em;
+        }
+    }
+
+    &__text {
+        @include p {
+            color: $light-grey;
+        }
+    }
+}

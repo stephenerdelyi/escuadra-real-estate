@@ -1,0 +1,23 @@
+@import '../base';
+
+.block-contact-us {
+    background-image: url('../textures/red-granite.png');
+    background-size: cover;
+
+    &__container {
+        @include container {
+            [block-after="cta-cards"] & {
+                padding-bottom: 16em;
+            }
+        }
+    }
+
+    &__title {
+        @include h2 {
+            text-align: center;
+            color: $white;
+        }
+    }
+
+    @include gravity-form;
+}

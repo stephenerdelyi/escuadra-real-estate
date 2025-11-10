@@ -1,0 +1,85 @@
+@import '../base';
+
+.block-about-overview {
+    &__container {
+        @include container {
+            display: flex;
+            gap: 4em;
+            justify-content: center;
+
+            @include breakpoint(800px) {
+                flex-direction: column-reverse;
+            }
+
+            [block-before="intro-copy"] & {
+                margin-top: -8em;
+            }
+
+            [block-after="contact-us"] & {
+                padding-bottom: 4em;
+            }
+        }
+    }
+
+    &__image {
+        flex-basis: 52%;
+
+        &__img {
+            width: 100%;
+        }
+
+        [block-before="intro-copy"] & {
+            margin-top: 4em;
+
+            @include breakpoint(800px) {
+                margin-top: 0em;
+            }
+        }
+    }
+
+    &__content {
+        flex-basis: 48%;
+        display: flex;
+        flex-direction: column;
+        gap: 1em;
+
+        @include breakpoint(800px) {
+            gap: 4em;
+        }
+
+        [block-before="intro-copy"] & {
+            margin-top: -8em;
+        }
+
+        @include card {
+            background-image: url('../textures/alligator-skin-red.png');
+            background-size: cover;
+            z-index: 0;
+
+            // &::before {
+            //     content: '';
+            //     height: 100%;
+            //     width: 100%;
+            //     left: 0em;
+            //     top: 0em;
+            //     position: absolute;
+            //     background-color: transparentize($black, 0.25);
+            //     z-index: -1;
+            // }
+        }
+
+        &__excerpt-container {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+        }
+
+        &__excerpt {
+            @include h4 {
+                margin: 0em auto;
+                max-width: 8em;
+                text-align: center;
+            }
+        }
+    }
+}

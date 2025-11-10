@@ -1,0 +1,154 @@
+@import '../base';
+
+.block-areas-of-expertise {
+    &__container {
+        @include container {
+            display: flex;
+            gap: 4em;
+
+            @include breakpoint(1200px) {
+                flex-direction: column-reverse;
+            }
+        }
+    }
+
+    &__areas {
+        width: 100%;
+        z-index: 2;
+        position: relative;
+
+        &.--shadow {
+            position: absolute;
+            z-index: 0;
+            width: calc(100% - 8em);
+        }
+
+        @include breakpoint(1200px) {
+            text-align: center;
+        }
+    }
+
+    &__area {
+        @include h3 {
+            position: relative;
+            opacity: 1;
+            cursor: pointer;
+
+            &.--inactive {
+                opacity: 0.25;
+            }
+
+            .--shadow & {
+                color: $white;
+
+                &::before {
+                    content: '';
+                    position: absolute;
+                    width: 100%;
+                    height: 0.05em;
+                    background-color: $light-grey;
+                    padding: 0em;
+                    margin-top: 1.25em;
+                    left: 0em;
+                }
+            }
+        }
+
+        &__extra {
+            @include h3 {
+                opacity: 0;
+                pointer-events: none;
+                font-size: 2em !important;
+                position: absolute;
+                max-width: 27em;
+
+                &.--active {
+                    opacity: 1;
+                }
+
+                @include breakpoint(1200px) {
+                    text-align: center;
+                    width: 100%;
+                    margin: 0em auto;
+                    max-width: unset;
+                }
+            }
+        }
+    }
+
+    &__details-container {
+        @include container {
+            position: absolute;
+            width: calc(100% - 8em);
+            left: 50%;
+            transform: translate(-50%);
+            display: flex;
+            justify-content: flex-end;
+            padding: 0em 4em;
+
+            @include breakpoint(1200px) {
+                position: unset;
+                transform: unset;
+                justify-content: center;
+            }
+        }
+    }
+
+    &__details {
+        max-width: 42em;
+        position: relative;
+        margin-right: 4em;
+        padding-bottom: 22em;
+
+        [block-before=""] & {
+            margin-top: -8em;
+            opacity: 0;
+            pointer-events: none;
+
+            .--nav-scrolled & {
+                margin-top: -16em;
+                opacity: 1;
+                pointer-events: all;
+            }
+        }
+
+        @include breakpoint(1200px) {
+            margin-right: unset;
+        }
+
+        &__primary-slider {
+            width: 20em;
+            aspect-ratio: 4 / 3;
+            position: absolute;
+            right: -4em;
+            bottom: 12em;
+            z-index: 2;
+
+            @include breakpoint(550px) {
+                right: -2em;
+            }
+
+            &__img {
+                object-fit: cover;
+            }
+        }
+
+        &__secondary-slider {
+            width: 14em;
+            aspect-ratio: 1 / 1;
+            position: absolute;
+            right: 12em;
+            bottom: 4em;
+
+            &__img {
+                object-fit: cover;
+            }
+        }
+    }
+
+    &__card {
+        @include card {
+            box-shadow: box-shadow(medium);
+        }
+    }
+}

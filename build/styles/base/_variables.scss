@@ -1,0 +1,21 @@
+//Colors:
+$white: #ede1d8;
+$black: #111111;
+$dark-grey: #404040;
+$grey: #646767;
+$light-grey: #f7f7f7;
+$red: #CB102B;
+
+$filter-red: invert(26%) sepia(92%) saturate(3430%) hue-rotate(337deg) brightness(76%) contrast(114%);
+
+$max-content-width: 1250px;
+$condensed-content-width: 950px;
+$gutter-width: 1.38em;
+$border-radius: 0.75em;
+
+//Fonts:
+$header_font: 'Kelin Eator';
+$fallback_header_font: serif;
+
+$body_font: 'Rubik';
+$fallback_body_font: sans-serif;

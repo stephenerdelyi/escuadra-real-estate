@@ -1,0 +1,237 @@
+//Fonts:
+@font-face {
+  font-family: 'Kelin Eator';
+  src: url('../fonts/kelin-eator.woff2') format('woff2'),
+       url('../fonts/kelin-eator.woff') format('woff'),
+       url('../fonts/kelin-eator.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@mixin header-font {
+    font-family: $header_font, $fallback_header_font;
+    line-height: 1em;
+    margin-bottom: 0.5em;
+    @content;
+}
+
+@mixin body-font {
+    font-family: $body_font, $fallback_body_font;
+    @content;
+}
+
+@mixin h1 {
+    @include header-font {
+        color: $red;
+        font-size: 12.375em;
+
+        @include breakpoint(500px) {
+            font-size: 9em;
+        }
+    }
+
+    @content;
+}
+
+@mixin h2 {
+    @include header-font {
+        color: $red;
+        font-size: 7.25em;
+
+        @include breakpoint(500px) {
+            font-size: 5em;
+        }
+    }
+
+    @content;
+}
+
+@mixin h3 {
+    @include header-font {
+        color: $red;
+        font-size: 5.375em;
+
+        @include breakpoint(500px) {
+            font-size: 3.75em;
+        }
+    }
+
+    @content;
+}
+
+@mixin h4 {
+    @include header-font {
+        color: $red;
+        font-size: 4.625em;
+
+        @include breakpoint(500px) {
+            font-size: 2.75em;
+        }
+    }
+
+    @content;
+}
+
+@mixin h5 {
+    @include header-font {
+        color: $red;
+        font-size: 4.0625em;
+
+        @include breakpoint(500px) {
+            font-size: 2.5em;
+        }
+    }
+
+    @content;
+}
+
+@mixin h6 {
+    @include body-font {
+        color: $red;
+        font-size: 3em;
+        font-weight: 700;
+
+        @include breakpoint(500px) {
+            font-size: 1.85em;
+        }
+    }
+
+    @content;
+}
+
+@mixin p {
+    @include body-font {
+        color: $grey;
+        font-size: 1.5625em;
+    }
+
+    @content;
+}
+
+@mixin p-header {
+    @include body-font {
+        color: $grey;
+        text-transform: uppercase;
+        letter-spacing: 0.125em;
+        font-size: 1.5625em;
+    }
+
+    @content;
+}
+
+@mixin link-reset($color) {
+    text-decoration: none;
+    position: relative;
+
+    &::after {
+        content: '';
+        position: absolute;
+        width: 0em;
+        background-color: $color;
+        left: 0em;
+        height: 0.12em;
+        bottom: -0.075em;
+    }
+
+    &:hover, &.--active {
+        &::after {
+            width: 100%;
+        }
+    }
+
+    @content;
+}
+
+@mixin a($no_underline: false) {
+    @include body-font {
+        color: $grey;
+        font-weight: 500;
+        font-size: 1.5625em;
+
+        @if $no_underline == false {
+            @include link-reset($grey);
+        } @else {
+            text-decoration: none;
+        }
+    }
+
+    @content;
+}
+
+@mixin inline-cta {
+    @include p {
+        text-transform: uppercase;
+        font-weight: bold;
+        display: inline-block;
+        @include link-reset($light-grey);
+        padding-right: 1.35em;
+
+        &:hover {
+            padding-right: 1.75em;
+        }
+
+        &::before {
+            content: '';
+            position: absolute;
+            right: 0em;
+            width: 0.8em;
+            height: 0.8em;
+            top: 50%;
+            transform: translateY(-50%);
+            background-image: url('../svgs/arrow.svg');
+        }
+    }
+
+    @content;
+}
+
+@mixin wysiwyg {
+    h1 {
+        @include h1;
+    }
+
+    h2 {
+        @include h2;
+    }
+
+    h3 {
+        @include h3;
+    }
+
+    h4 {
+        @include h4;
+    }
+
+    h5 {
+        @include h5;
+    }
+
+    h6 {
+        @include h6;
+    }
+
+    p, ol, ul {
+        @include p {
+            &:not(:last-child) {
+                margin-bottom: 0.75em;
+            }
+        }
+    }
+
+    a {
+        @include a {
+            font-size: inherit;
+        }
+    }
+
+    ol, ul {
+        margin-left: 2em;
+
+        li {
+            margin-bottom: 0.25em;
+        }
+    }
+
+    @content;
+}

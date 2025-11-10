@@ -1,0 +1,226 @@
+.modal-container {
+  z-index: 10;
+  backdrop-filter: blur(5px);
+  opacity: 0;
+  pointer-events: none;
+  box-sizing: border-box;
+  background-color: #11111180;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  padding: 0 1.38em;
+  display: flex;
+  position: fixed;
+  top: 0;
+}
+
+.modal-container__close {
+  z-index: 1;
+  width: 1.75em;
+  height: 1.75em;
+  position: absolute;
+  top: 2em;
+  left: 2em;
+}
+
+.modal-container__close.--hidden {
+  display: none;
+}
+
+.modal-container__close.--light {
+  filter: invert();
+}
+
+.modal-container__close:hover {
+  transform: scale(1.1);
+}
+
+.modal-container__close__icon {
+  fill: #ede1d8;
+}
+
+.modal-container.--active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.logged-in .modal-container {
+  height: calc(100vh - 32px);
+  margin-top: 32px;
+}
+
+@font-face {
+  font-family: Kelin Eator;
+  src: url("../kelin-eator.c7bd1dcd.woff2") format("woff2"), url("../kelin-eator.cb0a9f41.woff") format("woff"), url("../kelin-eator.14eabcb3.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+*, :after, :before {
+  transition: all .25s, font-size 50ms;
+}
+
+.incompatible-browser {
+  background-image: url("../red-granite.f90f0aff.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  justify-content: center;
+  align-items: center;
+  padding: 4em;
+  display: flex;
+}
+
+.incompatible-browser__card {
+  background-color: #111;
+  padding: 8em 5em;
+  position: relative;
+}
+
+.incompatible-browser__card.--light {
+  background-color: #ede1d8;
+}
+
+.incompatible-browser__card:after {
+  content: "";
+  border: 6px solid #cb102b0d;
+  width: calc(100% - 5em);
+  height: calc(100% - 5em);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.incompatible-browser__card__label {
+  color: #cb102b;
+  font-family: Rubik, sans-serif;
+  font-size: 3em;
+  font-weight: 700;
+}
+
+@media (width <= 500px) {
+  .incompatible-browser__card__label {
+    font-size: 1.85em;
+  }
+}
+
+.incompatible-browser__card__label {
+  text-transform: uppercase;
+  color: #ede1d8;
+  background-color: #cb102b;
+  margin-bottom: 1.5em;
+  padding: .25em .5em;
+  font-size: 1.5em;
+  display: inline-block;
+}
+
+.incompatible-browser__card__title {
+  color: #cb102b;
+  margin-bottom: .5em;
+  font-family: Kelin Eator, serif;
+  font-size: 7.25em;
+  line-height: 1em;
+}
+
+@media (width <= 500px) {
+  .incompatible-browser__card__title {
+    font-size: 5em;
+  }
+}
+
+.incompatible-browser__card__title {
+  color: #ede1d8;
+}
+
+.--light .incompatible-browser__card__title {
+  color: #cb102b;
+}
+
+.incompatible-browser__card__excerpt {
+  color: #f7f7f7;
+  font-family: Rubik, sans-serif;
+  font-size: 1.5625em;
+}
+
+.--light .incompatible-browser__card__excerpt {
+  color: #646767;
+}
+
+.incompatible-browser__card__cta {
+  color: #646767;
+  text-transform: uppercase;
+  font-family: Rubik, sans-serif;
+  font-size: 1.5625em;
+  font-weight: bold;
+  text-decoration: none;
+  display: inline-block;
+  position: relative;
+}
+
+.incompatible-browser__card__cta:after {
+  content: "";
+  background-color: #f7f7f7;
+  width: 0;
+  height: .12em;
+  position: absolute;
+  bottom: -.075em;
+  left: 0;
+}
+
+.incompatible-browser__card__cta:hover:after, .incompatible-browser__card__cta.--active:after {
+  width: 100%;
+}
+
+.incompatible-browser__card__cta {
+  padding-right: 1.35em;
+}
+
+.incompatible-browser__card__cta:hover {
+  padding-right: 1.75em;
+}
+
+.incompatible-browser__card__cta:before {
+  content: "";
+  background-image: url("../arrow.8acd8eae.svg");
+  width: .8em;
+  height: .8em;
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+}
+
+.incompatible-browser__card__cta {
+  color: #f7f7f7;
+  z-index: 1;
+  margin-top: 2em;
+}
+
+.--light .incompatible-browser__card__cta {
+  color: #cb102b;
+}
+
+.--light .incompatible-browser__card__cta:after {
+  background-color: #cb102b;
+}
+
+.--light .incompatible-browser__card__cta:before {
+  background-image: url("../arrow-red.0552f0e3.svg");
+}
+
+.incompatible-browser__card {
+  max-width: 28em;
+  box-shadow: 0 0 20px 10px #1111110d;
+}
+/*# sourceMappingURL=incompatible.css.map */

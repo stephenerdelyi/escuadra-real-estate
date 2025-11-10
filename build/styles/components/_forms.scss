@@ -1,0 +1,159 @@
+.gform_wrapper {
+    .gform_fields {
+        fieldset {
+            border: unset;
+        }
+
+        .ginput_complex {
+            display: flex;
+            justify-content: space-between;
+
+            span {
+                flex-basis: 48%;
+            }
+
+            label {
+                @include p {
+                    color: $white;
+                    padding-left: 0.5em;
+                    font-size: small;
+                    opacity: 0.5;
+                    padding-left: 1.25em;
+                }
+            }
+
+            input, select, textarea {
+                margin-bottom: 0.25em;
+            }
+        }
+
+        .ginput_container .medium {
+            width: 48%;
+        }
+    }
+
+    .gfield {
+        margin-bottom: 1em;
+
+        input, select, textarea {
+            @include p {
+                margin-top: 0.25em;
+                color: $white;
+                background-color: transparentize($black, 0.5);
+                border: 2px solid $black;
+                border-radius: $border-radius;
+                padding: 0.5em;
+                width: 100%;
+
+                &[aria-invalid='true'] {
+                    border-color: $pink;
+                }
+
+                &:focus {
+                    border-color: $light-blue;
+                    outline: unset;
+                }
+            }
+        }
+
+        input {
+            padding: 0.5em 0.75em;
+        }
+
+        textarea {
+            height: 7em;
+        }
+
+        &.gfield--width-half {
+            width: 48%;
+            display: inline-block;
+
+            &+.gfield--width-half {
+                margin-left: 4%;
+            }
+        }
+    }
+
+    .gfield_label {
+        @include p {
+            color: $white;
+            font-size: 1em;
+            padding-left: 1em;
+        }
+    }
+
+    .gchoice {
+        display: flex;
+        align-items: center;
+        margin-left: 0.65em;
+
+        &:first-child {
+            margin-top: 0.5em;
+        }
+
+        &:not(:last-child) {
+            margin-bottom: 0.25em;
+        }
+
+        input {
+            flex-basis: 1em;
+            margin: 0em;
+        }
+
+        label {
+            @include p {
+                color: $white;
+                font-size: small;
+                opacity: 0.5;
+            }
+        }
+    }
+
+    .gfield_required {
+        padding-left: 0.5em;
+        font-size: small;
+        opacity: 0.5;
+    }
+
+    .gform_validation_container {
+        display: none !important;
+        position: absolute !important;
+        left: -9000px;
+    }
+
+    .gform_submission_error {
+        @include p {
+            color: $white;
+            max-width: 24em;
+            text-align: center;
+            margin: 0em auto 1.25em;
+        }
+    }
+
+    .gfield_validation_message {
+        @include p {
+            text-align: center;
+            color: $pink;
+            font-size: smaller;
+        }
+    }
+
+    .gform_button {
+        @include button-primary {
+            border: unset;
+            cursor: pointer;
+            margin-top: 1em;
+        }
+    }
+}
+
+.gform_confirmation_wrapper {
+    .gform_confirmation_message {
+        @include p {
+            color: $white;
+            max-width: 24em;
+            text-align: center;
+            margin: 0em auto;
+        }
+    }
+}

@@ -1,0 +1,305 @@
+.open-content {
+    background-color: $white;
+
+    &__thumbnail {
+        padding: 5em 1.38em;
+        text-align: center;
+        margin: 0em auto;
+
+        &__image {
+            border-radius: $border-radius * 2;
+            max-width: 45em;
+            width: 100%;
+            aspect-ratio: 16 / 8;
+            object-fit: cover;
+            box-shadow: 0px 0px 15px transparentize($black, 0.5);
+        }
+    }
+
+    .--with-border {
+        border: 6px solid darken($light-grey, 6%);
+        padding: 1.38em !important;
+    }
+
+    & > *[class*="wp-block-"] {
+        &:first-child {
+            padding-top: 5em;
+        }
+
+        &:last-child {
+            padding-bottom: 5em;
+        }
+    }
+
+    *[class^="block-"] + *[class^="wp-block-"], *[class^="block-"] + *[class^="wp-container-"] {
+        margin-top: 5em;
+    }
+
+    *[class^="wp-block-"] + *[class^="block-"], *[class^="wp-container-"] + *[class^="block-"] {
+        margin-top: 5em;
+    }
+
+    *[class^="block-"].--whitespace + *[class^="block-"].--whitespace {
+        & > *[class*="__container"] {
+            padding-top: 0em;
+        }
+    }
+
+    *[class*="wp-block-"] {
+        padding: 0em $gutter-width;
+        max-width: $max-content-width;
+        margin: 0em auto;
+
+        ul:not([class]), ol:not([class]) {
+            margin: 0em auto;
+            max-width: $condensed-content-width;
+
+            @include p;
+
+            & ul, & ol {
+                font-size: inherit;
+            }
+
+            li {
+                margin-left: 2em;
+            }
+        }
+
+        h1 {
+            @include h1 {
+                margin: 0.5em auto;
+                max-width: $condensed-content-width;
+            }
+        }
+
+        h2 {
+            @include h2 {
+                margin: 0.5em auto;
+                max-width: $condensed-content-width;
+            }
+        }
+
+        h3 {
+            @include h3 {
+                margin: 0.5em auto;
+                max-width: $condensed-content-width;
+            }
+        }
+
+        h4 {
+            @include h4 {
+                margin: 0.5em auto;
+                max-width: $condensed-content-width;
+            }
+        }
+
+        h5 {
+            @include h5 {
+                margin: 0.5em auto;
+                max-width: $condensed-content-width;
+            }
+        }
+
+        h6 {
+            @include h6 {
+                margin: 0.5em auto;
+                max-width: $condensed-content-width;
+            }
+        }
+
+        a:not(.wp-block-button__link,.wp-block-file__button) {
+            @include a {
+                font-size: inherit;
+            }
+        }
+
+        p, li {
+            @include p {
+                margin: 1.25em auto;
+                max-width: $condensed-content-width;
+            }
+        }
+
+        li {
+            max-width: calc($condensed-content-width - 100px);
+        }
+    }
+
+    .wp-block-list {
+        
+    }
+
+    .wp-block-pullquote, .wp-block-quote {
+        position: relative;
+        padding-left: 4em;
+
+        &::before {
+            content: '';
+            position: absolute;
+            width: 5px;
+            height: 100%;
+            background-color: $black;
+            left: 3em;
+        }
+
+        cite {
+            @include h4 {
+                font-size: 0.75em;
+                font-style: normal;
+            }
+        }
+    }
+
+    .wp-block-paragraph {
+        .has-small-font-size {
+            font-size: 0.8em;
+        }
+
+        .has-medium-font-size {
+            font-size: 1.4em;
+        }
+
+        .has-large-font-size {
+            font-size: 1.6em;
+        }
+
+        .has-huge-font-size {
+            font-size: 1.8em;
+        }
+    }
+
+    *[class*="wp-block-"] + .block {
+        margin-top: 5em;
+    }
+
+    .block + *[class*="wp-block-"] {
+        margin-top: 5em;
+    }
+
+    .wp-block-table {
+        border-bottom: none;
+        margin-top: 2.5em;
+        margin-bottom: 2.5em;
+
+        table {
+            th {
+                @include h4 {
+                    padding: 0.75em 0.5em;
+                    font-size: 1.35em;
+                    color: $black;
+                }
+            }
+
+            td {
+                @include p {
+                    padding: 0.5em 0.5em;
+                    font-size: 1.25em;
+                }
+            }
+        }
+    }
+
+    figcaption {
+        @include p {
+            font-size: smaller;
+            text-align: center;
+        }
+    }
+
+    .wp-block-file {
+        &__button {
+            @include button {
+                margin-left: 1em;
+
+                &:hover {
+                    color: $black !important;
+                    opacity: 1 !important;
+                }
+            }
+        }
+    }
+
+    .wp-block-button {
+        &__link {
+            @include button {
+                font-weight: 900;
+
+                &:hover {
+                    text-decoration: none;
+                }
+            }
+        }
+    }
+
+    .has-pink-color {
+        color: $black !important;
+    }
+
+    .has-coral-color {
+        color: $black !important;
+    }
+
+    .has-light-blue-color {
+        color: $black !important;
+    }
+
+    .has-dark-blue-color {
+        color: $black !important;
+    }
+
+    .has-teal-color {
+        color: $black !important;
+    }
+
+    .has-black-color {
+        color: $black !important;
+    }
+
+    .has-dark-grey-color {
+        color: $black !important;
+    }
+
+    .has-light-grey-color {
+        color: $black !important;
+    }
+
+    .has-white-color {
+        color: $white !important;
+    }
+
+    .has-pink-background-color {
+        background-color: $black !important;
+    }
+
+    .has-coral-background-color {
+        background-color: $black !important;
+    }
+
+    .has-light-blue-background-color {
+        background-color: $black !important;
+    }
+
+    .has-dark-blue-background-color {
+        background-color: $black !important;
+    }
+
+    .has-teal-background-color {
+        background-color: $black !important;
+    }
+
+    .has-black-background-color {
+        background-color: $black !important;
+    }
+
+    .has-dark-grey-background-color {
+        background-color: $black !important;
+    }
+
+    .has-light-grey-background-color {
+        background-color: $black !important;
+    }
+
+    .has-white-background-color {
+        background-color: $white !important;
+    }
+}

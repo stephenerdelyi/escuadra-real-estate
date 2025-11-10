@@ -1,0 +1,101 @@
+.modal-featured-listings {
+    @include modal {
+        .--hidden {
+            display: none;
+        }
+
+        &__image-slider {
+            margin-bottom: 4em;
+            margin-top: -6em;
+            position: relative;
+
+            &__wrapper {
+                max-height: 34em;
+            }
+
+            &__slide {
+                object-fit: cover;
+                width: 100%;
+                height: unset !important;
+                aspect-ratio: 4 / 3;
+            }
+        }
+
+        &__pagination {
+            @include pagination {
+                position: absolute;
+                bottom: 4em;
+                right: 4em;
+                z-index: 1;
+
+                &__label {
+                    color: $white;
+                }
+            }
+        }
+
+        &__tag {
+            @include tag(dark) {
+                margin-bottom: 1em;
+            }
+        }
+
+        &__name {
+            @include h3 {
+                margin-bottom: 0.25em;
+            }
+        }
+
+        &__stats {
+            display: flex;
+            gap: 4em;
+            margin-bottom: 2em;
+        }
+
+        &__stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            &__title {
+                @include h6 {
+                    position: relative;
+                    margin-left: 1.25em;
+
+                    &::before {
+                        content: '';
+                        position: absolute;
+                        width: 0.85em;
+                        height: 0.85em;
+                        background-size: contain;
+                        left: -1.25em;
+                        top: 50%;
+                        transform: translateY(-50%);
+
+                        .--bed & {
+                            background-image: url('../svgs/bedroom.svg');
+                        }
+
+                        .--bath & {
+                            background-image: url('../svgs/bathroom.svg');
+                        }
+
+                        .--sq-ft & {
+                            background-image: url('../svgs/sq-ft.svg');
+                        }
+                    }
+                }
+            }
+
+            &__description {
+                @include p;
+            }
+        }
+
+        &__wysiwyg {
+            @include wysiwyg {
+                margin-top: 4em;
+            }
+        }
+    }
+}

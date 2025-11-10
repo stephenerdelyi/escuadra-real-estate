@@ -1,0 +1,38 @@
+@import 'base';
+@import 'components';
+@import 'blocks';
+
+*:not([class*="animate"]), *:after, *:before {
+    transition: all 0.25s, font-size 0.05s;
+}
+
+[class*="animate"] {
+    opacity: 0;
+}
+
+body {
+    font-size: 14px;
+    background-color: $white;
+    scroll-behavior: smooth;
+
+    *:focus {
+        //outline: 2px solid $black;
+        outline: none;
+    }
+
+    @include breakpoint(900px) {
+        font-size: 12px;
+    }
+
+    @include breakpoint(700px) {
+        font-size: 11px;
+    }
+
+    @include breakpoint(500px) {
+        font-size: 10px;
+    }
+
+    @include breakpoint(399px) {
+        font-size: 9px;
+    }
+}

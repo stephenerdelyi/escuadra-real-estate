@@ -1,0 +1,113 @@
+.modal-agent-detail {
+    @include modal {
+        .--hidden {
+            display: none;
+        }
+
+        &__intro-container {
+            display: flex;
+            gap: 1em;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 2em;
+
+            @include breakpoint(500px) {
+                flex-direction: column;
+                text-align: center;
+                gap: 3em;
+            }
+        }
+
+        &__name {
+            @include h3 {
+                width: min-content;
+                margin-bottom: 0em;
+            }
+        }
+
+        &__accounts {
+            display: flex;
+            gap: 1em;
+
+            &__link {
+                background-color: $red;
+                padding: 0.5em;
+
+                &:hover {
+                    transform: scale(1.1);
+                }
+            }
+
+            &__icon {
+                width: 1.75em;
+                height: 1.75em;
+                filter: invert(1);
+            }
+        }
+
+        &__contact-container {
+            padding: 4em 0em;
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75em;
+
+            @include breakpoint(500px) {
+                align-items: center;
+            }
+        }
+
+        &__contact-option {
+            position: relative;
+            padding-left: 2.5em;
+
+            &::before {
+                content: '';
+                position: absolute;
+                left: 0em;
+                width: 1.5em;
+                height: 1.5em;
+                background-repeat: no-repeat;
+                background-position: center;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+
+            &.--phone::before {
+                background-image: url('../svgs/phone.svg');
+            }
+
+            &.--email::before {
+                background-image: url('../svgs/email.svg');
+            }
+
+            &__link {
+                @include a;
+            }
+        }
+
+        &__bio {
+            @include wysiwyg;
+        }
+
+        &__footnotes {
+            margin-top: 4em;
+
+            .--hidden + & {
+                margin-top: 0em;
+            }
+        }
+
+        &__footnote {
+            @include p;
+
+            &:not(:last-child) {
+                margin-bottom: 1em;
+            }
+
+            &__title {
+                font-weight: bold;
+            }
+        }
+    }
+}

@@ -1,0 +1,491 @@
+@mixin breakpoint($size) {
+    @media (max-width: $size) {
+        @content;
+    }
+}
+
+@mixin line-clamp($num_lines) {
+    display: -webkit-box;
+    -webkit-line-clamp: $num_lines;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+@mixin container() {
+    max-width: 1500px;
+    margin: 0em auto;
+    padding: 8em 4em;
+
+    @content;
+}
+
+@mixin header-container() {
+    @include container {
+        padding: 11.5em 2em 5em;
+    }
+
+    @content;
+}
+
+@mixin tag($theme: light) {
+    @include h6 {
+        padding: 0.25em 0.5em;
+        text-transform: uppercase;
+        display: inline-block;
+        font-size: 1.5em;
+
+        @if $theme == light {
+            background-color: $white;
+            color: $red;
+        } @else if $theme == dark {
+            background-color: $red;
+            color: $white;
+        }
+    }
+
+    @content;
+}
+
+@mixin button() {
+    @include a(true) {
+        text-transform: uppercase;
+        padding: 0.5em;
+        padding: 0.65em 1em;
+        display: inline-block;
+        color: $white;
+        position: relative;
+        z-index: 0;
+        cursor: pointer;
+
+        &::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 3px solid $white;
+            left: -3px;
+            top: -3px;
+        }
+
+        &::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-color: $black;
+            border: 3px solid $black;
+            left: 0.35em;
+            top: 0.35em;
+        }
+
+        &:hover {
+            transform: scale(1.1);
+
+            &::after {
+                left: -3px;
+                top: -3px;
+            }
+        }
+
+        &:active {
+            transform: scale(1);
+        }
+    }
+
+    @content;
+}
+
+@mixin button-light {
+    @include button {
+        color: $dark-grey;
+
+        &::before {
+            border-color: $dark-grey;
+        }
+
+        &::after {
+            background-color: darken($light-grey, 6%);
+            border-color: darken($light-grey, 6%);
+        }
+    }
+
+    @content;
+}
+
+@mixin gravity-form {
+    .gravity-theme {
+        max-width: 860px;
+        margin: 0em auto;
+
+        .gform_validation_errors {
+            border-radius: 0em;
+            border: unset;
+            background-color: white;
+
+            .gform_submission_error {
+                font-family: 'Rubik' !important;
+            }
+        }
+
+        .gfield_validation_message {
+            border-radius: 0em;
+            border: unset;
+            background-color: white;
+            font-family: 'Rubik' !important;
+            padding: 0.75em 1em !important;
+        }
+
+        .gform_fields {
+            grid-column-gap: 5% !important;
+        }
+
+        .gfield_label {
+            @include p {
+                color: $white;
+                font-weight: normal !important;
+                font-size: 1.5em !important;
+                margin-bottom: 0.5em !important;
+            }
+
+            .gfield_required {
+                display: none;
+            }
+        }
+
+        .ginput_container {
+            margin-bottom: 1em;
+
+            input, textarea {
+                @include p {
+                    color: $white;
+                    background-color: unset;
+                    border: 4px solid transparentize($white, 0.5);
+                    font-size: 1.5em !important;
+                    padding: 0.75em 1em !important;
+                    resize: none;
+
+                    &:focus {
+                        border-color: $white;
+                    }
+                }
+            }
+        }
+
+        .gform_footer {
+            display: flex;
+            align-items: center;
+        }
+
+        .gform_ajax_spinner {
+            width: 3em;
+            height: 3em;
+            margin-left: 2em;
+            filter: invert(1);
+        }
+
+        .gform_button {
+            @include button {
+                background-color: unset;
+            }
+        }
+    }
+}
+
+@mixin card {
+    &__card {
+        background-color: $black;
+        padding: 8em 5em;
+        position: relative;
+
+        &.--light {
+            background-color: $white;
+
+            // &::after {
+            //     border-color: transparentize($red, 0.95);
+            // }
+        }
+
+        &::after {
+            content: '';
+            height: calc(100% - 5em);
+            width: calc(100% - 5em);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 6px solid transparentize($red, 0.95);
+        }
+
+        &__label {
+            @include tag(dark) {
+                margin-bottom: 1.5em;
+            }
+        }
+
+        &__title {
+            @include h2 {
+                color: $white;
+
+                .--light & {
+                    color: $red;
+                }
+            }
+        }
+
+        &__excerpt {
+            @include p {
+                color: $light-grey;
+
+                .--light & {
+                    color: $grey;
+                }
+            }
+        }
+
+        &__cta {
+            @include inline-cta {
+                margin-top: 2em;
+                color: $light-grey;
+                z-index: 1;
+
+                .--light & {
+                    color: $red;
+
+                    &::after {
+                        background-color: $red;
+                    }
+
+                    &::before {
+                        background-image: url('../svgs/arrow-red.svg');
+                    }
+                }
+            }
+        }
+
+        @content;
+    }
+}
+
+.modal-container {
+    z-index: 10;
+    position: fixed;
+    top: 0;
+    background-color: transparentize($black, 0.5);
+    backdrop-filter: blur(5px);
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    padding: 0em $gutter-width;
+    box-sizing: border-box;
+
+    &__close {
+        position: absolute;
+        left: 2em;
+        top: 2em;
+        height: 1.75em;
+        width: 1.75em;
+        z-index: 1;
+
+        &.--hidden {
+            display: none;
+        }
+
+        &.--light {
+            filter: invert(1);
+        }
+
+        &:hover {
+            transform: scale(1.1);
+        }
+
+        &__icon {
+            fill: $white;
+        }
+    }
+
+    &.--active {
+        opacity: 1;
+        pointer-events: all;
+    }
+
+    .logged-in & {
+        height: calc(100vh - 32px);
+        margin-top: 32px;
+    }
+}
+
+@mixin modal {
+    background-color: $white;
+    box-shadow: box-shadow(light);
+    max-width: 48em;
+    flex-grow: 1;
+    overflow: hidden;
+    opacity: 0;
+    position: absolute;
+    pointer-events: none;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    transform: translateX(-100%);
+
+    &.--active {
+        opacity: 1;
+        pointer-events: all;
+        transform: translateX(0%);
+    }
+
+    &.--loading {
+        &::after {
+            content: '';
+            background-image: url('../images/spinner.gif');
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 5em;
+            height: 5em;
+            background-size: contain;
+        }
+    }
+
+    @include breakpoint(700px) {
+        max-width: unset;
+        height: 100vh;
+        width: 100vw;
+        border-radius: unset;
+        overflow-y: scroll;
+
+        .logged-in & {
+            height: calc(100vh - 30px);
+            margin-top: 30px;
+        }
+    }
+
+    &__container {
+        overflow-y: auto;
+        max-height: calc(100% - 6em);
+        padding-top: 6em;
+
+        .--loading & {
+            opacity: 0;
+            transition-delay: 0.25s;
+        }
+    }
+
+    &__main {
+        padding: 0em 4em 4em 4em;
+    }
+
+    @content;
+}
+
+@mixin pagination {
+    display: flex;
+    gap: 2em;
+    align-items: center;
+
+    @include breakpoint(950px) {
+        justify-content: center;
+    }
+
+    &.--label-left {
+        flex-direction: row-reverse;
+        justify-content: left;
+    }
+
+    &__buttons {
+        display: flex;
+        gap: 1em;
+
+        .--up-down & {
+            flex-direction: column;
+        }
+    }
+
+    &__button {
+        display: block;
+        position: relative;
+        width: 2.5em;
+        height: 2.5em;
+        background-color: $white;
+        box-shadow: box-shadow(medium);
+        cursor: pointer;
+
+        &.--disabled {
+            pointer-events: none;
+            opacity: 0.15;
+        }
+
+        &.--hidden {
+            display: none;
+        }
+
+        &:hover {
+            transform: scale(1.25);
+        }
+
+        &:active {
+            transform: scale(0.9);
+        }
+
+        &::after {
+            content: '';
+            position: absolute;
+            right: 0em;
+            width: 1.25em;
+            height: 1.25em;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-image: url('../svgs/arrow-dark.svg');
+
+            .--up-down & {
+                transform: translate(-50%, -50%) rotate(90deg);
+            }
+        }
+
+        &.--prev::after {
+            transform: translate(-50%, -50%) rotate(180deg);
+
+            .--up-down & {
+                transform: translate(-50%, -50%) rotate(-90deg);
+            }
+        }
+    }
+
+    &__label {
+        @include p;
+    }
+
+    @content;
+}
+
+@mixin scroll-button {
+    position: absolute;
+    bottom: 3em;
+    left: 50%;
+    transform: translateX(-50%);
+
+    &:hover {
+        transform: translate(-50%, 0.5em) scale(1.1);
+    }
+
+    .--nav-scrolled & {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    &__image {
+        width: 3em;
+    }
+}
+
+@mixin aspect($width: 16, $height: 9) {
+    width: 100%;
+    max-height: 25em;
+}

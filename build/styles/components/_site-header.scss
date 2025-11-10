@@ -1,0 +1,206 @@
+.site-header {
+    position: fixed;
+    width: 100%;
+    top: 0%;
+    z-index: 10;
+
+    @include breakpoint(660px) {
+        min-height: 12em;
+    }
+
+    .logged-in & {
+        top: calc(0% + 32px);
+    }
+
+    .--nav-scrolled & {
+        background-color: $white;
+        border-bottom: 2px solid $light-grey;
+        box-shadow: box-shadow(medium);
+    }
+
+    .--nav-hidden & {
+        top: -10em;
+
+        @include breakpoint(660px) {
+            top: -13em;
+        }
+    }
+
+    &__navigation {
+        display: flex;
+        align-items: center;
+        gap: 3em;
+        justify-content: center;
+        padding: 2em 1em;
+
+        @include breakpoint(660px) {
+            background-color: white;
+            flex-direction: column;
+            gap: 0em;
+            margin-top: -10em;
+            max-height: 0em;
+            padding: 0em;
+            overflow: hidden;
+            opacity: 0;
+
+            .--active & {
+                padding: 14em 1em 3em;
+                max-height: 100em;
+                opacity: 1;
+            }
+        }
+
+        &__link-container {
+            position: relative;
+            padding: 2em 0em;
+
+            &:hover {
+                .site-header__navigation__children {
+                    margin-top: 2em;
+                    opacity: 1;
+                    pointer-events: all;
+                }
+            }
+
+            &.--mobile {
+                display: none;
+
+                @include breakpoint(660px) {
+                    display: block;
+                }
+            }
+        }
+
+        &__link {
+            @include p-header {
+                color: $white;
+                @include link-reset($red) {
+                    &::after {
+                        background-color: $white;
+                    }
+
+                    .--nav-scrolled &::after {
+                        background-color: $red;
+                    }
+
+                    &:hover, &.--active {
+                        &::after {
+                            width: 98%;
+                        }
+                    }
+                }
+
+                .--nav-scrolled & {
+                    color: $red;
+                }
+
+                @include breakpoint(660px) {
+                    .--active & {
+                        color: $red;
+                        @include link-reset($red);
+                    }
+                }
+            }
+        }
+
+        &__children {
+            position: absolute;
+            background-color: $white;
+            display: flex;
+            flex-direction: column;
+            width: 15em;
+            padding: 2em;
+            gap: 2em;
+            margin-top: 0em;
+            left: -2em;
+            box-shadow: box-shadow(medium);
+            opacity: 0;
+            pointer-events: none;
+
+            @include breakpoint(660px) {
+                position: unset;
+                box-shadow: unset;
+                width: unset;
+                padding: unset;
+                opacity: 1;
+                pointer-events: all;
+                margin-top: 4em !important;
+                gap: 4em;
+            }
+
+            &::before {
+                content: '';
+                width: 1em;
+                height: 1em;
+                transform: rotate(45deg);
+                top: -0.5em;
+                left: 2em;
+                position: absolute;
+                background-color: $white;
+            }
+        }
+
+        &__child-link {
+            @include a {
+                width: fit-content;
+
+                @include breakpoint(660px) {
+                    color: $black;
+                    text-transform: uppercase;
+                    letter-spacing: 0.125em;
+                    font-size: 1.5625em;
+                    font-weight: normal;
+                    text-align: center;
+                    margin: 0em auto;
+                    @include link-reset($black);
+                }
+            }
+        }
+
+        &__logo {
+            &.--red {
+                display: none;
+            }
+
+            .--nav-scrolled & {
+                &.--cream {
+                    display: none;
+                }
+
+                &.--red {
+                    display: block;
+                }
+            }
+
+            &.--desktop {
+                @include breakpoint(660px) {
+                    display: none;
+                }
+            }
+
+            &.--mobile {
+                display: none;
+                margin-top: 3em;
+                text-align: center;
+                text-decoration: unset;
+
+                @include breakpoint(660px) {
+                    display: block;
+                }
+            }
+
+            &__image {
+                width: 5em;
+            }
+
+            &__label {
+                @include h6 {
+                    text-transform: uppercase;
+                    color: white;
+                    margin-top: 0.5em;
+                    font-size: 1em;
+                }
+            }
+        }
+    }
+}

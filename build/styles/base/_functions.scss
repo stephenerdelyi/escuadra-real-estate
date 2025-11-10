@@ -1,0 +1,12 @@
+@function box-shadow($type: normal, $x: 0px, $y: 0px) {
+    //standard
+    $box-shadow: $x $y 20px 10px transparentize($black, 0.95);
+
+    @if $type == heavy {
+        $box-shadow: $x $y 20px 10px transparentize($black, 0.9);
+    } @else if $type == light {
+        $box-shadow: $x $y 20px 10px transparentize($black, 0.99);
+    }
+
+    @return $box-shadow;
+}

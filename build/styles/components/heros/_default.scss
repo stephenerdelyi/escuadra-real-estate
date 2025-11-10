@@ -1,0 +1,66 @@
+.default-hero {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+    background-color: $black;
+    overflow: hidden;
+    background-image: url('../textures/red-granite.png');
+
+    @include breakpoint(700px) {
+        background-attachment: unset;
+    }
+
+    &.--full {
+        height: 100vh;
+
+        .logged-in & {
+            height: calc(100vh - 32px);
+        }
+    }
+
+    &::before {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0em;
+        left: 0em;
+        background-color: transparentize($black, 0.45);
+    }
+
+    &__content {
+        @include container {
+            padding-top: 12em;
+            z-index: 0;
+            text-align: center;
+
+            [block-first="image-with-text"] &, [block-first="agent-listing"] &, [block-first="developments"] & {
+                padding-bottom: 16em;
+            }
+        }
+    }
+
+    &__title {
+        @include h2 {
+            color: $white;
+        }
+    }
+
+    &__excerpt {
+        @include p {
+            margin-top: 1.5em;
+            color: $light-grey;
+            max-width: 20em;
+            margin: 0em auto;
+        }
+    }
+
+    &__scroll-button {
+        @include scroll-button;
+    }
+}

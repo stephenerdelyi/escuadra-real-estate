@@ -1,0 +1,118 @@
+@import '../base';
+
+.block-tabbed-content {
+    &__container {
+        @include container {
+            display: flex;
+            gap: 4em;
+            justify-content: space-between;
+
+            @include breakpoint(1160px) {
+                flex-direction: column;
+            }
+        }
+    }
+
+    &__buttons {
+        display: inline-flex;
+        flex-shrink: 0;
+        gap: 3em;
+
+        &__pagination {
+            @include pagination {
+                padding-top: 0.5em;
+                align-items: flex-start;
+
+                &__button {
+                    background-color: $light-grey;
+                }
+            }
+        }
+
+        &__links {
+            display: flex;
+            flex-direction: column;
+        }
+
+        &__link {
+            @include h3 {
+                width: fit-content;
+                @include link-reset($red);
+                margin-bottom: 0.5em;
+                opacity: 0.25;
+
+                &:hover, &.--active {
+                    opacity: 1;
+                }
+
+                &.--active {
+                    pointer-events: none;
+                    &::after {
+                        content: unset;
+                    }
+                }
+            }
+        }
+    }
+
+    &__slides {
+        max-width: 60em;
+
+        @include breakpoint(1440px) {
+            max-width: 50em;
+        }
+
+        @include breakpoint(1290px) {
+            max-width: 40em;
+        }
+
+        @include breakpoint(1160px) {
+            flex-direction: column;
+        }
+
+        [block-before=""] & {
+            margin-top: -8em;
+            opacity: 0;
+            pointer-events: none;
+
+            .--nav-scrolled & {
+                margin-top: -16em;
+                opacity: 1;
+                pointer-events: all;
+            }
+
+            @include breakpoint(1160px) {
+                margin-top: 0em !important;
+            }
+        }
+
+        &__image-slider {
+            aspect-ratio: 4 / 3;
+            width: 100%;
+
+            &__img {
+                object-fit: cover;
+                height: -webkit-fill-available !important;
+            }
+        }
+
+        &__text-slider {
+            margin-top: 4em;
+            max-width: 80%;
+            height: fit-content;
+
+            @include breakpoint(500px) {
+                max-width: 100%;
+            }
+
+            &__slide {
+                background-color: $white;
+                height: auto !important;
+            }
+
+            &__text {
+                @include p;
+            }
+        }
+    }
+}

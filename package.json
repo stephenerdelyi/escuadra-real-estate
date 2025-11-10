@@ -1,0 +1,20 @@
+{
+    "name": "escuadra-real-estate",
+    "version": "1.0.0",
+    "license": "MIT",
+    "scripts": {
+        "watch": "parcel watch build/styles/admin.scss build/styles/incompatible.scss build/styles/main.scss build/scripts/admin.js build/scripts/main.js build/scripts/blocks/* --public-url /wp-content/themes/escuadra-real-estate/assets/ --dist-dir ./assets/ --no-content-hash",
+        "build": "parcel build build/styles/admin.scss build/styles/incompatible.scss build/styles/main.scss build/scripts/admin.js build/scripts/main.js build/scripts/blocks/* --public-url /wp-content/themes/escuadra-real-estate/assets/ --no-optimize --dist-dir ./assets/ --no-content-hash",
+        "build-production": "parcel build build/styles/admin.scss build/styles/incompatible.scss build/styles/main.scss build/scripts/admin.js build/scripts/main.js build/scripts/blocks/* --public-url /wp-content/themes/escuadra-real-estate/assets/ --dist-dir ./assets/ --no-content-hash",
+        "build-env-new": "parcel build build/styles/admin.scss build/styles/incompatible.scss build/styles/main.scss build/scripts/admin.js build/scripts/main.js build/scripts/blocks/* --public-url /web/wp-content/themes/escuadra-real-estate/assets/ --dist-dir ./assets/ --no-content-hash"
+    },
+    "devDependencies": {
+        "@parcel/transformer-sass": "^2.14.1",
+        "parcel": "^2.14.1",
+        "sass": "^1.37.5",
+        "svgo": "^3.3.2"
+    },
+    "dependencies": {
+        "swiper": "^6.8.1"
+    }
+}
