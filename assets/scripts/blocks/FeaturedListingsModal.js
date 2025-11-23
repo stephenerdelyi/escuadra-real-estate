@@ -1,48 +1,809 @@
-(() => {
+// modules are defined as an array
+// [ module function, map of requires ]
+//
+// map of requires is short require name -> numeric require
+//
+// anything defined in a previous bundle is accessed via the
+// orig method which is the require for previous bundles
 
-function $parcel$export(e, n, v, s) {
-  Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
-}
+(function (
+  modules,
+  entry,
+  mainEntry,
+  parcelRequireName,
+  externals,
+  distDir,
+  publicUrl,
+  devServer
+) {
+  /* eslint-disable no-undef */
+  var globalObject =
+    typeof globalThis !== 'undefined'
+      ? globalThis
+      : typeof self !== 'undefined'
+      ? self
+      : typeof window !== 'undefined'
+      ? window
+      : typeof global !== 'undefined'
+      ? global
+      : {};
+  /* eslint-enable no-undef */
 
-      var $parcel$global = globalThis;
-    
-var $parcel$modules = {};
-var $parcel$inits = {};
+  // Save the require from previous bundle to this closure if any
+  var previousRequire =
+    typeof globalObject[parcelRequireName] === 'function' &&
+    globalObject[parcelRequireName];
 
-var parcelRequire = $parcel$global["parcelRequire4037"];
+  var importMap = previousRequire.i || {};
+  var cache = previousRequire.cache || {};
+  // Do not use `require` to prevent Webpack from trying to bundle this call
+  var nodeRequire =
+    typeof module !== 'undefined' &&
+    typeof module.require === 'function' &&
+    module.require.bind(module);
 
-if (parcelRequire == null) {
-  parcelRequire = function(id) {
-    if (id in $parcel$modules) {
-      return $parcel$modules[id].exports;
+  function newRequire(name, jumped) {
+    if (!cache[name]) {
+      if (!modules[name]) {
+        if (externals[name]) {
+          return externals[name];
+        }
+        // if we cannot find the module within our internal map or
+        // cache jump to the current global require ie. the last bundle
+        // that was added to the page.
+        var currentRequire =
+          typeof globalObject[parcelRequireName] === 'function' &&
+          globalObject[parcelRequireName];
+        if (!jumped && currentRequire) {
+          return currentRequire(name, true);
+        }
+
+        // If there are other bundles on this page the require from the
+        // previous one is saved to 'previousRequire'. Repeat this as
+        // many times as there are bundles until the module is found or
+        // we exhaust the require chain.
+        if (previousRequire) {
+          return previousRequire(name, true);
+        }
+
+        // Try the node require function if it exists.
+        if (nodeRequire && typeof name === 'string') {
+          return nodeRequire(name);
+        }
+
+        var err = new Error("Cannot find module '" + name + "'");
+        err.code = 'MODULE_NOT_FOUND';
+        throw err;
+      }
+
+      localRequire.resolve = resolve;
+      localRequire.cache = {};
+
+      var module = (cache[name] = new newRequire.Module(name));
+
+      modules[name][0].call(
+        module.exports,
+        localRequire,
+        module,
+        module.exports,
+        globalObject
+      );
     }
-    if (id in $parcel$inits) {
-      var init = $parcel$inits[id];
-      delete $parcel$inits[id];
-      var module = {id: id, exports: {}};
-      $parcel$modules[id] = module;
-      init.call(module.exports, module, module.exports);
-      return module.exports;
+
+    return cache[name].exports;
+
+    function localRequire(x) {
+      var res = localRequire.resolve(x);
+      if (res === false) {
+        return {};
+      }
+      // Synthesize a module to follow re-exports.
+      if (Array.isArray(res)) {
+        var m = {__esModule: true};
+        res.forEach(function (v) {
+          var key = v[0];
+          var id = v[1];
+          var exp = v[2] || v[0];
+          var x = newRequire(id);
+          if (key === '*') {
+            Object.keys(x).forEach(function (key) {
+              if (
+                key === 'default' ||
+                key === '__esModule' ||
+                Object.prototype.hasOwnProperty.call(m, key)
+              ) {
+                return;
+              }
+
+              Object.defineProperty(m, key, {
+                enumerable: true,
+                get: function () {
+                  return x[key];
+                },
+              });
+            });
+          } else if (exp === '*') {
+            Object.defineProperty(m, key, {
+              enumerable: true,
+              value: x,
+            });
+          } else {
+            Object.defineProperty(m, key, {
+              enumerable: true,
+              get: function () {
+                if (exp === 'default') {
+                  return x.__esModule ? x.default : x;
+                }
+                return x[exp];
+              },
+            });
+          }
+        });
+        return m;
+      }
+      return newRequire(res);
     }
-    var err = new Error("Cannot find module '" + id + "'");
-    err.code = 'MODULE_NOT_FOUND';
-    throw err;
+
+    function resolve(x) {
+      var id = modules[name][1][x];
+      return id != null ? id : x;
+    }
+  }
+
+  function Module(moduleName) {
+    this.id = moduleName;
+    this.bundle = newRequire;
+    this.require = nodeRequire;
+    this.exports = {};
+  }
+
+  newRequire.isParcelRequire = true;
+  newRequire.Module = Module;
+  newRequire.modules = modules;
+  newRequire.cache = cache;
+  newRequire.parent = previousRequire;
+  newRequire.distDir = distDir;
+  newRequire.publicUrl = publicUrl;
+  newRequire.devServer = devServer;
+  newRequire.i = importMap;
+  newRequire.register = function (id, exports) {
+    modules[id] = [
+      function (require, module) {
+        module.exports = exports;
+      },
+      {},
+    ];
   };
 
-  parcelRequire.register = function register(id, init) {
-    $parcel$inits[id] = init;
-  };
+  // Only insert newRequire.load when it is actually used.
+  // The code in this file is linted against ES5, so dynamic import is not allowed.
+  // INSERT_LOAD_HERE
 
-  $parcel$global["parcelRequire4037"] = parcelRequire;
+  Object.defineProperty(newRequire, 'root', {
+    get: function () {
+      return globalObject[parcelRequireName];
+    },
+  });
+
+  globalObject[parcelRequireName] = newRequire;
+
+  for (var i = 0; i < entry.length; i++) {
+    newRequire(entry[i]);
+  }
+
+  if (mainEntry) {
+    // Expose entry point to Node, AMD or browser globals
+    // Based on https://github.com/ForbesLindesay/umd/blob/master/template.js
+    var mainExports = newRequire(mainEntry);
+
+    // CommonJS
+    if (typeof exports === 'object' && typeof module !== 'undefined') {
+      module.exports = mainExports;
+
+      // RequireJS
+    } else if (typeof define === 'function' && define.amd) {
+      define(function () {
+        return mainExports;
+      });
+    }
+  }
+})({"ikncZ":[function(require,module,exports,__globalThis) {
+var global = arguments[3];
+var HMR_HOST = null;
+var HMR_PORT = 1234;
+var HMR_SERVER_PORT = 1234;
+var HMR_SECURE = false;
+var HMR_ENV_HASH = "d6ea1d42532a7575";
+var HMR_USE_SSE = false;
+module.bundle.HMR_BUNDLE_ID = "c9ee4950ded8db22";
+"use strict";
+/* global HMR_HOST, HMR_PORT, HMR_SERVER_PORT, HMR_ENV_HASH, HMR_SECURE, HMR_USE_SSE, chrome, browser, __parcel__import__, __parcel__importScripts__, ServiceWorkerGlobalScope */ /*::
+import type {
+  HMRAsset,
+  HMRMessage,
+} from '@parcel/reporter-dev-server/src/HMRServer.js';
+interface ParcelRequire {
+  (string): mixed;
+  cache: {|[string]: ParcelModule|};
+  hotData: {|[string]: mixed|};
+  Module: any;
+  parent: ?ParcelRequire;
+  isParcelRequire: true;
+  modules: {|[string]: [Function, {|[string]: string|}]|};
+  HMR_BUNDLE_ID: string;
+  root: ParcelRequire;
+}
+interface ParcelModule {
+  hot: {|
+    data: mixed,
+    accept(cb: (Function) => void): void,
+    dispose(cb: (mixed) => void): void,
+    // accept(deps: Array<string> | string, cb: (Function) => void): void,
+    // decline(): void,
+    _acceptCallbacks: Array<(Function) => void>,
+    _disposeCallbacks: Array<(mixed) => void>,
+  |};
+}
+interface ExtensionContext {
+  runtime: {|
+    reload(): void,
+    getURL(url: string): string;
+    getManifest(): {manifest_version: number, ...};
+  |};
+}
+declare var module: {bundle: ParcelRequire, ...};
+declare var HMR_HOST: string;
+declare var HMR_PORT: string;
+declare var HMR_SERVER_PORT: string;
+declare var HMR_ENV_HASH: string;
+declare var HMR_SECURE: boolean;
+declare var HMR_USE_SSE: boolean;
+declare var chrome: ExtensionContext;
+declare var browser: ExtensionContext;
+declare var __parcel__import__: (string) => Promise<void>;
+declare var __parcel__importScripts__: (string) => Promise<void>;
+declare var globalThis: typeof self;
+declare var ServiceWorkerGlobalScope: Object;
+*/ var OVERLAY_ID = '__parcel__error__overlay__';
+var OldModule = module.bundle.Module;
+function Module(moduleName) {
+    OldModule.call(this, moduleName);
+    this.hot = {
+        data: module.bundle.hotData[moduleName],
+        _acceptCallbacks: [],
+        _disposeCallbacks: [],
+        accept: function(fn) {
+            this._acceptCallbacks.push(fn || function() {});
+        },
+        dispose: function(fn) {
+            this._disposeCallbacks.push(fn);
+        }
+    };
+    module.bundle.hotData[moduleName] = undefined;
+}
+module.bundle.Module = Module;
+module.bundle.hotData = {};
+var checkedAssets /*: {|[string]: boolean|} */ , disposedAssets /*: {|[string]: boolean|} */ , assetsToDispose /*: Array<[ParcelRequire, string]> */ , assetsToAccept /*: Array<[ParcelRequire, string]> */ , bundleNotFound = false;
+function getHostname() {
+    return HMR_HOST || (typeof location !== 'undefined' && location.protocol.indexOf('http') === 0 ? location.hostname : 'localhost');
+}
+function getPort() {
+    return HMR_PORT || (typeof location !== 'undefined' ? location.port : HMR_SERVER_PORT);
+}
+// eslint-disable-next-line no-redeclare
+let WebSocket = globalThis.WebSocket;
+if (!WebSocket && typeof module.bundle.root === 'function') try {
+    // eslint-disable-next-line no-global-assign
+    WebSocket = module.bundle.root('ws');
+} catch  {
+// ignore.
+}
+var hostname = getHostname();
+var port = getPort();
+var protocol = HMR_SECURE || typeof location !== 'undefined' && location.protocol === 'https:' && ![
+    'localhost',
+    '127.0.0.1',
+    '0.0.0.0'
+].includes(hostname) ? 'wss' : 'ws';
+// eslint-disable-next-line no-redeclare
+var parent = module.bundle.parent;
+if (!parent || !parent.isParcelRequire) {
+    // Web extension context
+    var extCtx = typeof browser === 'undefined' ? typeof chrome === 'undefined' ? null : chrome : browser;
+    // Safari doesn't support sourceURL in error stacks.
+    // eval may also be disabled via CSP, so do a quick check.
+    var supportsSourceURL = false;
+    try {
+        (0, eval)('throw new Error("test"); //# sourceURL=test.js');
+    } catch (err) {
+        supportsSourceURL = err.stack.includes('test.js');
+    }
+    var ws;
+    if (HMR_USE_SSE) ws = new EventSource('/__parcel_hmr');
+    else try {
+        // If we're running in the dev server's node runner, listen for messages on the parent port.
+        let { workerData, parentPort } = module.bundle.root('node:worker_threads') /*: any*/ ;
+        if (workerData !== null && workerData !== void 0 && workerData.__parcel) {
+            parentPort.on('message', async (message)=>{
+                try {
+                    await handleMessage(message);
+                    parentPort.postMessage('updated');
+                } catch  {
+                    parentPort.postMessage('restart');
+                }
+            });
+            // After the bundle has finished running, notify the dev server that the HMR update is complete.
+            queueMicrotask(()=>parentPort.postMessage('ready'));
+        }
+    } catch  {
+        if (typeof WebSocket !== 'undefined') try {
+            ws = new WebSocket(protocol + '://' + hostname + (port ? ':' + port : '') + '/');
+        } catch (err) {
+            // Ignore cloudflare workers error.
+            if (err.message && !err.message.includes('Disallowed operation called within global scope')) console.error(err.message);
+        }
+    }
+    if (ws) {
+        // $FlowFixMe
+        ws.onmessage = async function(event /*: {data: string, ...} */ ) {
+            var data /*: HMRMessage */  = JSON.parse(event.data);
+            await handleMessage(data);
+        };
+        if (ws instanceof WebSocket) {
+            ws.onerror = function(e) {
+                if (e.message) console.error(e.message);
+            };
+            ws.onclose = function() {
+                console.warn("[parcel] \uD83D\uDEA8 Connection to the HMR server was lost");
+            };
+        }
+    }
+}
+async function handleMessage(data /*: HMRMessage */ ) {
+    checkedAssets = {} /*: {|[string]: boolean|} */ ;
+    disposedAssets = {} /*: {|[string]: boolean|} */ ;
+    assetsToAccept = [];
+    assetsToDispose = [];
+    bundleNotFound = false;
+    if (data.type === 'reload') fullReload();
+    else if (data.type === 'update') {
+        // Remove error overlay if there is one
+        if (typeof document !== 'undefined') removeErrorOverlay();
+        let assets = data.assets;
+        // Handle HMR Update
+        let handled = assets.every((asset)=>{
+            return asset.type === 'css' || asset.type === 'js' && hmrAcceptCheck(module.bundle.root, asset.id, asset.depsByBundle);
+        });
+        // Dispatch a custom event in case a bundle was not found. This might mean
+        // an asset on the server changed and we should reload the page. This event
+        // gives the client an opportunity to refresh without losing state
+        // (e.g. via React Server Components). If e.preventDefault() is not called,
+        // we will trigger a full page reload.
+        if (handled && bundleNotFound && assets.some((a)=>a.envHash !== HMR_ENV_HASH) && typeof window !== 'undefined' && typeof CustomEvent !== 'undefined') handled = !window.dispatchEvent(new CustomEvent('parcelhmrreload', {
+            cancelable: true
+        }));
+        if (handled) {
+            console.clear();
+            // Dispatch custom event so other runtimes (e.g React Refresh) are aware.
+            if (typeof window !== 'undefined' && typeof CustomEvent !== 'undefined') window.dispatchEvent(new CustomEvent('parcelhmraccept'));
+            await hmrApplyUpdates(assets);
+            hmrDisposeQueue();
+            // Run accept callbacks. This will also re-execute other disposed assets in topological order.
+            let processedAssets = {};
+            for(let i = 0; i < assetsToAccept.length; i++){
+                let id = assetsToAccept[i][1];
+                if (!processedAssets[id]) {
+                    hmrAccept(assetsToAccept[i][0], id);
+                    processedAssets[id] = true;
+                }
+            }
+        } else fullReload();
+    }
+    if (data.type === 'error') {
+        // Log parcel errors to console
+        for (let ansiDiagnostic of data.diagnostics.ansi){
+            let stack = ansiDiagnostic.codeframe ? ansiDiagnostic.codeframe : ansiDiagnostic.stack;
+            console.error("\uD83D\uDEA8 [parcel]: " + ansiDiagnostic.message + '\n' + stack + '\n\n' + ansiDiagnostic.hints.join('\n'));
+        }
+        if (typeof document !== 'undefined') {
+            // Render the fancy html overlay
+            removeErrorOverlay();
+            var overlay = createErrorOverlay(data.diagnostics.html);
+            // $FlowFixMe
+            document.body.appendChild(overlay);
+        }
+    }
+}
+function removeErrorOverlay() {
+    var overlay = document.getElementById(OVERLAY_ID);
+    if (overlay) {
+        overlay.remove();
+        console.log("[parcel] \u2728 Error resolved");
+    }
+}
+function createErrorOverlay(diagnostics) {
+    var overlay = document.createElement('div');
+    overlay.id = OVERLAY_ID;
+    let errorHTML = '<div style="background: black; opacity: 0.85; font-size: 16px; color: white; position: fixed; height: 100%; width: 100%; top: 0px; left: 0px; padding: 30px; font-family: Menlo, Consolas, monospace; z-index: 9999;">';
+    for (let diagnostic of diagnostics){
+        let stack = diagnostic.frames.length ? diagnostic.frames.reduce((p, frame)=>{
+            return `${p}
+<a href="${protocol === 'wss' ? 'https' : 'http'}://${hostname}:${port}/__parcel_launch_editor?file=${encodeURIComponent(frame.location)}" style="text-decoration: underline; color: #888" onclick="fetch(this.href); return false">${frame.location}</a>
+${frame.code}`;
+        }, '') : diagnostic.stack;
+        errorHTML += `
+      <div>
+        <div style="font-size: 18px; font-weight: bold; margin-top: 20px;">
+          \u{1F6A8} ${diagnostic.message}
+        </div>
+        <pre>${stack}</pre>
+        <div>
+          ${diagnostic.hints.map((hint)=>"<div>\uD83D\uDCA1 " + hint + '</div>').join('')}
+        </div>
+        ${diagnostic.documentation ? `<div>\u{1F4DD} <a style="color: violet" href="${diagnostic.documentation}" target="_blank">Learn more</a></div>` : ''}
+      </div>
+    `;
+    }
+    errorHTML += '</div>';
+    overlay.innerHTML = errorHTML;
+    return overlay;
+}
+function fullReload() {
+    if (typeof location !== 'undefined' && 'reload' in location) location.reload();
+    else if (typeof extCtx !== 'undefined' && extCtx && extCtx.runtime && extCtx.runtime.reload) extCtx.runtime.reload();
+    else try {
+        let { workerData, parentPort } = module.bundle.root('node:worker_threads') /*: any*/ ;
+        if (workerData !== null && workerData !== void 0 && workerData.__parcel) parentPort.postMessage('restart');
+    } catch (err) {
+        console.error("[parcel] \u26A0\uFE0F An HMR update was not accepted. Please restart the process.");
+    }
+}
+function getParents(bundle, id) /*: Array<[ParcelRequire, string]> */ {
+    var modules = bundle.modules;
+    if (!modules) return [];
+    var parents = [];
+    var k, d, dep;
+    for(k in modules)for(d in modules[k][1]){
+        dep = modules[k][1][d];
+        if (dep === id || Array.isArray(dep) && dep[dep.length - 1] === id) parents.push([
+            bundle,
+            k
+        ]);
+    }
+    if (bundle.parent) parents = parents.concat(getParents(bundle.parent, id));
+    return parents;
+}
+function updateLink(link) {
+    var href = link.getAttribute('href');
+    if (!href) return;
+    var newLink = link.cloneNode();
+    newLink.onload = function() {
+        if (link.parentNode !== null) // $FlowFixMe
+        link.parentNode.removeChild(link);
+    };
+    newLink.setAttribute('href', // $FlowFixMe
+    href.split('?')[0] + '?' + Date.now());
+    // $FlowFixMe
+    link.parentNode.insertBefore(newLink, link.nextSibling);
+}
+var cssTimeout = null;
+function reloadCSS() {
+    if (cssTimeout || typeof document === 'undefined') return;
+    cssTimeout = setTimeout(function() {
+        var links = document.querySelectorAll('link[rel="stylesheet"]');
+        for(var i = 0; i < links.length; i++){
+            // $FlowFixMe[incompatible-type]
+            var href /*: string */  = links[i].getAttribute('href');
+            var hostname = getHostname();
+            var servedFromHMRServer = hostname === 'localhost' ? new RegExp('^(https?:\\/\\/(0.0.0.0|127.0.0.1)|localhost):' + getPort()).test(href) : href.indexOf(hostname + ':' + getPort());
+            var absolute = /^https?:\/\//i.test(href) && href.indexOf(location.origin) !== 0 && !servedFromHMRServer;
+            if (!absolute) updateLink(links[i]);
+        }
+        cssTimeout = null;
+    }, 50);
+}
+function hmrDownload(asset) {
+    if (asset.type === 'js') {
+        if (typeof document !== 'undefined') {
+            let script = document.createElement('script');
+            script.src = asset.url + '?t=' + Date.now();
+            if (asset.outputFormat === 'esmodule') script.type = 'module';
+            return new Promise((resolve, reject)=>{
+                var _document$head;
+                script.onload = ()=>resolve(script);
+                script.onerror = reject;
+                (_document$head = document.head) === null || _document$head === void 0 || _document$head.appendChild(script);
+            });
+        } else if (typeof importScripts === 'function') {
+            // Worker scripts
+            if (asset.outputFormat === 'esmodule') return import(asset.url + '?t=' + Date.now());
+            else return new Promise((resolve, reject)=>{
+                try {
+                    importScripts(asset.url + '?t=' + Date.now());
+                    resolve();
+                } catch (err) {
+                    reject(err);
+                }
+            });
+        }
+    }
+}
+async function hmrApplyUpdates(assets) {
+    global.parcelHotUpdate = Object.create(null);
+    let scriptsToRemove;
+    try {
+        // If sourceURL comments aren't supported in eval, we need to load
+        // the update from the dev server over HTTP so that stack traces
+        // are correct in errors/logs. This is much slower than eval, so
+        // we only do it if needed (currently just Safari).
+        // https://bugs.webkit.org/show_bug.cgi?id=137297
+        // This path is also taken if a CSP disallows eval.
+        if (!supportsSourceURL) {
+            let promises = assets.map((asset)=>{
+                var _hmrDownload;
+                return (_hmrDownload = hmrDownload(asset)) === null || _hmrDownload === void 0 ? void 0 : _hmrDownload.catch((err)=>{
+                    // Web extension fix
+                    if (extCtx && extCtx.runtime && extCtx.runtime.getManifest().manifest_version == 3 && typeof ServiceWorkerGlobalScope != 'undefined' && global instanceof ServiceWorkerGlobalScope) {
+                        extCtx.runtime.reload();
+                        return;
+                    }
+                    throw err;
+                });
+            });
+            scriptsToRemove = await Promise.all(promises);
+        }
+        assets.forEach(function(asset) {
+            hmrApply(module.bundle.root, asset);
+        });
+    } finally{
+        delete global.parcelHotUpdate;
+        if (scriptsToRemove) scriptsToRemove.forEach((script)=>{
+            if (script) {
+                var _document$head2;
+                (_document$head2 = document.head) === null || _document$head2 === void 0 || _document$head2.removeChild(script);
+            }
+        });
+    }
+}
+function hmrApply(bundle /*: ParcelRequire */ , asset /*:  HMRAsset */ ) {
+    var modules = bundle.modules;
+    if (!modules) return;
+    if (asset.type === 'css') reloadCSS();
+    else if (asset.type === 'js') {
+        let deps = asset.depsByBundle[bundle.HMR_BUNDLE_ID];
+        if (deps) {
+            if (modules[asset.id]) {
+                // Remove dependencies that are removed and will become orphaned.
+                // This is necessary so that if the asset is added back again, the cache is gone, and we prevent a full page reload.
+                let oldDeps = modules[asset.id][1];
+                for(let dep in oldDeps)if (!deps[dep] || deps[dep] !== oldDeps[dep]) {
+                    let id = oldDeps[dep];
+                    let parents = getParents(module.bundle.root, id);
+                    if (parents.length === 1) hmrDelete(module.bundle.root, id);
+                }
+            }
+            if (supportsSourceURL) // Global eval. We would use `new Function` here but browser
+            // support for source maps is better with eval.
+            (0, eval)(asset.output);
+            // $FlowFixMe
+            let fn = global.parcelHotUpdate[asset.id];
+            modules[asset.id] = [
+                fn,
+                deps
+            ];
+        }
+        // Always traverse to the parent bundle, even if we already replaced the asset in this bundle.
+        // This is required in case modules are duplicated. We need to ensure all instances have the updated code.
+        if (bundle.parent) hmrApply(bundle.parent, asset);
+    }
+}
+function hmrDelete(bundle, id) {
+    let modules = bundle.modules;
+    if (!modules) return;
+    if (modules[id]) {
+        // Collect dependencies that will become orphaned when this module is deleted.
+        let deps = modules[id][1];
+        let orphans = [];
+        for(let dep in deps){
+            let parents = getParents(module.bundle.root, deps[dep]);
+            if (parents.length === 1) orphans.push(deps[dep]);
+        }
+        // Delete the module. This must be done before deleting dependencies in case of circular dependencies.
+        delete modules[id];
+        delete bundle.cache[id];
+        // Now delete the orphans.
+        orphans.forEach((id)=>{
+            hmrDelete(module.bundle.root, id);
+        });
+    } else if (bundle.parent) hmrDelete(bundle.parent, id);
+}
+function hmrAcceptCheck(bundle /*: ParcelRequire */ , id /*: string */ , depsByBundle /*: ?{ [string]: { [string]: string } }*/ ) {
+    checkedAssets = {};
+    if (hmrAcceptCheckOne(bundle, id, depsByBundle)) return true;
+    // Traverse parents breadth first. All possible ancestries must accept the HMR update, or we'll reload.
+    let parents = getParents(module.bundle.root, id);
+    let accepted = false;
+    while(parents.length > 0){
+        let v = parents.shift();
+        let a = hmrAcceptCheckOne(v[0], v[1], null);
+        if (a) // If this parent accepts, stop traversing upward, but still consider siblings.
+        accepted = true;
+        else if (a !== null) {
+            // Otherwise, queue the parents in the next level upward.
+            let p = getParents(module.bundle.root, v[1]);
+            if (p.length === 0) {
+                // If there are no parents, then we've reached an entry without accepting. Reload.
+                accepted = false;
+                break;
+            }
+            parents.push(...p);
+        }
+    }
+    return accepted;
+}
+function hmrAcceptCheckOne(bundle /*: ParcelRequire */ , id /*: string */ , depsByBundle /*: ?{ [string]: { [string]: string } }*/ ) {
+    var modules = bundle.modules;
+    if (!modules) return;
+    if (depsByBundle && !depsByBundle[bundle.HMR_BUNDLE_ID]) {
+        // If we reached the root bundle without finding where the asset should go,
+        // there's nothing to do. Mark as "accepted" so we don't reload the page.
+        if (!bundle.parent) {
+            bundleNotFound = true;
+            return true;
+        }
+        return hmrAcceptCheckOne(bundle.parent, id, depsByBundle);
+    }
+    if (checkedAssets[id]) return null;
+    checkedAssets[id] = true;
+    var cached = bundle.cache[id];
+    if (!cached) return true;
+    assetsToDispose.push([
+        bundle,
+        id
+    ]);
+    if (cached && cached.hot && cached.hot._acceptCallbacks.length) {
+        assetsToAccept.push([
+            bundle,
+            id
+        ]);
+        return true;
+    }
+    return false;
+}
+function hmrDisposeQueue() {
+    // Dispose all old assets.
+    for(let i = 0; i < assetsToDispose.length; i++){
+        let id = assetsToDispose[i][1];
+        if (!disposedAssets[id]) {
+            hmrDispose(assetsToDispose[i][0], id);
+            disposedAssets[id] = true;
+        }
+    }
+    assetsToDispose = [];
+}
+function hmrDispose(bundle /*: ParcelRequire */ , id /*: string */ ) {
+    var cached = bundle.cache[id];
+    bundle.hotData[id] = {};
+    if (cached && cached.hot) cached.hot.data = bundle.hotData[id];
+    if (cached && cached.hot && cached.hot._disposeCallbacks.length) cached.hot._disposeCallbacks.forEach(function(cb) {
+        cb(bundle.hotData[id]);
+    });
+    delete bundle.cache[id];
+}
+function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
+    // Execute the module.
+    bundle(id);
+    // Run the accept callbacks in the new version of the module.
+    var cached = bundle.cache[id];
+    if (cached && cached.hot && cached.hot._acceptCallbacks.length) {
+        let assetsToAlsoAccept = [];
+        cached.hot._acceptCallbacks.forEach(function(cb) {
+            let additionalAssets = cb(function() {
+                return getParents(module.bundle.root, id);
+            });
+            if (Array.isArray(additionalAssets) && additionalAssets.length) assetsToAlsoAccept.push(...additionalAssets);
+        });
+        if (assetsToAlsoAccept.length) {
+            let handled = assetsToAlsoAccept.every(function(a) {
+                return hmrAcceptCheck(a[0], a[1]);
+            });
+            if (!handled) return fullReload();
+            hmrDisposeQueue();
+        }
+    }
 }
 
-var parcelRegister = parcelRequire.register;
-parcelRegister("gcB2O", function(module, exports) {
+},{}],"27fLx":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+var _modal = require("../helpers/Modal");
+var _modalDefault = parcelHelpers.interopDefault(_modal);
+var _getData = require("../helpers/GetData");
+var _getDataDefault = parcelHelpers.interopDefault(_getData);
+var _slider = require("../helpers/Slider");
+var _sliderDefault = parcelHelpers.interopDefault(_slider);
+class FeaturedListingsModal {
+    constructor(root){
+        this.root = root;
+        this.scroll_container = root.querySelector('.js-featured-listings-modal-scroller');
+        this.prev_btn = root.querySelector('.js-featured-listings-modal-prev');
+        this.next_btn = root.querySelector('.js-featured-listings-modal-next');
+        this.pagination_label = root.querySelector('.js-featured-listings-modal-pagination-label');
+        this.fields = {
+            image_slider: root.querySelector('.js-featured-listings-modal-image-slider'),
+            image_container: root.querySelector('.js-featured-listings-modal-image-container'),
+            price: root.querySelector('.js-featured-listings-modal-price'),
+            name: root.querySelector('.js-featured-listings-modal-name'),
+            bedrooms: root.querySelector('.js-featured-listings-modal-bedrooms'),
+            bathrooms: root.querySelector('.js-featured-listings-modal-bathrooms'),
+            sqft: root.querySelector('.js-featured-listings-modal-sqft'),
+            wysiwyg: root.querySelector('.js-featured-listings-modal-wysiwyg')
+        };
+        this.modal = new (0, _modalDefault.default)(this.root, (dataset)=>{
+            this.data = new (0, _getDataDefault.default)({
+                endpoint: 'get-property/' + dataset.propertyId,
+                callback: (data)=>{
+                    this.scroll_container.scrollTop = 0;
+                    this.fields.name.innerHTML = data.name;
+                    document.querySelector('.js-universal-modal-close').classList.add('--light');
+                    if (data.gallery && data.gallery.length > 0) {
+                        this.fields.image_slider.classList.remove('--hidden');
+                        this.fields.image_container.innerHTML = '';
+                        data.gallery.forEach((gallery_item)=>{
+                            this.fields.image_container.insertAdjacentHTML('beforeend', '<img class="modal-featured-listings__image-slider__slide swiper-slide" src="' + gallery_item.sizes.large + '" alt="' + gallery_item.alt + '"/>');
+                        });
+                        this.image_slider = new (0, _sliderDefault.default)(this.fields.image_slider, {
+                            swiperOptions: {
+                                slidesPerView: 1,
+                                loop: false
+                            },
+                            prev_btn: this.prev_btn,
+                            next_btn: this.next_btn,
+                            pagination_label: this.pagination_label
+                        });
+                    } else this.fields.image_slider.classList.add('--hidden');
+                    if (data.price && data.price != '$') {
+                        this.fields.price.classList.remove('--hidden');
+                        this.fields.price.innerHTML = data.price;
+                    } else this.fields.price.classList.add('--hidden');
+                    if (data.bedrooms) {
+                        this.fields.bedrooms.parentElement.classList.remove('--hidden');
+                        this.fields.bedrooms.innerHTML = data.bedrooms;
+                    } else this.fields.bedrooms.parentElement.classList.add('--hidden');
+                    if (data.bathrooms) {
+                        this.fields.bathrooms.parentElement.classList.remove('--hidden');
+                        this.fields.bathrooms.innerHTML = data.bathrooms;
+                    } else this.fields.bathrooms.parentElement.classList.add('--hidden');
+                    if (data.sqft) {
+                        this.fields.sqft.parentElement.classList.remove('--hidden');
+                        this.fields.sqft.innerHTML = data.sqft;
+                    } else this.fields.sqft.parentElement.classList.add('--hidden');
+                    if (!data.bedrooms && !data.bathrooms && !data.sqft) this.fields.bedrooms.parentElement.parentElement.classList.add('--hidden');
+                    else this.fields.bedrooms.parentElement.parentElement.classList.remove('--hidden');
+                    if (data.content) {
+                        this.fields.wysiwyg.classList.remove('--hidden');
+                        this.fields.wysiwyg.innerHTML = data.content;
+                    } else this.fields.wysiwyg.classList.add('--hidden');
+                    this.root.classList.remove('--loading');
+                }
+            });
+        }, (dataset)=>{
+            document.querySelector('.js-universal-modal-close').classList.remove('--light');
+        });
+    }
+}
+document.addEventListener('DOMContentLoaded', ()=>{
+    var featured_listings_modals = document.querySelectorAll('.js-featured-listings-modal') ?? [];
+    featured_listings_modals.forEach((featured_listings_modal)=>{
+        new FeaturedListingsModal(featured_listings_modal);
+    });
+});
 
-$parcel$export(module.exports, "default", () => $bcba808b60b7aa5a$export$2e2bcd8739ae039);
-
-var $7OkjH = parcelRequire("7OkjH");
-class $bcba808b60b7aa5a$export$2e2bcd8739ae039 {
+},{"../helpers/Modal":"ktCcU","../helpers/GetData":"iW7nY","../helpers/Slider":"4f8Pk","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ktCcU":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _params = require("./Params");
+var _paramsDefault = parcelHelpers.interopDefault(_params);
+class Modal {
     constructor(root, before_open, after_close, options = null){
         this.root = root;
         this.before_open = before_open;
@@ -50,7 +811,7 @@ class $bcba808b60b7aa5a$export$2e2bcd8739ae039 {
         this.modal_name = this.root.dataset.modalName;
         this.modal_container = document.querySelector('.js-modal-container');
         this.options = options;
-        this.params = new (0, $7OkjH.default)();
+        this.params = new (0, _paramsDefault.default)();
         this.setupExistingModals();
         this.convertLinks();
         this.open_buttons = document.querySelectorAll('.js-modal-open[data-modal-name="' + this.modal_name + '"]');
@@ -115,12 +876,12 @@ class $bcba808b60b7aa5a$export$2e2bcd8739ae039 {
         window.modals.push(this);
     }
 }
+exports.default = Modal;
 
-});
-parcelRegister("7OkjH", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $5afcf65fa74473df$export$2e2bcd8739ae039);
-class $5afcf65fa74473df$export$2e2bcd8739ae039 {
+},{"./Params":"7Uemp","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"7Uemp":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+class Params {
     constructor(){
         this.url = new URLSearchParams(window.location.search);
     }
@@ -149,14 +910,42 @@ class $5afcf65fa74473df$export$2e2bcd8739ae039 {
         else window.history.pushState(null, null, window.location.pathname);
     }
 }
+exports.default = Params;
 
-});
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gkKU3":[function(require,module,exports,__globalThis) {
+exports.interopDefault = function(a) {
+    return a && a.__esModule ? a : {
+        default: a
+    };
+};
+exports.defineInteropFlag = function(a) {
+    Object.defineProperty(a, '__esModule', {
+        value: true
+    });
+};
+exports.exportAll = function(source, dest) {
+    Object.keys(source).forEach(function(key) {
+        if (key === 'default' || key === '__esModule' || Object.prototype.hasOwnProperty.call(dest, key)) return;
+        Object.defineProperty(dest, key, {
+            enumerable: true,
+            get: function() {
+                return source[key];
+            }
+        });
+    });
+    return dest;
+};
+exports.export = function(dest, destName, get) {
+    Object.defineProperty(dest, destName, {
+        enumerable: true,
+        get: get
+    });
+};
 
-
-parcelRegister("epH6w", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $a7e4d613c8fccdd8$export$2e2bcd8739ae039);
-class $a7e4d613c8fccdd8$export$2e2bcd8739ae039 {
+},{}],"iW7nY":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+class GetData {
     constructor(args){
         this.args = args;
         this.showLoader();
@@ -206,15 +995,14 @@ class $a7e4d613c8fccdd8$export$2e2bcd8739ae039 {
         if (this.args.loading) this.args.loading.classList.add('--loading');
     }
 }
+exports.default = GetData;
 
-});
-
-parcelRegister("hvi9e", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $cbe368bab47c4f5d$export$2e2bcd8739ae039);
-parcelRequire("aUu46");
-var $7PmHK = parcelRequire("7PmHK");
-class $cbe368bab47c4f5d$export$2e2bcd8739ae039 {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"4f8Pk":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _bundle = require("swiper/bundle");
+var _bundleDefault = parcelHelpers.interopDefault(_bundle);
+class Slider {
     constructor(root, options = {}){
         this.root = root;
         if (!this.root) return;
@@ -236,7 +1024,7 @@ class $cbe368bab47c4f5d$export$2e2bcd8739ae039 {
             return;
         }
         if (!options.swiperOptions) options.swiperOptions = {};
-        this.swiper = new (0, $7PmHK.default)(this.container, {
+        this.swiper = new (0, _bundleDefault.default)(this.container, {
             loop: true,
             autoplay: {
                 delay: 5000,
@@ -278,11 +1066,9 @@ class $cbe368bab47c4f5d$export$2e2bcd8739ae039 {
         }
     }
 }
+exports.default = Slider;
 
-});
-parcelRegister("aUu46", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => (parcelRequire("7PmHK")).default);
+},{"swiper/bundle":"110z5","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"110z5":[function(require,module,exports,__globalThis) {
 /**
  * Swiper 6.8.4
  * Most modern mobile touch slider and framework with hardware accelerated transitions
@@ -293,121 +1079,119 @@ $parcel$export(module.exports, "default", () => (parcelRequire("7PmHK")).default
  * Released under the MIT License
  *
  * Released on: August 23, 2021
- */ 
-var $7PmHK = parcelRequire("7PmHK");
-
-var $cxv2b = parcelRequire("cxv2b");
-
-var $7aWs4 = parcelRequire("7aWs4");
-
-var $7UJKp = parcelRequire("7UJKp");
-
-var $l8x4G = parcelRequire("l8x4G");
-
-var $iaiPE = parcelRequire("iaiPE");
-
-var $74LIF = parcelRequire("74LIF");
-
-var $lwT3x = parcelRequire("lwT3x");
-
-var $53z2i = parcelRequire("53z2i");
-
-var $gtVlH = parcelRequire("gtVlH");
-
-var $1qtEJ = parcelRequire("1qtEJ");
-
-var $4yGaX = parcelRequire("4yGaX");
-
-var $h7e8Z = parcelRequire("h7e8Z");
-
-var $8qe5j = parcelRequire("8qe5j");
-
-var $cH8Hi = parcelRequire("cH8Hi");
-
-var $agDIj = parcelRequire("agDIj");
-
-var $gmU7T = parcelRequire("gmU7T");
-
-var $k7tgB = parcelRequire("k7tgB");
-
-var $cguUs = parcelRequire("cguUs");
-
-var $9vgYl = parcelRequire("9vgYl");
+ */ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "Swiper", ()=>(0, _coreClassDefault.default));
+parcelHelpers.export(exports, "default", ()=>(0, _coreClassDefault.default));
+var _coreClass = require("./esm/components/core/core-class");
+var _coreClassDefault = parcelHelpers.interopDefault(_coreClass);
+var _virtual = require("./esm/components/virtual/virtual");
+var _virtualDefault = parcelHelpers.interopDefault(_virtual);
+var _keyboard = require("./esm/components/keyboard/keyboard");
+var _keyboardDefault = parcelHelpers.interopDefault(_keyboard);
+var _mousewheel = require("./esm/components/mousewheel/mousewheel");
+var _mousewheelDefault = parcelHelpers.interopDefault(_mousewheel);
+var _navigation = require("./esm/components/navigation/navigation");
+var _navigationDefault = parcelHelpers.interopDefault(_navigation);
+var _pagination = require("./esm/components/pagination/pagination");
+var _paginationDefault = parcelHelpers.interopDefault(_pagination);
+var _scrollbar = require("./esm/components/scrollbar/scrollbar");
+var _scrollbarDefault = parcelHelpers.interopDefault(_scrollbar);
+var _parallax = require("./esm/components/parallax/parallax");
+var _parallaxDefault = parcelHelpers.interopDefault(_parallax);
+var _zoom = require("./esm/components/zoom/zoom");
+var _zoomDefault = parcelHelpers.interopDefault(_zoom);
+var _lazy = require("./esm/components/lazy/lazy");
+var _lazyDefault = parcelHelpers.interopDefault(_lazy);
+var _controller = require("./esm/components/controller/controller");
+var _controllerDefault = parcelHelpers.interopDefault(_controller);
+var _a11Y = require("./esm/components/a11y/a11y");
+var _a11YDefault = parcelHelpers.interopDefault(_a11Y);
+var _history = require("./esm/components/history/history");
+var _historyDefault = parcelHelpers.interopDefault(_history);
+var _hashNavigation = require("./esm/components/hash-navigation/hash-navigation");
+var _hashNavigationDefault = parcelHelpers.interopDefault(_hashNavigation);
+var _autoplay = require("./esm/components/autoplay/autoplay");
+var _autoplayDefault = parcelHelpers.interopDefault(_autoplay);
+var _effectFade = require("./esm/components/effect-fade/effect-fade");
+var _effectFadeDefault = parcelHelpers.interopDefault(_effectFade);
+var _effectCube = require("./esm/components/effect-cube/effect-cube");
+var _effectCubeDefault = parcelHelpers.interopDefault(_effectCube);
+var _effectFlip = require("./esm/components/effect-flip/effect-flip");
+var _effectFlipDefault = parcelHelpers.interopDefault(_effectFlip);
+var _effectCoverflow = require("./esm/components/effect-coverflow/effect-coverflow");
+var _effectCoverflowDefault = parcelHelpers.interopDefault(_effectCoverflow);
+var _thumbs = require("./esm/components/thumbs/thumbs");
+var _thumbsDefault = parcelHelpers.interopDefault(_thumbs);
 // Swiper Class
-var $7f1674ae57efe2d5$var$components = [
-    (0, $cxv2b.default),
-    (0, $7aWs4.default),
-    (0, $7UJKp.default),
-    (0, $l8x4G.default),
-    (0, $iaiPE.default),
-    (0, $74LIF.default),
-    (0, $lwT3x.default),
-    (0, $53z2i.default),
-    (0, $gtVlH.default),
-    (0, $1qtEJ.default),
-    (0, $4yGaX.default),
-    (0, $h7e8Z.default),
-    (0, $8qe5j.default),
-    (0, $cH8Hi.default),
-    (0, $agDIj.default),
-    (0, $gmU7T.default),
-    (0, $k7tgB.default),
-    (0, $cguUs.default),
-    (0, $9vgYl.default)
+var components = [
+    (0, _virtualDefault.default),
+    (0, _keyboardDefault.default),
+    (0, _mousewheelDefault.default),
+    (0, _navigationDefault.default),
+    (0, _paginationDefault.default),
+    (0, _scrollbarDefault.default),
+    (0, _parallaxDefault.default),
+    (0, _zoomDefault.default),
+    (0, _lazyDefault.default),
+    (0, _controllerDefault.default),
+    (0, _a11YDefault.default),
+    (0, _historyDefault.default),
+    (0, _hashNavigationDefault.default),
+    (0, _autoplayDefault.default),
+    (0, _effectFadeDefault.default),
+    (0, _effectCubeDefault.default),
+    (0, _effectFlipDefault.default),
+    (0, _effectCoverflowDefault.default),
+    (0, _thumbsDefault.default)
 ];
-(0, $7PmHK.default).use($7f1674ae57efe2d5$var$components);
+(0, _coreClassDefault.default).use(components);
 
-});
-parcelRegister("7PmHK", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $5b2ee87c39a19f4b$export$2e2bcd8739ae039);
-
-var $dvVIK = parcelRequire("dvVIK");
-
-var $kyDhW = parcelRequire("kyDhW");
-
-var $g4qc9 = parcelRequire("g4qc9");
-
-var $1biEN = parcelRequire("1biEN");
-
-var $3hCdG = parcelRequire("3hCdG");
-
-var $6T1MG = parcelRequire("6T1MG");
-
-var $1btfh = parcelRequire("1btfh");
-
-var $jHvso = parcelRequire("jHvso");
-
-var $atzPl = parcelRequire("atzPl");
-
-var $aOj4E = parcelRequire("aOj4E");
-
-var $dQngn = parcelRequire("dQngn");
-
-var $ib5OG = parcelRequire("ib5OG");
-
-var $9YwMj = parcelRequire("9YwMj");
-
-var $lbaut = parcelRequire("lbaut");
-
-var $4xdfA = parcelRequire("4xdfA");
-
-var $gygd4 = parcelRequire("gygd4");
-
-var $Wnf62 = parcelRequire("Wnf62");
-
-var $4S440 = parcelRequire("4S440");
-
-var $l3CFJ = parcelRequire("l3CFJ");
-
-var $3nFqM = parcelRequire("3nFqM");
-
-var $4LNBQ = parcelRequire("4LNBQ");
-
-var $3fuBM = parcelRequire("3fuBM");
-
-var $dvDfq = parcelRequire("dvDfq");
-function $5b2ee87c39a19f4b$var$_defineProperties(target, props) {
+},{"./esm/components/core/core-class":"5Ccqt","./esm/components/virtual/virtual":"3kjgr","./esm/components/keyboard/keyboard":"9Y3eU","./esm/components/mousewheel/mousewheel":"4nfgT","./esm/components/navigation/navigation":"9LHy0","./esm/components/pagination/pagination":"3kQpw","./esm/components/scrollbar/scrollbar":"3Sxdu","./esm/components/parallax/parallax":"1pCfw","./esm/components/zoom/zoom":"bpYrN","./esm/components/lazy/lazy":"a339R","./esm/components/controller/controller":"aJSY4","./esm/components/a11y/a11y":"kChVS","./esm/components/history/history":"2EUyR","./esm/components/hash-navigation/hash-navigation":"4N8Ge","./esm/components/autoplay/autoplay":"1tdH8","./esm/components/effect-fade/effect-fade":"al8Hp","./esm/components/effect-cube/effect-cube":"bD6Yd","./esm/components/effect-flip/effect-flip":"bq5dw","./esm/components/effect-coverflow/effect-coverflow":"dyxip","./esm/components/thumbs/thumbs":"9CTBg","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"5Ccqt":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+/* eslint no-param-reassign: "off" */ var _ssrWindow = require("ssr-window");
+var _dom = require("../../utils/dom");
+var _domDefault = parcelHelpers.interopDefault(_dom);
+var _utils = require("../../utils/utils");
+var _getSupport = require("../../utils/get-support");
+var _getDevice = require("../../utils/get-device");
+var _getBrowser = require("../../utils/get-browser");
+var _resize = require("../../modules/resize/resize");
+var _resizeDefault = parcelHelpers.interopDefault(_resize);
+var _observer = require("../../modules/observer/observer");
+var _observerDefault = parcelHelpers.interopDefault(_observer);
+var _modular = require("./modular");
+var _modularDefault = parcelHelpers.interopDefault(_modular);
+var _eventsEmitter = require("./events-emitter");
+var _eventsEmitterDefault = parcelHelpers.interopDefault(_eventsEmitter);
+var _index = require("./update/index");
+var _indexDefault = parcelHelpers.interopDefault(_index);
+var _index1 = require("./translate/index");
+var _indexDefault1 = parcelHelpers.interopDefault(_index1);
+var _index2 = require("./transition/index");
+var _indexDefault2 = parcelHelpers.interopDefault(_index2);
+var _index3 = require("./slide/index");
+var _indexDefault3 = parcelHelpers.interopDefault(_index3);
+var _index4 = require("./loop/index");
+var _indexDefault4 = parcelHelpers.interopDefault(_index4);
+var _index5 = require("./grab-cursor/index");
+var _indexDefault5 = parcelHelpers.interopDefault(_index5);
+var _index6 = require("./manipulation/index");
+var _indexDefault6 = parcelHelpers.interopDefault(_index6);
+var _index7 = require("./events/index");
+var _indexDefault7 = parcelHelpers.interopDefault(_index7);
+var _index8 = require("./breakpoints/index");
+var _indexDefault8 = parcelHelpers.interopDefault(_index8);
+var _index9 = require("./classes/index");
+var _indexDefault9 = parcelHelpers.interopDefault(_index9);
+var _index10 = require("./images/index");
+var _indexDefault10 = parcelHelpers.interopDefault(_index10);
+var _index11 = require("./check-overflow/index");
+var _indexDefault11 = parcelHelpers.interopDefault(_index11);
+var _defaults = require("./defaults");
+var _defaultsDefault = parcelHelpers.interopDefault(_defaults);
+function _defineProperties(target, props) {
     for(var i = 0; i < props.length; i++){
         var descriptor = props[i];
         descriptor.enumerable = descriptor.enumerable || false;
@@ -416,29 +1200,29 @@ function $5b2ee87c39a19f4b$var$_defineProperties(target, props) {
         Object.defineProperty(target, descriptor.key, descriptor);
     }
 }
-function $5b2ee87c39a19f4b$var$_createClass(Constructor, protoProps, staticProps) {
-    if (protoProps) $5b2ee87c39a19f4b$var$_defineProperties(Constructor.prototype, protoProps);
-    if (staticProps) $5b2ee87c39a19f4b$var$_defineProperties(Constructor, staticProps);
+function _createClass(Constructor, protoProps, staticProps) {
+    if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) _defineProperties(Constructor, staticProps);
     return Constructor;
 }
-var $5b2ee87c39a19f4b$var$prototypes = {
-    modular: (0, $atzPl.default),
-    eventsEmitter: (0, $aOj4E.default),
-    update: (0, $dQngn.default),
-    translate: (0, $ib5OG.default),
-    transition: (0, $9YwMj.default),
-    slide: (0, $lbaut.default),
-    loop: (0, $4xdfA.default),
-    grabCursor: (0, $gygd4.default),
-    manipulation: (0, $Wnf62.default),
-    events: (0, $4S440.default),
-    breakpoints: (0, $l3CFJ.default),
-    checkOverflow: (0, $3fuBM.default),
-    classes: (0, $3nFqM.default),
-    images: (0, $4LNBQ.default)
+var prototypes = {
+    modular: (0, _modularDefault.default),
+    eventsEmitter: (0, _eventsEmitterDefault.default),
+    update: (0, _indexDefault.default),
+    translate: (0, _indexDefault1.default),
+    transition: (0, _indexDefault2.default),
+    slide: (0, _indexDefault3.default),
+    loop: (0, _indexDefault4.default),
+    grabCursor: (0, _indexDefault5.default),
+    manipulation: (0, _indexDefault6.default),
+    events: (0, _indexDefault7.default),
+    breakpoints: (0, _indexDefault8.default),
+    checkOverflow: (0, _indexDefault11.default),
+    classes: (0, _indexDefault9.default),
+    images: (0, _indexDefault10.default)
 };
-var $5b2ee87c39a19f4b$var$extendedDefaults = {};
-var $5b2ee87c39a19f4b$var$Swiper = /*#__PURE__*/ function() {
+var extendedDefaults = {};
+var Swiper = /*#__PURE__*/ function() {
     function Swiper() {
         var el;
         var params;
@@ -449,12 +1233,12 @@ var $5b2ee87c39a19f4b$var$Swiper = /*#__PURE__*/ function() {
             params = args[1];
         }
         if (!params) params = {};
-        params = (0, $g4qc9.extend)({}, params);
+        params = (0, _utils.extend)({}, params);
         if (el && !params.el) params.el = el;
-        if (params.el && (0, $kyDhW.default)(params.el).length > 1) {
+        if (params.el && (0, _domDefault.default)(params.el).length > 1) {
             var swipers = [];
-            (0, $kyDhW.default)(params.el).each(function(containerEl) {
-                var newParams = (0, $g4qc9.extend)({}, params, {
+            (0, _domDefault.default)(params.el).each(function(containerEl) {
+                var newParams = (0, _utils.extend)({}, params, {
                     el: containerEl
                 });
                 swipers.push(new Swiper(newParams));
@@ -463,11 +1247,11 @@ var $5b2ee87c39a19f4b$var$Swiper = /*#__PURE__*/ function() {
         } // Swiper Instance
         var swiper = this;
         swiper.__swiper__ = true;
-        swiper.support = (0, $1biEN.getSupport)();
-        swiper.device = (0, $3hCdG.getDevice)({
+        swiper.support = (0, _getSupport.getSupport)();
+        swiper.device = (0, _getDevice.getDevice)({
             userAgent: params.userAgent
         });
-        swiper.browser = (0, $6T1MG.getBrowser)();
+        swiper.browser = (0, _getBrowser.getBrowser)();
         swiper.eventsListeners = {};
         swiper.eventsAnyListeners = [];
         if (typeof swiper.modules === 'undefined') swiper.modules = {};
@@ -494,24 +1278,24 @@ var $5b2ee87c39a19f4b$var$Swiper = /*#__PURE__*/ function() {
                 };
             }
         }); // Extend defaults with modules params
-        var swiperParams = (0, $g4qc9.extend)({}, (0, $dvDfq.default));
+        var swiperParams = (0, _utils.extend)({}, (0, _defaultsDefault.default));
         swiper.useParams(swiperParams); // Extend defaults with passed params
-        swiper.params = (0, $g4qc9.extend)({}, swiperParams, $5b2ee87c39a19f4b$var$extendedDefaults, params);
-        swiper.originalParams = (0, $g4qc9.extend)({}, swiper.params);
-        swiper.passedParams = (0, $g4qc9.extend)({}, params); // add event listeners
+        swiper.params = (0, _utils.extend)({}, swiperParams, extendedDefaults, params);
+        swiper.originalParams = (0, _utils.extend)({}, swiper.params);
+        swiper.passedParams = (0, _utils.extend)({}, params); // add event listeners
         if (swiper.params && swiper.params.on) Object.keys(swiper.params.on).forEach(function(eventName) {
             swiper.on(eventName, swiper.params.on[eventName]);
         });
         if (swiper.params && swiper.params.onAny) swiper.onAny(swiper.params.onAny);
          // Save Dom lib
-        swiper.$ = (0, $kyDhW.default); // Extend Swiper
-        (0, $g4qc9.extend)(swiper, {
+        swiper.$ = (0, _domDefault.default); // Extend Swiper
+        (0, _utils.extend)(swiper, {
             enabled: swiper.params.enabled,
             el: el,
             // Classes
             classNames: [],
             // Slides
-            slides: (0, $kyDhW.default)(),
+            slides: (0, _domDefault.default)(),
             slidesGrid: [],
             snapGrid: [],
             slidesSizesGrid: [],
@@ -580,7 +1364,7 @@ var $5b2ee87c39a19f4b$var$Swiper = /*#__PURE__*/ function() {
                 // Form elements to match
                 focusableElements: swiper.params.focusableElements,
                 // Last click time
-                lastClickTime: (0, $g4qc9.now)(),
+                lastClickTime: (0, _utils.now)(),
                 clickTimeout: undefined,
                 // Velocities
                 velocities: [],
@@ -733,7 +1517,7 @@ var $5b2ee87c39a19f4b$var$Swiper = /*#__PURE__*/ function() {
     _proto.mount = function mount(el) {
         var swiper = this;
         if (swiper.mounted) return true; // Find el
-        var $el = (0, $kyDhW.default)(el || swiper.params.el);
+        var $el = (0, _domDefault.default)(el || swiper.params.el);
         el = $el[0];
         if (!el) return false;
         el.swiper = swiper;
@@ -742,7 +1526,7 @@ var $5b2ee87c39a19f4b$var$Swiper = /*#__PURE__*/ function() {
         };
         var getWrapper = function getWrapper() {
             if (el && el.shadowRoot && el.shadowRoot.querySelector) {
-                var res = (0, $kyDhW.default)(el.shadowRoot.querySelector(getWrapperSelector())); // Children needs to return slot items
+                var res = (0, _domDefault.default)(el.shadowRoot.querySelector(getWrapperSelector())); // Children needs to return slot items
                 res.children = function(options) {
                     return $el.children(options);
                 };
@@ -752,16 +1536,16 @@ var $5b2ee87c39a19f4b$var$Swiper = /*#__PURE__*/ function() {
         }; // Find Wrapper
         var $wrapperEl = getWrapper();
         if ($wrapperEl.length === 0 && swiper.params.createElements) {
-            var document = (0, $dvVIK.getDocument)();
+            var document = (0, _ssrWindow.getDocument)();
             var wrapper = document.createElement('div');
-            $wrapperEl = (0, $kyDhW.default)(wrapper);
+            $wrapperEl = (0, _domDefault.default)(wrapper);
             wrapper.className = swiper.params.wrapperClass;
             $el.append(wrapper);
             $el.children("." + swiper.params.slideClass).each(function(slideEl) {
                 $wrapperEl.append(slideEl);
             });
         }
-        (0, $g4qc9.extend)(swiper, {
+        (0, _utils.extend)(swiper, {
             $el: $el,
             el: el,
             $wrapperEl: $wrapperEl,
@@ -829,17 +1613,17 @@ var $5b2ee87c39a19f4b$var$Swiper = /*#__PURE__*/ function() {
         });
         if (deleteInstance !== false) {
             swiper.$el[0].swiper = null;
-            (0, $g4qc9.deleteProps)(swiper);
+            (0, _utils.deleteProps)(swiper);
         }
         swiper.destroyed = true;
         return null;
     };
     Swiper.extendDefaults = function extendDefaults(newDefaults) {
-        (0, $g4qc9.extend)($5b2ee87c39a19f4b$var$extendedDefaults, newDefaults);
+        (0, _utils.extend)(extendedDefaults, newDefaults);
     };
     Swiper.installModule = function installModule(module) {
         if (!Swiper.prototype.modules) Swiper.prototype.modules = {};
-        var name = module.name || Object.keys(Swiper.prototype.modules).length + "_" + (0, $g4qc9.now)();
+        var name = module.name || Object.keys(Swiper.prototype.modules).length + "_" + (0, _utils.now)();
         Swiper.prototype.modules[name] = module;
     };
     Swiper.use = function use(module) {
@@ -852,38 +1636,34 @@ var $5b2ee87c39a19f4b$var$Swiper = /*#__PURE__*/ function() {
         Swiper.installModule(module);
         return Swiper;
     };
-    $5b2ee87c39a19f4b$var$_createClass(Swiper, null, [
+    _createClass(Swiper, null, [
         {
             key: "extendedDefaults",
             get: function get() {
-                return $5b2ee87c39a19f4b$var$extendedDefaults;
+                return extendedDefaults;
             }
         },
         {
             key: "defaults",
             get: function get() {
-                return 0, $dvDfq.default;
+                return 0, _defaultsDefault.default;
             }
         }
     ]);
     return Swiper;
 }();
-Object.keys($5b2ee87c39a19f4b$var$prototypes).forEach(function(prototypeGroup) {
-    Object.keys($5b2ee87c39a19f4b$var$prototypes[prototypeGroup]).forEach(function(protoMethod) {
-        $5b2ee87c39a19f4b$var$Swiper.prototype[protoMethod] = $5b2ee87c39a19f4b$var$prototypes[prototypeGroup][protoMethod];
+Object.keys(prototypes).forEach(function(prototypeGroup) {
+    Object.keys(prototypes[prototypeGroup]).forEach(function(protoMethod) {
+        Swiper.prototype[protoMethod] = prototypes[prototypeGroup][protoMethod];
     });
 });
-$5b2ee87c39a19f4b$var$Swiper.use([
-    (0, $1btfh.default),
-    (0, $jHvso.default)
+Swiper.use([
+    (0, _resizeDefault.default),
+    (0, _observerDefault.default)
 ]);
-var $5b2ee87c39a19f4b$export$2e2bcd8739ae039 = $5b2ee87c39a19f4b$var$Swiper;
+exports.default = Swiper;
 
-});
-parcelRegister("dvVIK", function(module, exports) {
-
-$parcel$export(module.exports, "getDocument", () => $9d6af1c00121d779$export$f65ca476c09acec0);
-$parcel$export(module.exports, "getWindow", () => $9d6af1c00121d779$export$38b2d434cce3ea22);
+},{"ssr-window":"3lyfI","../../utils/dom":"iauJ2","../../utils/utils":"3PNrL","../../utils/get-support":"eAtom","../../utils/get-device":"2E0M4","../../utils/get-browser":"iiYDI","../../modules/resize/resize":"b43qI","../../modules/observer/observer":"hrPYP","./modular":"8h0cu","./events-emitter":"2kJFg","./update/index":"8VKLt","./translate/index":"ebCHw","./transition/index":"eEpl7","./slide/index":"gW0RP","./loop/index":"gEbbO","./grab-cursor/index":"ed0Gp","./manipulation/index":"k6osq","./events/index":"bXnoL","./breakpoints/index":"7ONH6","./classes/index":"dHj2w","./images/index":"3ttxd","./check-overflow/index":"en17n","./defaults":"j2iqF","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3lyfI":[function(require,module,exports,__globalThis) {
 /**
  * SSR Window 3.0.0
  * Better handling for window object in SSR environment
@@ -894,18 +1674,25 @@ $parcel$export(module.exports, "getWindow", () => $9d6af1c00121d779$export$38b2d
  * Licensed under MIT
  *
  * Released on: November 9, 2020
- */ /* eslint-disable no-param-reassign */ function $9d6af1c00121d779$var$isObject(obj) {
+ */ /* eslint-disable no-param-reassign */ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "extend", ()=>extend);
+parcelHelpers.export(exports, "getDocument", ()=>getDocument);
+parcelHelpers.export(exports, "getWindow", ()=>getWindow);
+parcelHelpers.export(exports, "ssrDocument", ()=>ssrDocument);
+parcelHelpers.export(exports, "ssrWindow", ()=>ssrWindow);
+function isObject(obj) {
     return obj !== null && typeof obj === 'object' && 'constructor' in obj && obj.constructor === Object;
 }
-function $9d6af1c00121d779$export$8b58be045bf06082(target, src) {
+function extend(target, src) {
     if (target === void 0) target = {};
     if (src === void 0) src = {};
     Object.keys(src).forEach(function(key) {
         if (typeof target[key] === 'undefined') target[key] = src[key];
-        else if ($9d6af1c00121d779$var$isObject(src[key]) && $9d6af1c00121d779$var$isObject(target[key]) && Object.keys(src[key]).length > 0) $9d6af1c00121d779$export$8b58be045bf06082(target[key], src[key]);
+        else if (isObject(src[key]) && isObject(target[key]) && Object.keys(src[key]).length > 0) extend(target[key], src[key]);
     });
 }
-var $9d6af1c00121d779$export$3fdcb9b4d81368d8 = {
+var ssrDocument = {
     body: {},
     addEventListener: function() {},
     removeEventListener: function() {},
@@ -955,13 +1742,13 @@ var $9d6af1c00121d779$export$3fdcb9b4d81368d8 = {
         search: ''
     }
 };
-function $9d6af1c00121d779$export$f65ca476c09acec0() {
+function getDocument() {
     var doc = typeof document !== 'undefined' ? document : {};
-    $9d6af1c00121d779$export$8b58be045bf06082(doc, $9d6af1c00121d779$export$3fdcb9b4d81368d8);
+    extend(doc, ssrDocument);
     return doc;
 }
-var $9d6af1c00121d779$export$8582633f185c62bb = {
-    document: $9d6af1c00121d779$export$3fdcb9b4d81368d8,
+var ssrWindow = {
+    document: ssrDocument,
     navigator: {
         userAgent: ''
     },
@@ -1013,105 +1800,63 @@ var $9d6af1c00121d779$export$8582633f185c62bb = {
         clearTimeout(id);
     }
 };
-function $9d6af1c00121d779$export$38b2d434cce3ea22() {
+function getWindow() {
     var win = typeof window !== 'undefined' ? window : {};
-    $9d6af1c00121d779$export$8b58be045bf06082(win, $9d6af1c00121d779$export$8582633f185c62bb);
+    extend(win, ssrWindow);
     return win;
 }
 
-});
-
-parcelRegister("kyDhW", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $ef757574052dc5b0$export$2e2bcd8739ae039);
-
-var $8x7Xh = parcelRequire("8x7Xh");
-var $ef757574052dc5b0$var$Methods = {
-    addClass: (0, $8x7Xh.addClass),
-    removeClass: (0, $8x7Xh.removeClass),
-    hasClass: (0, $8x7Xh.hasClass),
-    toggleClass: (0, $8x7Xh.toggleClass),
-    attr: (0, $8x7Xh.attr),
-    removeAttr: (0, $8x7Xh.removeAttr),
-    transform: (0, $8x7Xh.transform),
-    transition: (0, $8x7Xh.transition),
-    on: (0, $8x7Xh.on),
-    off: (0, $8x7Xh.off),
-    trigger: (0, $8x7Xh.trigger),
-    transitionEnd: (0, $8x7Xh.transitionEnd),
-    outerWidth: (0, $8x7Xh.outerWidth),
-    outerHeight: (0, $8x7Xh.outerHeight),
-    styles: (0, $8x7Xh.styles),
-    offset: (0, $8x7Xh.offset),
-    css: (0, $8x7Xh.css),
-    each: (0, $8x7Xh.each),
-    html: (0, $8x7Xh.html),
-    text: (0, $8x7Xh.text),
-    is: (0, $8x7Xh.is),
-    index: (0, $8x7Xh.index),
-    eq: (0, $8x7Xh.eq),
-    append: (0, $8x7Xh.append),
-    prepend: (0, $8x7Xh.prepend),
-    next: (0, $8x7Xh.next),
-    nextAll: (0, $8x7Xh.nextAll),
-    prev: (0, $8x7Xh.prev),
-    prevAll: (0, $8x7Xh.prevAll),
-    parent: (0, $8x7Xh.parent),
-    parents: (0, $8x7Xh.parents),
-    closest: (0, $8x7Xh.closest),
-    find: (0, $8x7Xh.find),
-    children: (0, $8x7Xh.children),
-    filter: (0, $8x7Xh.filter),
-    remove: (0, $8x7Xh.remove)
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"iauJ2":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _dom7 = require("dom7");
+var Methods = {
+    addClass: (0, _dom7.addClass),
+    removeClass: (0, _dom7.removeClass),
+    hasClass: (0, _dom7.hasClass),
+    toggleClass: (0, _dom7.toggleClass),
+    attr: (0, _dom7.attr),
+    removeAttr: (0, _dom7.removeAttr),
+    transform: (0, _dom7.transform),
+    transition: (0, _dom7.transition),
+    on: (0, _dom7.on),
+    off: (0, _dom7.off),
+    trigger: (0, _dom7.trigger),
+    transitionEnd: (0, _dom7.transitionEnd),
+    outerWidth: (0, _dom7.outerWidth),
+    outerHeight: (0, _dom7.outerHeight),
+    styles: (0, _dom7.styles),
+    offset: (0, _dom7.offset),
+    css: (0, _dom7.css),
+    each: (0, _dom7.each),
+    html: (0, _dom7.html),
+    text: (0, _dom7.text),
+    is: (0, _dom7.is),
+    index: (0, _dom7.index),
+    eq: (0, _dom7.eq),
+    append: (0, _dom7.append),
+    prepend: (0, _dom7.prepend),
+    next: (0, _dom7.next),
+    nextAll: (0, _dom7.nextAll),
+    prev: (0, _dom7.prev),
+    prevAll: (0, _dom7.prevAll),
+    parent: (0, _dom7.parent),
+    parents: (0, _dom7.parents),
+    closest: (0, _dom7.closest),
+    find: (0, _dom7.find),
+    children: (0, _dom7.children),
+    filter: (0, _dom7.filter),
+    remove: (0, _dom7.remove)
 };
-Object.keys($ef757574052dc5b0$var$Methods).forEach(function(methodName) {
-    Object.defineProperty((0, $8x7Xh.$).fn, methodName, {
-        value: $ef757574052dc5b0$var$Methods[methodName],
+Object.keys(Methods).forEach(function(methodName) {
+    Object.defineProperty((0, _dom7.$).fn, methodName, {
+        value: Methods[methodName],
         writable: true
     });
 });
-var $ef757574052dc5b0$export$2e2bcd8739ae039 = (0, $8x7Xh.$);
+exports.default = (0, _dom7.$);
 
-});
-parcelRegister("8x7Xh", function(module, exports) {
-
-$parcel$export(module.exports, "$", () => $);
-$parcel$export(module.exports, "addClass", () => addClass);
-$parcel$export(module.exports, "removeClass", () => removeClass);
-$parcel$export(module.exports, "toggleClass", () => toggleClass);
-$parcel$export(module.exports, "hasClass", () => hasClass);
-$parcel$export(module.exports, "attr", () => attr);
-$parcel$export(module.exports, "removeAttr", () => removeAttr);
-$parcel$export(module.exports, "transform", () => transform);
-$parcel$export(module.exports, "transition", () => transition);
-$parcel$export(module.exports, "on", () => on);
-$parcel$export(module.exports, "off", () => off);
-$parcel$export(module.exports, "trigger", () => trigger);
-$parcel$export(module.exports, "transitionEnd", () => transitionEnd);
-$parcel$export(module.exports, "outerWidth", () => outerWidth);
-$parcel$export(module.exports, "outerHeight", () => outerHeight);
-$parcel$export(module.exports, "offset", () => offset);
-$parcel$export(module.exports, "styles", () => styles);
-$parcel$export(module.exports, "css", () => css);
-$parcel$export(module.exports, "each", () => each);
-$parcel$export(module.exports, "filter", () => filter);
-$parcel$export(module.exports, "html", () => html);
-$parcel$export(module.exports, "text", () => text);
-$parcel$export(module.exports, "is", () => is);
-$parcel$export(module.exports, "index", () => index);
-$parcel$export(module.exports, "eq", () => eq);
-$parcel$export(module.exports, "append", () => append);
-$parcel$export(module.exports, "prepend", () => prepend);
-$parcel$export(module.exports, "next", () => next);
-$parcel$export(module.exports, "nextAll", () => nextAll);
-$parcel$export(module.exports, "prev", () => prev);
-$parcel$export(module.exports, "prevAll", () => prevAll);
-$parcel$export(module.exports, "parent", () => parent);
-$parcel$export(module.exports, "parents", () => parents);
-$parcel$export(module.exports, "closest", () => closest);
-$parcel$export(module.exports, "find", () => find);
-$parcel$export(module.exports, "children", () => children);
-$parcel$export(module.exports, "remove", () => remove);
+},{"dom7":"fDQYr","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"fDQYr":[function(require,module,exports,__globalThis) {
 /**
  * Dom7 3.0.0
  * Minimalistic JavaScript library for DOM manipulation, with a jQuery-compatible API
@@ -1122,8 +1867,93 @@ $parcel$export(module.exports, "remove", () => remove);
  * Licensed under MIT
  *
  * Released on: November 9, 2020
- */ 
-var $dvVIK = parcelRequire("dvVIK");
+ */ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "$", ()=>$);
+parcelHelpers.export(exports, "add", ()=>add);
+parcelHelpers.export(exports, "addClass", ()=>addClass);
+parcelHelpers.export(exports, "animate", ()=>animate);
+parcelHelpers.export(exports, "animationEnd", ()=>animationEnd);
+parcelHelpers.export(exports, "append", ()=>append);
+parcelHelpers.export(exports, "appendTo", ()=>appendTo);
+parcelHelpers.export(exports, "attr", ()=>attr);
+parcelHelpers.export(exports, "blur", ()=>blur);
+parcelHelpers.export(exports, "change", ()=>change);
+parcelHelpers.export(exports, "children", ()=>children);
+parcelHelpers.export(exports, "click", ()=>click);
+parcelHelpers.export(exports, "closest", ()=>closest);
+parcelHelpers.export(exports, "css", ()=>css);
+parcelHelpers.export(exports, "data", ()=>data);
+parcelHelpers.export(exports, "dataset", ()=>dataset);
+parcelHelpers.export(exports, "detach", ()=>detach);
+parcelHelpers.export(exports, "each", ()=>each);
+parcelHelpers.export(exports, "empty", ()=>empty);
+parcelHelpers.export(exports, "eq", ()=>eq);
+parcelHelpers.export(exports, "filter", ()=>filter);
+parcelHelpers.export(exports, "find", ()=>find);
+parcelHelpers.export(exports, "focus", ()=>focus);
+parcelHelpers.export(exports, "focusin", ()=>focusin);
+parcelHelpers.export(exports, "focusout", ()=>focusout);
+parcelHelpers.export(exports, "hasClass", ()=>hasClass);
+parcelHelpers.export(exports, "height", ()=>height);
+parcelHelpers.export(exports, "hide", ()=>hide);
+parcelHelpers.export(exports, "html", ()=>html);
+parcelHelpers.export(exports, "index", ()=>index);
+parcelHelpers.export(exports, "insertAfter", ()=>insertAfter);
+parcelHelpers.export(exports, "insertBefore", ()=>insertBefore);
+parcelHelpers.export(exports, "is", ()=>is);
+parcelHelpers.export(exports, "keydown", ()=>keydown);
+parcelHelpers.export(exports, "keypress", ()=>keypress);
+parcelHelpers.export(exports, "keyup", ()=>keyup);
+parcelHelpers.export(exports, "mousedown", ()=>mousedown);
+parcelHelpers.export(exports, "mouseenter", ()=>mouseenter);
+parcelHelpers.export(exports, "mouseleave", ()=>mouseleave);
+parcelHelpers.export(exports, "mousemove", ()=>mousemove);
+parcelHelpers.export(exports, "mouseout", ()=>mouseout);
+parcelHelpers.export(exports, "mouseover", ()=>mouseover);
+parcelHelpers.export(exports, "mouseup", ()=>mouseup);
+parcelHelpers.export(exports, "next", ()=>next);
+parcelHelpers.export(exports, "nextAll", ()=>nextAll);
+parcelHelpers.export(exports, "off", ()=>off);
+parcelHelpers.export(exports, "offset", ()=>offset);
+parcelHelpers.export(exports, "on", ()=>on);
+parcelHelpers.export(exports, "once", ()=>once);
+parcelHelpers.export(exports, "outerHeight", ()=>outerHeight);
+parcelHelpers.export(exports, "outerWidth", ()=>outerWidth);
+parcelHelpers.export(exports, "parent", ()=>parent);
+parcelHelpers.export(exports, "parents", ()=>parents);
+parcelHelpers.export(exports, "prepend", ()=>prepend);
+parcelHelpers.export(exports, "prependTo", ()=>prependTo);
+parcelHelpers.export(exports, "prev", ()=>prev);
+parcelHelpers.export(exports, "prevAll", ()=>prevAll);
+parcelHelpers.export(exports, "prop", ()=>prop);
+parcelHelpers.export(exports, "remove", ()=>remove);
+parcelHelpers.export(exports, "removeAttr", ()=>removeAttr);
+parcelHelpers.export(exports, "removeClass", ()=>removeClass);
+parcelHelpers.export(exports, "removeData", ()=>removeData);
+parcelHelpers.export(exports, "resize", ()=>resize);
+parcelHelpers.export(exports, "scroll", ()=>scroll);
+parcelHelpers.export(exports, "scrollLeft", ()=>scrollLeft);
+parcelHelpers.export(exports, "scrollTo", ()=>scrollTo);
+parcelHelpers.export(exports, "scrollTop", ()=>scrollTop);
+parcelHelpers.export(exports, "show", ()=>show);
+parcelHelpers.export(exports, "siblings", ()=>siblings);
+parcelHelpers.export(exports, "stop", ()=>stop);
+parcelHelpers.export(exports, "styles", ()=>styles);
+parcelHelpers.export(exports, "submit", ()=>submit);
+parcelHelpers.export(exports, "text", ()=>text);
+parcelHelpers.export(exports, "toggleClass", ()=>toggleClass);
+parcelHelpers.export(exports, "touchend", ()=>touchend);
+parcelHelpers.export(exports, "touchmove", ()=>touchmove);
+parcelHelpers.export(exports, "touchstart", ()=>touchstart);
+parcelHelpers.export(exports, "transform", ()=>transform);
+parcelHelpers.export(exports, "transition", ()=>transition);
+parcelHelpers.export(exports, "transitionEnd", ()=>transitionEnd);
+parcelHelpers.export(exports, "trigger", ()=>trigger);
+parcelHelpers.export(exports, "val", ()=>val);
+parcelHelpers.export(exports, "value", ()=>value);
+parcelHelpers.export(exports, "width", ()=>width);
+var _ssrWindow = require("ssr-window");
 function _inheritsLoose(subClass, superClass) {
     subClass.prototype = Object.create(superClass.prototype);
     subClass.prototype.constructor = subClass;
@@ -1253,8 +2083,8 @@ function qsa(selector, context) {
     return a;
 }
 function $(selector, context) {
-    var window = (0, $dvVIK.getWindow)();
-    var document = (0, $dvVIK.getDocument)();
+    var window = (0, _ssrWindow.getWindow)();
+    var document = (0, _ssrWindow.getDocument)();
     var arr = [];
     if (!context && selector instanceof Dom7) return selector;
     if (!selector) return new Dom7(arr);
@@ -1542,7 +2372,7 @@ function once() {
     return dom.on(eventName, targetSelector, onceHandler, capture);
 }
 function trigger() {
-    var window = (0, $dvVIK.getWindow)();
+    var window = (0, _ssrWindow.getWindow)();
     for(var _len9 = arguments.length, args = new Array(_len9), _key9 = 0; _key9 < _len9; _key9++)args[_key9] = arguments[_key9];
     var events = args[0].split(' ');
     var eventData = args[1];
@@ -1588,7 +2418,7 @@ function animationEnd(callback) {
     return this;
 }
 function width() {
-    var window = (0, $dvVIK.getWindow)();
+    var window = (0, _ssrWindow.getWindow)();
     if (this[0] === window) return window.innerWidth;
     if (this.length > 0) return parseFloat(this.css('width'));
     return null;
@@ -1604,7 +2434,7 @@ function outerWidth(includeMargins) {
     return null;
 }
 function height() {
-    var window = (0, $dvVIK.getWindow)();
+    var window = (0, _ssrWindow.getWindow)();
     if (this[0] === window) return window.innerHeight;
     if (this.length > 0) return parseFloat(this.css('height'));
     return null;
@@ -1621,8 +2451,8 @@ function outerHeight(includeMargins) {
 }
 function offset() {
     if (this.length > 0) {
-        var window = (0, $dvVIK.getWindow)();
-        var document = (0, $dvVIK.getDocument)();
+        var window = (0, _ssrWindow.getWindow)();
+        var document = (0, _ssrWindow.getDocument)();
         var el = this[0];
         var box = el.getBoundingClientRect();
         var body = document.body;
@@ -1642,7 +2472,7 @@ function hide() {
     return this;
 }
 function show() {
-    var window = (0, $dvVIK.getWindow)();
+    var window = (0, _ssrWindow.getWindow)();
     for(var i = 0; i < this.length; i += 1){
         var el = this[i];
         if (el.style.display === 'none') el.style.display = '';
@@ -1652,12 +2482,12 @@ function show() {
     return this;
 }
 function styles() {
-    var window = (0, $dvVIK.getWindow)();
+    var window = (0, _ssrWindow.getWindow)();
     if (this[0]) return window.getComputedStyle(this[0], null);
     return {};
 }
 function css(props, value) {
-    var window = (0, $dvVIK.getWindow)();
+    var window = (0, _ssrWindow.getWindow)();
     var i;
     if (arguments.length === 1) {
         if (typeof props === 'string') {
@@ -1701,8 +2531,8 @@ function text(text) {
     return this;
 }
 function is(selector) {
-    var window = (0, $dvVIK.getWindow)();
-    var document = (0, $dvVIK.getDocument)();
+    var window = (0, _ssrWindow.getWindow)();
+    var document = (0, _ssrWindow.getDocument)();
     var el = this[0];
     var compareWith;
     var i;
@@ -1757,7 +2587,7 @@ function eq(index) {
 }
 function append() {
     var newChild;
-    var document = (0, $dvVIK.getDocument)();
+    var document = (0, _ssrWindow.getDocument)();
     for(var k = 0; k < arguments.length; k += 1){
         newChild = k < 0 || arguments.length <= k ? undefined : arguments[k];
         for(var i = 0; i < this.length; i += 1){
@@ -1776,7 +2606,7 @@ function appendTo(parent) {
     return this;
 }
 function prepend(newChild) {
-    var document = (0, $dvVIK.getDocument)();
+    var document = (0, _ssrWindow.getDocument)();
     var i;
     var j;
     for(i = 0; i < this.length; i += 1){
@@ -1940,7 +2770,7 @@ function empty() {
     return this;
 }
 function scrollTo() {
-    var window = (0, $dvVIK.getWindow)();
+    var window = (0, _ssrWindow.getWindow)();
     for(var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++)args[_key] = arguments[_key];
     var left = args[0], top = args[1], duration = args[2], easing = args[3], callback = args[4];
     if (args.length === 4 && typeof easing === 'function') {
@@ -2053,7 +2883,7 @@ function scrollLeft() {
     return dom.scrollTo(left, undefined, duration, easing, callback);
 }
 function animate(initialProps, initialParams) {
-    var window = (0, $dvVIK.getWindow)();
+    var window = (0, _ssrWindow.getWindow)();
     var els = this;
     var a = {
         props: Object.assign({}, initialProps),
@@ -2228,25 +3058,23 @@ var touchend = shortcut('touchend');
 var touchmove = shortcut('touchmove');
 var resize = shortcut('resize');
 var scroll = shortcut('scroll');
-var $636793843a8ba1ed$export$2e2bcd8739ae039 = $;
+exports.default = $;
 
-});
-
-
-parcelRegister("g4qc9", function(module, exports) {
-
-$parcel$export(module.exports, "deleteProps", () => $bb3156d6d0fd3fab$export$8694e5c03a4df8e6);
-$parcel$export(module.exports, "nextTick", () => $bb3156d6d0fd3fab$export$bdd553fddd433dcb);
-$parcel$export(module.exports, "now", () => $bb3156d6d0fd3fab$export$461939dd4422153);
-$parcel$export(module.exports, "getTranslate", () => $bb3156d6d0fd3fab$export$5ec402b7fcf74398);
-$parcel$export(module.exports, "isObject", () => $bb3156d6d0fd3fab$export$a6cdc56e425d0d0a);
-$parcel$export(module.exports, "extend", () => $bb3156d6d0fd3fab$export$8b58be045bf06082);
-$parcel$export(module.exports, "bindModuleMethods", () => $bb3156d6d0fd3fab$export$d2651194ddf43b70);
-$parcel$export(module.exports, "classesToSelector", () => $bb3156d6d0fd3fab$export$730a8e2ed4fdbe02);
-$parcel$export(module.exports, "createElementIfNotDefined", () => $bb3156d6d0fd3fab$export$f4bbea1d7959d26b);
-
-var $dvVIK = parcelRequire("dvVIK");
-function $bb3156d6d0fd3fab$export$8694e5c03a4df8e6(obj) {
+},{"ssr-window":"3lyfI","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3PNrL":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "deleteProps", ()=>deleteProps);
+parcelHelpers.export(exports, "nextTick", ()=>nextTick);
+parcelHelpers.export(exports, "now", ()=>now);
+parcelHelpers.export(exports, "getTranslate", ()=>getTranslate);
+parcelHelpers.export(exports, "isObject", ()=>isObject);
+parcelHelpers.export(exports, "extend", ()=>extend);
+parcelHelpers.export(exports, "bindModuleMethods", ()=>bindModuleMethods);
+parcelHelpers.export(exports, "getComputedStyle", ()=>getComputedStyle);
+parcelHelpers.export(exports, "classesToSelector", ()=>classesToSelector);
+parcelHelpers.export(exports, "createElementIfNotDefined", ()=>createElementIfNotDefined);
+var _ssrWindow = require("ssr-window");
+function deleteProps(obj) {
     var object = obj;
     Object.keys(object).forEach(function(key) {
         try {
@@ -2257,28 +3085,28 @@ function $bb3156d6d0fd3fab$export$8694e5c03a4df8e6(obj) {
         } catch (e) {}
     });
 }
-function $bb3156d6d0fd3fab$export$bdd553fddd433dcb(callback, delay) {
+function nextTick(callback, delay) {
     if (delay === void 0) delay = 0;
     return setTimeout(callback, delay);
 }
-function $bb3156d6d0fd3fab$export$461939dd4422153() {
+function now() {
     return Date.now();
 }
-function $bb3156d6d0fd3fab$export$3735103072e4a80(el) {
-    var window1 = (0, $dvVIK.getWindow)();
+function getComputedStyle(el) {
+    var window1 = (0, _ssrWindow.getWindow)();
     var style;
     if (window1.getComputedStyle) style = window1.getComputedStyle(el, null);
     if (!style && el.currentStyle) style = el.currentStyle;
     if (!style) style = el.style;
     return style;
 }
-function $bb3156d6d0fd3fab$export$5ec402b7fcf74398(el, axis) {
+function getTranslate(el, axis) {
     if (axis === void 0) axis = 'x';
-    var window1 = (0, $dvVIK.getWindow)();
+    var window1 = (0, _ssrWindow.getWindow)();
     var matrix;
     var curTransform;
     var transformMatrix;
-    var curStyle = $bb3156d6d0fd3fab$export$3735103072e4a80(el, null);
+    var curStyle = getComputedStyle(el, null);
     if (window1.WebKitCSSMatrix) {
         curTransform = curStyle.transform || curStyle.webkitTransform;
         if (curTransform.split(',').length > 6) curTransform = curTransform.split(', ').map(function(a) {
@@ -2305,15 +3133,15 @@ function $bb3156d6d0fd3fab$export$5ec402b7fcf74398(el, axis) {
     }
     return curTransform || 0;
 }
-function $bb3156d6d0fd3fab$export$a6cdc56e425d0d0a(o) {
+function isObject(o) {
     return typeof o === 'object' && o !== null && o.constructor && Object.prototype.toString.call(o).slice(8, -1) === 'Object';
 }
-function $bb3156d6d0fd3fab$var$isNode(node) {
+function isNode(node) {
     // eslint-disable-next-line
     if (typeof window !== 'undefined' && typeof window.HTMLElement !== 'undefined') return node instanceof HTMLElement;
     return node && (node.nodeType === 1 || node.nodeType === 11);
 }
-function $bb3156d6d0fd3fab$export$8b58be045bf06082() {
+function extend() {
     var to = Object(arguments.length <= 0 ? undefined : arguments[0]);
     var noExtend = [
         '__proto__',
@@ -2322,7 +3150,7 @@ function $bb3156d6d0fd3fab$export$8b58be045bf06082() {
     ];
     for(var i = 1; i < arguments.length; i += 1){
         var nextSource = i < 0 || arguments.length <= i ? undefined : arguments[i];
-        if (nextSource !== undefined && nextSource !== null && !$bb3156d6d0fd3fab$var$isNode(nextSource)) {
+        if (nextSource !== undefined && nextSource !== null && !isNode(nextSource)) {
             var keysArray = Object.keys(Object(nextSource)).filter(function(key) {
                 return noExtend.indexOf(key) < 0;
             });
@@ -2330,13 +3158,13 @@ function $bb3156d6d0fd3fab$export$8b58be045bf06082() {
                 var nextKey = keysArray[nextIndex];
                 var desc = Object.getOwnPropertyDescriptor(nextSource, nextKey);
                 if (desc !== undefined && desc.enumerable) {
-                    if ($bb3156d6d0fd3fab$export$a6cdc56e425d0d0a(to[nextKey]) && $bb3156d6d0fd3fab$export$a6cdc56e425d0d0a(nextSource[nextKey])) {
+                    if (isObject(to[nextKey]) && isObject(nextSource[nextKey])) {
                         if (nextSource[nextKey].__swiper__) to[nextKey] = nextSource[nextKey];
-                        else $bb3156d6d0fd3fab$export$8b58be045bf06082(to[nextKey], nextSource[nextKey]);
-                    } else if (!$bb3156d6d0fd3fab$export$a6cdc56e425d0d0a(to[nextKey]) && $bb3156d6d0fd3fab$export$a6cdc56e425d0d0a(nextSource[nextKey])) {
+                        else extend(to[nextKey], nextSource[nextKey]);
+                    } else if (!isObject(to[nextKey]) && isObject(nextSource[nextKey])) {
                         to[nextKey] = {};
                         if (nextSource[nextKey].__swiper__) to[nextKey] = nextSource[nextKey];
-                        else $bb3156d6d0fd3fab$export$8b58be045bf06082(to[nextKey], nextSource[nextKey]);
+                        else extend(to[nextKey], nextSource[nextKey]);
                     } else to[nextKey] = nextSource[nextKey];
                 }
             }
@@ -2344,21 +3172,21 @@ function $bb3156d6d0fd3fab$export$8b58be045bf06082() {
     }
     return to;
 }
-function $bb3156d6d0fd3fab$export$d2651194ddf43b70(instance, obj) {
+function bindModuleMethods(instance, obj) {
     Object.keys(obj).forEach(function(key) {
-        if ($bb3156d6d0fd3fab$export$a6cdc56e425d0d0a(obj[key])) Object.keys(obj[key]).forEach(function(subKey) {
+        if (isObject(obj[key])) Object.keys(obj[key]).forEach(function(subKey) {
             if (typeof obj[key][subKey] === 'function') obj[key][subKey] = obj[key][subKey].bind(instance);
         });
         instance[key] = obj[key];
     });
 }
-function $bb3156d6d0fd3fab$export$730a8e2ed4fdbe02(classes) {
+function classesToSelector(classes) {
     if (classes === void 0) classes = '';
     return "." + classes.trim().replace(/([\.:!\/])/g, '\\$1') // eslint-disable-line
     .replace(/ /g, '.');
 }
-function $bb3156d6d0fd3fab$export$f4bbea1d7959d26b($container, params, createElements, checkProps) {
-    var document = (0, $dvVIK.getDocument)();
+function createElementIfNotDefined($container, params, createElements, checkProps) {
+    var document = (0, _ssrWindow.getDocument)();
     if (createElements) Object.keys(checkProps).forEach(function(key) {
         if (!params[key] && params.auto === true) {
             var element = document.createElement('div');
@@ -2370,17 +3198,15 @@ function $bb3156d6d0fd3fab$export$f4bbea1d7959d26b($container, params, createEle
     return params;
 }
 
-});
-
-parcelRegister("1biEN", function(module, exports) {
-
-$parcel$export(module.exports, "getSupport", () => $0dc54a648e286347$export$d61c7b85ff180578);
-
-var $dvVIK = parcelRequire("dvVIK");
-var $0dc54a648e286347$var$support;
-function $0dc54a648e286347$var$calcSupport() {
-    var window = (0, $dvVIK.getWindow)();
-    var document = (0, $dvVIK.getDocument)();
+},{"ssr-window":"3lyfI","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"eAtom":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "getSupport", ()=>getSupport);
+var _ssrWindow = require("ssr-window");
+var support;
+function calcSupport() {
+    var window = (0, _ssrWindow.getWindow)();
+    var document = (0, _ssrWindow.getDocument)();
     return {
         touch: !!('ontouchstart' in window || window.DocumentTouch && document instanceof window.DocumentTouch),
         pointerEvents: !!window.PointerEvent && 'maxTouchPoints' in window.navigator && window.navigator.maxTouchPoints >= 0,
@@ -2405,25 +3231,22 @@ function $0dc54a648e286347$var$calcSupport() {
         }()
     };
 }
-function $0dc54a648e286347$export$d61c7b85ff180578() {
-    if (!$0dc54a648e286347$var$support) $0dc54a648e286347$var$support = $0dc54a648e286347$var$calcSupport();
-    return $0dc54a648e286347$var$support;
+function getSupport() {
+    if (!support) support = calcSupport();
+    return support;
 }
 
-});
-
-parcelRegister("3hCdG", function(module, exports) {
-
-$parcel$export(module.exports, "getDevice", () => $26409b3fe0478627$export$30c823bc834d6ab4);
-
-var $dvVIK = parcelRequire("dvVIK");
-
-var $1biEN = parcelRequire("1biEN");
-var $26409b3fe0478627$var$device;
-function $26409b3fe0478627$var$calcDevice(_temp) {
+},{"ssr-window":"3lyfI","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2E0M4":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "getDevice", ()=>getDevice);
+var _ssrWindow = require("ssr-window");
+var _getSupport = require("./get-support");
+var device;
+function calcDevice(_temp) {
     var _ref = _temp === void 0 ? {} : _temp, userAgent = _ref.userAgent;
-    var support = (0, $1biEN.getSupport)();
-    var window = (0, $dvVIK.getWindow)();
+    var support = (0, _getSupport.getSupport)();
+    var window = (0, _ssrWindow.getWindow)();
     var platform = window.navigator.platform;
     var ua = userAgent || window.navigator.userAgent;
     var device = {
@@ -2471,22 +3294,20 @@ function $26409b3fe0478627$var$calcDevice(_temp) {
     } // Export object
     return device;
 }
-function $26409b3fe0478627$export$30c823bc834d6ab4(overrides) {
+function getDevice(overrides) {
     if (overrides === void 0) overrides = {};
-    if (!$26409b3fe0478627$var$device) $26409b3fe0478627$var$device = $26409b3fe0478627$var$calcDevice(overrides);
-    return $26409b3fe0478627$var$device;
+    if (!device) device = calcDevice(overrides);
+    return device;
 }
 
-});
-
-parcelRegister("6T1MG", function(module, exports) {
-
-$parcel$export(module.exports, "getBrowser", () => $50394374d4c4de8a$export$89e15fc796a4a429);
-
-var $dvVIK = parcelRequire("dvVIK");
-var $50394374d4c4de8a$var$browser;
-function $50394374d4c4de8a$var$calcBrowser() {
-    var window = (0, $dvVIK.getWindow)();
+},{"ssr-window":"3lyfI","./get-support":"eAtom","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"iiYDI":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "getBrowser", ()=>getBrowser);
+var _ssrWindow = require("ssr-window");
+var browser;
+function calcBrowser() {
+    var window = (0, _ssrWindow.getWindow)();
     function isSafari() {
         var ua = window.navigator.userAgent.toLowerCase();
         return ua.indexOf('safari') >= 0 && ua.indexOf('chrome') < 0 && ua.indexOf('android') < 0;
@@ -2497,29 +3318,25 @@ function $50394374d4c4de8a$var$calcBrowser() {
         isWebView: /(iPhone|iPod|iPad).*AppleWebKit(?!.*Safari)/i.test(window.navigator.userAgent)
     };
 }
-function $50394374d4c4de8a$export$89e15fc796a4a429() {
-    if (!$50394374d4c4de8a$var$browser) $50394374d4c4de8a$var$browser = $50394374d4c4de8a$var$calcBrowser();
-    return $50394374d4c4de8a$var$browser;
+function getBrowser() {
+    if (!browser) browser = calcBrowser();
+    return browser;
 }
 
-});
-
-parcelRegister("1btfh", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $0dcd810d07c11749$export$2e2bcd8739ae039);
-
-var $dvVIK = parcelRequire("dvVIK");
-
-var $g4qc9 = parcelRequire("g4qc9");
-var $0dcd810d07c11749$var$supportsResizeObserver = function supportsResizeObserver() {
-    var window = (0, $dvVIK.getWindow)();
+},{"ssr-window":"3lyfI","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"b43qI":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _ssrWindow = require("ssr-window");
+var _utils = require("../../utils/utils");
+var supportsResizeObserver = function supportsResizeObserver() {
+    var window = (0, _ssrWindow.getWindow)();
     return typeof window.ResizeObserver !== 'undefined';
 };
-var $0dcd810d07c11749$export$2e2bcd8739ae039 = {
+exports.default = {
     name: 'resize',
     create: function create() {
         var swiper = this;
-        (0, $g4qc9.extend)(swiper, {
+        (0, _utils.extend)(swiper, {
             resize: {
                 observer: null,
                 createObserver: function createObserver() {
@@ -2558,8 +3375,8 @@ var $0dcd810d07c11749$export$2e2bcd8739ae039 = {
     },
     on: {
         init: function init(swiper) {
-            var window = (0, $dvVIK.getWindow)();
-            if (swiper.params.resizeObserver && $0dcd810d07c11749$var$supportsResizeObserver()) {
+            var window = (0, _ssrWindow.getWindow)();
+            if (swiper.params.resizeObserver && supportsResizeObserver()) {
                 swiper.resize.createObserver();
                 return;
             } // Emit resize
@@ -2567,7 +3384,7 @@ var $0dcd810d07c11749$export$2e2bcd8739ae039 = {
             window.addEventListener('orientationchange', swiper.resize.orientationChangeHandler);
         },
         destroy: function destroy(swiper) {
-            var window = (0, $dvVIK.getWindow)();
+            var window = (0, _ssrWindow.getWindow)();
             swiper.resize.removeObserver();
             window.removeEventListener('resize', swiper.resize.resizeHandler);
             window.removeEventListener('orientationchange', swiper.resize.orientationChangeHandler);
@@ -2575,29 +3392,25 @@ var $0dcd810d07c11749$export$2e2bcd8739ae039 = {
     }
 };
 
-});
-
-parcelRegister("jHvso", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $e57a6f2dc7718397$export$2e2bcd8739ae039);
-
-var $dvVIK = parcelRequire("dvVIK");
-
-var $g4qc9 = parcelRequire("g4qc9");
-function $e57a6f2dc7718397$var$_extends() {
-    $e57a6f2dc7718397$var$_extends = Object.assign || function(target) {
+},{"ssr-window":"3lyfI","../../utils/utils":"3PNrL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"hrPYP":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _ssrWindow = require("ssr-window");
+var _utils = require("../../utils/utils");
+function _extends() {
+    _extends = Object.assign || function(target) {
         for(var i = 1; i < arguments.length; i++){
             var source = arguments[i];
             for(var key in source)if (Object.prototype.hasOwnProperty.call(source, key)) target[key] = source[key];
         }
         return target;
     };
-    return $e57a6f2dc7718397$var$_extends.apply(this, arguments);
+    return _extends.apply(this, arguments);
 }
-var $e57a6f2dc7718397$var$Observer = {
+var Observer = {
     attach: function attach(target, options) {
         if (options === void 0) options = {};
-        var window = (0, $dvVIK.getWindow)();
+        var window = (0, _ssrWindow.getWindow)();
         var swiper = this;
         var ObserverFunc = window.MutationObserver || window.WebkitMutationObserver;
         var observer = new ObserverFunc(function(mutations) {
@@ -2643,7 +3456,7 @@ var $e57a6f2dc7718397$var$Observer = {
         swiper.observer.observers = [];
     }
 };
-var $e57a6f2dc7718397$export$2e2bcd8739ae039 = {
+exports.default = {
     name: 'observer',
     params: {
         observer: false,
@@ -2652,8 +3465,8 @@ var $e57a6f2dc7718397$export$2e2bcd8739ae039 = {
     },
     create: function create() {
         var swiper = this;
-        (0, $g4qc9.bindModuleMethods)(swiper, {
-            observer: $e57a6f2dc7718397$var$_extends({}, $e57a6f2dc7718397$var$Observer, {
+        (0, _utils.bindModuleMethods)(swiper, {
+            observer: _extends({}, Observer, {
                 observers: []
             })
         });
@@ -2668,20 +3481,17 @@ var $e57a6f2dc7718397$export$2e2bcd8739ae039 = {
     }
 };
 
-});
-
-parcelRegister("atzPl", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $7a086757437c5787$export$2e2bcd8739ae039);
-
-var $g4qc9 = parcelRequire("g4qc9");
-var $7a086757437c5787$export$2e2bcd8739ae039 = {
+},{"ssr-window":"3lyfI","../../utils/utils":"3PNrL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8h0cu":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _utils = require("../../utils/utils");
+exports.default = {
     useParams: function useParams(instanceParams) {
         var instance = this;
         if (!instance.modules) return;
         Object.keys(instance.modules).forEach(function(moduleName) {
             var module = instance.modules[moduleName]; // Extend params
-            if (module.params) (0, $g4qc9.extend)(instanceParams, module.params);
+            if (module.params) (0, _utils.extend)(instanceParams, module.params);
         });
     },
     useModules: function useModules(modulesParams) {
@@ -2700,12 +3510,10 @@ var $7a086757437c5787$export$2e2bcd8739ae039 = {
     }
 };
 
-});
-
-parcelRegister("aOj4E", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $7ded5e947e7c90c3$export$2e2bcd8739ae039);
-/* eslint-disable no-underscore-dangle */ var $7ded5e947e7c90c3$export$2e2bcd8739ae039 = {
+},{"../../utils/utils":"3PNrL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2kJFg":[function(require,module,exports,__globalThis) {
+/* eslint-disable no-underscore-dangle */ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+exports.default = {
     on: function on(events, handler, priority) {
         var self = this;
         if (typeof handler !== 'function') return self;
@@ -2785,48 +3593,45 @@ $parcel$export(module.exports, "default", () => $7ded5e947e7c90c3$export$2e2bcd8
     }
 };
 
-});
-
-parcelRegister("dQngn", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $a1422d3edd4ebde7$export$2e2bcd8739ae039);
-
-var $bekYp = parcelRequire("bekYp");
-
-var $8mNyv = parcelRequire("8mNyv");
-
-var $cCdip = parcelRequire("cCdip");
-
-var $lTWvW = parcelRequire("lTWvW");
-
-var $ge53v = parcelRequire("ge53v");
-
-var $gwhRP = parcelRequire("gwhRP");
-
-var $84OR8 = parcelRequire("84OR8");
-
-var $5f5uG = parcelRequire("5f5uG");
-
-var $5lB0E = parcelRequire("5lB0E");
-var $a1422d3edd4ebde7$export$2e2bcd8739ae039 = {
-    updateSize: (0, $bekYp.default),
-    updateSlides: (0, $8mNyv.default),
-    updateAutoHeight: (0, $cCdip.default),
-    updateSlidesOffset: (0, $lTWvW.default),
-    updateSlidesProgress: (0, $ge53v.default),
-    updateProgress: (0, $gwhRP.default),
-    updateSlidesClasses: (0, $84OR8.default),
-    updateActiveIndex: (0, $5f5uG.default),
-    updateClickedSlide: (0, $5lB0E.default)
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8VKLt":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _updateSize = require("./updateSize");
+var _updateSizeDefault = parcelHelpers.interopDefault(_updateSize);
+var _updateSlides = require("./updateSlides");
+var _updateSlidesDefault = parcelHelpers.interopDefault(_updateSlides);
+var _updateAutoHeight = require("./updateAutoHeight");
+var _updateAutoHeightDefault = parcelHelpers.interopDefault(_updateAutoHeight);
+var _updateSlidesOffset = require("./updateSlidesOffset");
+var _updateSlidesOffsetDefault = parcelHelpers.interopDefault(_updateSlidesOffset);
+var _updateSlidesProgress = require("./updateSlidesProgress");
+var _updateSlidesProgressDefault = parcelHelpers.interopDefault(_updateSlidesProgress);
+var _updateProgress = require("./updateProgress");
+var _updateProgressDefault = parcelHelpers.interopDefault(_updateProgress);
+var _updateSlidesClasses = require("./updateSlidesClasses");
+var _updateSlidesClassesDefault = parcelHelpers.interopDefault(_updateSlidesClasses);
+var _updateActiveIndex = require("./updateActiveIndex");
+var _updateActiveIndexDefault = parcelHelpers.interopDefault(_updateActiveIndex);
+var _updateClickedSlide = require("./updateClickedSlide");
+var _updateClickedSlideDefault = parcelHelpers.interopDefault(_updateClickedSlide);
+exports.default = {
+    updateSize: (0, _updateSizeDefault.default),
+    updateSlides: (0, _updateSlidesDefault.default),
+    updateAutoHeight: (0, _updateAutoHeightDefault.default),
+    updateSlidesOffset: (0, _updateSlidesOffsetDefault.default),
+    updateSlidesProgress: (0, _updateSlidesProgressDefault.default),
+    updateProgress: (0, _updateProgressDefault.default),
+    updateSlidesClasses: (0, _updateSlidesClassesDefault.default),
+    updateActiveIndex: (0, _updateActiveIndexDefault.default),
+    updateClickedSlide: (0, _updateClickedSlideDefault.default)
 };
 
-});
-parcelRegister("bekYp", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $82d145626d89077e$export$2e2bcd8739ae039);
-
-var $g4qc9 = parcelRequire("g4qc9");
-function $82d145626d89077e$export$2e2bcd8739ae039() {
+},{"./updateSize":"4MjEw","./updateSlides":"57zex","./updateAutoHeight":"2mQck","./updateSlidesOffset":"aaFH1","./updateSlidesProgress":"hxUZq","./updateProgress":"7S7m6","./updateSlidesClasses":"f4hEH","./updateActiveIndex":"iL7v6","./updateClickedSlide":"6PG2o","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"4MjEw":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>updateSize);
+var _utils = require("../../../utils/utils");
+function updateSize() {
     var swiper = this;
     var width;
     var height;
@@ -2841,21 +3646,19 @@ function $82d145626d89077e$export$2e2bcd8739ae039() {
     height = height - parseInt($el.css('padding-top') || 0, 10) - parseInt($el.css('padding-bottom') || 0, 10);
     if (Number.isNaN(width)) width = 0;
     if (Number.isNaN(height)) height = 0;
-    (0, $g4qc9.extend)(swiper, {
+    (0, _utils.extend)(swiper, {
         width: width,
         height: height,
         size: swiper.isHorizontal() ? width : height
     });
 }
 
-});
-
-parcelRegister("8mNyv", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $6176d1814c21251b$export$2e2bcd8739ae039);
-
-var $g4qc9 = parcelRequire("g4qc9");
-function $6176d1814c21251b$export$2e2bcd8739ae039() {
+},{"../../../utils/utils":"3PNrL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"57zex":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>updateSlides);
+var _utils = require("../../../utils/utils");
+function updateSlides() {
     var swiper = this;
     function getDirectionLabel(property) {
         if (swiper.isHorizontal()) return property;
@@ -3079,7 +3882,7 @@ function $6176d1814c21251b$export$2e2bcd8739ae039() {
             });
         }
     }
-    (0, $g4qc9.extend)(swiper, {
+    (0, _utils.extend)(swiper, {
         slides: slides,
         snapGrid: snapGrid,
         slidesGrid: slidesGrid,
@@ -3094,12 +3897,11 @@ function $6176d1814c21251b$export$2e2bcd8739ae039() {
     if (params.watchSlidesProgress || params.watchSlidesVisibility) swiper.updateSlidesOffset();
 }
 
-});
-
-parcelRegister("cCdip", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $92f358ead6492c9c$export$2e2bcd8739ae039);
-function $92f358ead6492c9c$export$2e2bcd8739ae039(speed) {
+},{"../../../utils/utils":"3PNrL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2mQck":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>updateAutoHeight);
+function updateAutoHeight(speed) {
     var swiper = this;
     var activeSlides = [];
     var isVirtual = swiper.virtual && swiper.params.virtual.enabled;
@@ -3132,25 +3934,23 @@ function $92f358ead6492c9c$export$2e2bcd8739ae039(speed) {
     if (newHeight) swiper.$wrapperEl.css('height', newHeight + "px");
 }
 
-});
-
-parcelRegister("lTWvW", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $ff1c1fb4abbd9230$export$2e2bcd8739ae039);
-function $ff1c1fb4abbd9230$export$2e2bcd8739ae039() {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aaFH1":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>updateSlidesOffset);
+function updateSlidesOffset() {
     var swiper = this;
     var slides = swiper.slides;
     for(var i = 0; i < slides.length; i += 1)slides[i].swiperSlideOffset = swiper.isHorizontal() ? slides[i].offsetLeft : slides[i].offsetTop;
 }
 
-});
-
-parcelRegister("ge53v", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $bd01e00eb7fabcbf$export$2e2bcd8739ae039);
-
-var $kyDhW = parcelRequire("kyDhW");
-function $bd01e00eb7fabcbf$export$2e2bcd8739ae039(translate) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"hxUZq":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>updateSlidesProgress);
+var _dom = require("../../../utils/dom");
+var _domDefault = parcelHelpers.interopDefault(_dom);
+function updateSlidesProgress(translate) {
     if (translate === void 0) translate = this && this.translate || 0;
     var swiper = this;
     var params = swiper.params;
@@ -3177,17 +3977,15 @@ function $bd01e00eb7fabcbf$export$2e2bcd8739ae039(translate) {
         }
         slide.progress = rtl ? -slideProgress : slideProgress;
     }
-    swiper.visibleSlides = (0, $kyDhW.default)(swiper.visibleSlides);
+    swiper.visibleSlides = (0, _domDefault.default)(swiper.visibleSlides);
 }
 
-});
-
-parcelRegister("gwhRP", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $c06d7e88eedacd73$export$2e2bcd8739ae039);
-
-var $g4qc9 = parcelRequire("g4qc9");
-function $c06d7e88eedacd73$export$2e2bcd8739ae039(translate) {
+},{"../../../utils/dom":"iauJ2","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"7S7m6":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>updateProgress);
+var _utils = require("../../../utils/utils");
+function updateProgress(translate) {
     var swiper = this;
     if (typeof translate === 'undefined') {
         var multiplier = swiper.rtlTranslate ? -1 : 1; // eslint-disable-next-line
@@ -3207,7 +4005,7 @@ function $c06d7e88eedacd73$export$2e2bcd8739ae039(translate) {
         isBeginning = progress <= 0;
         isEnd = progress >= 1;
     }
-    (0, $g4qc9.extend)(swiper, {
+    (0, _utils.extend)(swiper, {
         progress: progress,
         isBeginning: isBeginning,
         isEnd: isEnd
@@ -3219,12 +4017,11 @@ function $c06d7e88eedacd73$export$2e2bcd8739ae039(translate) {
     swiper.emit('progress', progress);
 }
 
-});
-
-parcelRegister("84OR8", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $5e162567323280b7$export$2e2bcd8739ae039);
-function $5e162567323280b7$export$2e2bcd8739ae039() {
+},{"../../../utils/utils":"3PNrL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"f4hEH":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>updateSlidesClasses);
+function updateSlidesClasses() {
     var swiper = this;
     var slides = swiper.slides, params = swiper.params, $wrapperEl = swiper.$wrapperEl, activeIndex = swiper.activeIndex, realIndex = swiper.realIndex;
     var isVirtual = swiper.virtual && params.virtual.enabled;
@@ -3259,14 +4056,12 @@ function $5e162567323280b7$export$2e2bcd8739ae039() {
     swiper.emitSlidesClasses();
 }
 
-});
-
-parcelRegister("5f5uG", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $3d129d6e9ca33fbe$export$2e2bcd8739ae039);
-
-var $g4qc9 = parcelRequire("g4qc9");
-function $3d129d6e9ca33fbe$export$2e2bcd8739ae039(newActiveIndex) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"iL7v6":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>updateActiveIndex);
+var _utils = require("../../../utils/utils");
+function updateActiveIndex(newActiveIndex) {
     var swiper = this;
     var translate = swiper.rtlTranslate ? swiper.translate : -swiper.translate;
     var slidesGrid = swiper.slidesGrid, snapGrid = swiper.snapGrid, params = swiper.params, previousIndex = swiper.activeIndex, previousRealIndex = swiper.realIndex, previousSnapIndex = swiper.snapIndex;
@@ -3297,7 +4092,7 @@ function $3d129d6e9ca33fbe$export$2e2bcd8739ae039(newActiveIndex) {
         return;
     } // Get real index
     var realIndex = parseInt(swiper.slides.eq(activeIndex).attr('data-swiper-slide-index') || activeIndex, 10);
-    (0, $g4qc9.extend)(swiper, {
+    (0, _utils.extend)(swiper, {
         snapIndex: snapIndex,
         realIndex: realIndex,
         previousIndex: previousIndex,
@@ -3309,17 +4104,16 @@ function $3d129d6e9ca33fbe$export$2e2bcd8739ae039(newActiveIndex) {
     if (swiper.initialized || swiper.params.runCallbacksOnInit) swiper.emit('slideChange');
 }
 
-});
-
-parcelRegister("5lB0E", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $3e4b9f379bb71c10$export$2e2bcd8739ae039);
-
-var $kyDhW = parcelRequire("kyDhW");
-function $3e4b9f379bb71c10$export$2e2bcd8739ae039(e) {
+},{"../../../utils/utils":"3PNrL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"6PG2o":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>updateClickedSlide);
+var _dom = require("../../../utils/dom");
+var _domDefault = parcelHelpers.interopDefault(_dom);
+function updateClickedSlide(e) {
     var swiper = this;
     var params = swiper.params;
-    var slide = (0, $kyDhW.default)(e.target).closest("." + params.slideClass)[0];
+    var slide = (0, _domDefault.default)(e.target).closest("." + params.slideClass)[0];
     var slideFound = false;
     var slideIndex;
     if (slide) {
@@ -3331,7 +4125,7 @@ function $3e4b9f379bb71c10$export$2e2bcd8739ae039(e) {
     }
     if (slide && slideFound) {
         swiper.clickedSlide = slide;
-        if (swiper.virtual && swiper.params.virtual.enabled) swiper.clickedIndex = parseInt((0, $kyDhW.default)(slide).attr('data-swiper-slide-index'), 10);
+        if (swiper.virtual && swiper.params.virtual.enabled) swiper.clickedIndex = parseInt((0, _domDefault.default)(slide).attr('data-swiper-slide-index'), 10);
         else swiper.clickedIndex = slideIndex;
     } else {
         swiper.clickedSlide = undefined;
@@ -3341,53 +4135,48 @@ function $3e4b9f379bb71c10$export$2e2bcd8739ae039(e) {
     if (params.slideToClickedSlide && swiper.clickedIndex !== undefined && swiper.clickedIndex !== swiper.activeIndex) swiper.slideToClickedSlide();
 }
 
-});
-
-
-parcelRegister("ib5OG", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $d3bdc414d0735afe$export$2e2bcd8739ae039);
-
-var $esArP = parcelRequire("esArP");
-
-var $ekF9i = parcelRequire("ekF9i");
-
-var $lFeBx = parcelRequire("lFeBx");
-
-var $gILYF = parcelRequire("gILYF");
-
-var $hH141 = parcelRequire("hH141");
-var $d3bdc414d0735afe$export$2e2bcd8739ae039 = {
-    getTranslate: (0, $esArP.default),
-    setTranslate: (0, $ekF9i.default),
-    minTranslate: (0, $lFeBx.default),
-    maxTranslate: (0, $gILYF.default),
-    translateTo: (0, $hH141.default)
+},{"../../../utils/dom":"iauJ2","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ebCHw":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _getTranslate = require("./getTranslate");
+var _getTranslateDefault = parcelHelpers.interopDefault(_getTranslate);
+var _setTranslate = require("./setTranslate");
+var _setTranslateDefault = parcelHelpers.interopDefault(_setTranslate);
+var _minTranslate = require("./minTranslate");
+var _minTranslateDefault = parcelHelpers.interopDefault(_minTranslate);
+var _maxTranslate = require("./maxTranslate");
+var _maxTranslateDefault = parcelHelpers.interopDefault(_maxTranslate);
+var _translateTo = require("./translateTo");
+var _translateToDefault = parcelHelpers.interopDefault(_translateTo);
+exports.default = {
+    getTranslate: (0, _getTranslateDefault.default),
+    setTranslate: (0, _setTranslateDefault.default),
+    minTranslate: (0, _minTranslateDefault.default),
+    maxTranslate: (0, _maxTranslateDefault.default),
+    translateTo: (0, _translateToDefault.default)
 };
 
-});
-parcelRegister("esArP", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $a86ff3ff8e6d3c5b$export$2e2bcd8739ae039);
-
-var $g4qc9 = parcelRequire("g4qc9");
-function $a86ff3ff8e6d3c5b$export$2e2bcd8739ae039(axis) {
+},{"./getTranslate":"aQ86x","./setTranslate":"1cWja","./minTranslate":"6VtAU","./maxTranslate":"6ngaf","./translateTo":"ffpq6","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aQ86x":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>getSwiperTranslate);
+var _utils = require("../../../utils/utils");
+function getSwiperTranslate(axis) {
     if (axis === void 0) axis = this.isHorizontal() ? 'x' : 'y';
     var swiper = this;
     var params = swiper.params, rtl = swiper.rtlTranslate, translate = swiper.translate, $wrapperEl = swiper.$wrapperEl;
     if (params.virtualTranslate) return rtl ? -translate : translate;
     if (params.cssMode) return translate;
-    var currentTranslate = (0, $g4qc9.getTranslate)($wrapperEl[0], axis);
+    var currentTranslate = (0, _utils.getTranslate)($wrapperEl[0], axis);
     if (rtl) currentTranslate = -currentTranslate;
     return currentTranslate || 0;
 }
 
-});
-
-parcelRegister("ekF9i", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $a6f2da492a21bb22$export$2e2bcd8739ae039);
-function $a6f2da492a21bb22$export$2e2bcd8739ae039(translate, byController) {
+},{"../../../utils/utils":"3PNrL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"1cWja":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>setTranslate);
+function setTranslate(translate, byController) {
     var swiper = this;
     var rtl = swiper.rtlTranslate, params = swiper.params, $wrapperEl = swiper.$wrapperEl, wrapperEl = swiper.wrapperEl, progress = swiper.progress;
     var x = 0;
@@ -3411,30 +4200,27 @@ function $a6f2da492a21bb22$export$2e2bcd8739ae039(translate, byController) {
     swiper.emit('setTranslate', swiper.translate, byController);
 }
 
-});
-
-parcelRegister("lFeBx", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $fc58c178be10a1a7$export$2e2bcd8739ae039);
-function $fc58c178be10a1a7$export$2e2bcd8739ae039() {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"6VtAU":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>minTranslate);
+function minTranslate() {
     return -this.snapGrid[0];
 }
 
-});
-
-parcelRegister("gILYF", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $c2c5f8be7f40c204$export$2e2bcd8739ae039);
-function $c2c5f8be7f40c204$export$2e2bcd8739ae039() {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"6ngaf":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>maxTranslate);
+function maxTranslate() {
     return -this.snapGrid[this.snapGrid.length - 1];
 }
 
-});
-
-parcelRegister("hH141", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $ce174715712f04a6$export$2e2bcd8739ae039);
-function $ce174715712f04a6$export$2e2bcd8739ae039(translate, speed, runCallbacks, translateBounds, internal) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ffpq6":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>translateTo);
+function translateTo(translate, speed, runCallbacks, translateBounds, internal) {
     if (translate === void 0) translate = 0;
     if (speed === void 0) speed = this.params.speed;
     if (runCallbacks === void 0) runCallbacks = true;
@@ -3491,40 +4277,36 @@ function $ce174715712f04a6$export$2e2bcd8739ae039(translate, speed, runCallbacks
     return true;
 }
 
-});
-
-
-parcelRegister("9YwMj", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $743324b6404d6a98$export$2e2bcd8739ae039);
-
-var $lW0e3 = parcelRequire("lW0e3");
-
-var $6eJpe = parcelRequire("6eJpe");
-
-var $cXSpm = parcelRequire("cXSpm");
-var $743324b6404d6a98$export$2e2bcd8739ae039 = {
-    setTransition: (0, $lW0e3.default),
-    transitionStart: (0, $6eJpe.default),
-    transitionEnd: (0, $cXSpm.default)
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"eEpl7":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _setTransition = require("./setTransition");
+var _setTransitionDefault = parcelHelpers.interopDefault(_setTransition);
+var _transitionStart = require("./transitionStart");
+var _transitionStartDefault = parcelHelpers.interopDefault(_transitionStart);
+var _transitionEnd = require("./transitionEnd");
+var _transitionEndDefault = parcelHelpers.interopDefault(_transitionEnd);
+exports.default = {
+    setTransition: (0, _setTransitionDefault.default),
+    transitionStart: (0, _transitionStartDefault.default),
+    transitionEnd: (0, _transitionEndDefault.default)
 };
 
-});
-parcelRegister("lW0e3", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $ff7f308f0203cece$export$2e2bcd8739ae039);
-function $ff7f308f0203cece$export$2e2bcd8739ae039(duration, byController) {
+},{"./setTransition":"8DxVG","./transitionStart":"627Jx","./transitionEnd":"8sR0N","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8DxVG":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>setTransition);
+function setTransition(duration, byController) {
     var swiper = this;
     if (!swiper.params.cssMode) swiper.$wrapperEl.transition(duration);
     swiper.emit('setTransition', duration, byController);
 }
 
-});
-
-parcelRegister("6eJpe", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $48a7458a7a7d2872$export$2e2bcd8739ae039);
-function $48a7458a7a7d2872$export$2e2bcd8739ae039(runCallbacks, direction) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"627Jx":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>transitionStart);
+function transitionStart(runCallbacks, direction) {
     if (runCallbacks === void 0) runCallbacks = true;
     var swiper = this;
     var activeIndex = swiper.activeIndex, params = swiper.params, previousIndex = swiper.previousIndex;
@@ -3548,12 +4330,11 @@ function $48a7458a7a7d2872$export$2e2bcd8739ae039(runCallbacks, direction) {
     }
 }
 
-});
-
-parcelRegister("cXSpm", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $9705330aa59a4360$export$2e2bcd8739ae039);
-function $9705330aa59a4360$export$2e2bcd8739ae039(runCallbacks, direction) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8sR0N":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>transitionEnd);
+function transitionEnd(runCallbacks, direction) {
     if (runCallbacks === void 0) runCallbacks = true;
     var swiper = this;
     var activeIndex = swiper.activeIndex, previousIndex = swiper.previousIndex, params = swiper.params;
@@ -3578,41 +4359,38 @@ function $9705330aa59a4360$export$2e2bcd8739ae039(runCallbacks, direction) {
     }
 }
 
-});
-
-
-parcelRegister("lbaut", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $f6b2c33cc26b4a82$export$2e2bcd8739ae039);
-
-var $6qKlS = parcelRequire("6qKlS");
-
-var $1Pbls = parcelRequire("1Pbls");
-
-var $fUFzL = parcelRequire("fUFzL");
-
-var $5i7OR = parcelRequire("5i7OR");
-
-var $lD3VQ = parcelRequire("lD3VQ");
-
-var $f7Wuh = parcelRequire("f7Wuh");
-
-var $c9wSJ = parcelRequire("c9wSJ");
-var $f6b2c33cc26b4a82$export$2e2bcd8739ae039 = {
-    slideTo: (0, $6qKlS.default),
-    slideToLoop: (0, $1Pbls.default),
-    slideNext: (0, $fUFzL.default),
-    slidePrev: (0, $5i7OR.default),
-    slideReset: (0, $lD3VQ.default),
-    slideToClosest: (0, $f7Wuh.default),
-    slideToClickedSlide: (0, $c9wSJ.default)
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gW0RP":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _slideTo = require("./slideTo");
+var _slideToDefault = parcelHelpers.interopDefault(_slideTo);
+var _slideToLoop = require("./slideToLoop");
+var _slideToLoopDefault = parcelHelpers.interopDefault(_slideToLoop);
+var _slideNext = require("./slideNext");
+var _slideNextDefault = parcelHelpers.interopDefault(_slideNext);
+var _slidePrev = require("./slidePrev");
+var _slidePrevDefault = parcelHelpers.interopDefault(_slidePrev);
+var _slideReset = require("./slideReset");
+var _slideResetDefault = parcelHelpers.interopDefault(_slideReset);
+var _slideToClosest = require("./slideToClosest");
+var _slideToClosestDefault = parcelHelpers.interopDefault(_slideToClosest);
+var _slideToClickedSlide = require("./slideToClickedSlide");
+var _slideToClickedSlideDefault = parcelHelpers.interopDefault(_slideToClickedSlide);
+exports.default = {
+    slideTo: (0, _slideToDefault.default),
+    slideToLoop: (0, _slideToLoopDefault.default),
+    slideNext: (0, _slideNextDefault.default),
+    slidePrev: (0, _slidePrevDefault.default),
+    slideReset: (0, _slideResetDefault.default),
+    slideToClosest: (0, _slideToClosestDefault.default),
+    slideToClickedSlide: (0, _slideToClickedSlideDefault.default)
 };
 
-});
-parcelRegister("6qKlS", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $4ae9204b253021c1$export$2e2bcd8739ae039);
-function $4ae9204b253021c1$export$2e2bcd8739ae039(index, speed, runCallbacks, internal, initial) {
+},{"./slideTo":"4HXOW","./slideToLoop":"fgjw8","./slideNext":"7BFaZ","./slidePrev":"8WrrP","./slideReset":"ipBTM","./slideToClosest":"35vDI","./slideToClickedSlide":"5JIMc","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"4HXOW":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>slideTo);
+function slideTo(index, speed, runCallbacks, internal, initial) {
     if (index === void 0) index = 0;
     if (speed === void 0) speed = this.params.speed;
     if (runCallbacks === void 0) runCallbacks = true;
@@ -3719,12 +4497,11 @@ function $4ae9204b253021c1$export$2e2bcd8739ae039(index, speed, runCallbacks, in
     return true;
 }
 
-});
-
-parcelRegister("1Pbls", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $15435ac2b0c390bc$export$2e2bcd8739ae039);
-function $15435ac2b0c390bc$export$2e2bcd8739ae039(index, speed, runCallbacks, internal) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"fgjw8":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>slideToLoop);
+function slideToLoop(index, speed, runCallbacks, internal) {
     if (index === void 0) index = 0;
     if (speed === void 0) speed = this.params.speed;
     if (runCallbacks === void 0) runCallbacks = true;
@@ -3734,12 +4511,11 @@ function $15435ac2b0c390bc$export$2e2bcd8739ae039(index, speed, runCallbacks, in
     return swiper.slideTo(newIndex, speed, runCallbacks, internal);
 }
 
-});
-
-parcelRegister("fUFzL", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $b95c5616d50bc52d$export$2e2bcd8739ae039);
-/* eslint no-unused-vars: "off" */ function $b95c5616d50bc52d$export$2e2bcd8739ae039(speed, runCallbacks, internal) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"7BFaZ":[function(require,module,exports,__globalThis) {
+/* eslint no-unused-vars: "off" */ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>slideNext);
+function slideNext(speed, runCallbacks, internal) {
     if (speed === void 0) speed = this.params.speed;
     if (runCallbacks === void 0) runCallbacks = true;
     var swiper = this;
@@ -3754,12 +4530,11 @@ $parcel$export(module.exports, "default", () => $b95c5616d50bc52d$export$2e2bcd8
     return swiper.slideTo(swiper.activeIndex + increment, speed, runCallbacks, internal);
 }
 
-});
-
-parcelRegister("5i7OR", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $3da4b2ee4bf1926f$export$2e2bcd8739ae039);
-/* eslint no-unused-vars: "off" */ function $3da4b2ee4bf1926f$export$2e2bcd8739ae039(speed, runCallbacks, internal) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8WrrP":[function(require,module,exports,__globalThis) {
+/* eslint no-unused-vars: "off" */ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>slidePrev);
+function slidePrev(speed, runCallbacks, internal) {
     if (speed === void 0) speed = this.params.speed;
     if (runCallbacks === void 0) runCallbacks = true;
     var swiper = this;
@@ -3791,24 +4566,22 @@ $parcel$export(module.exports, "default", () => $3da4b2ee4bf1926f$export$2e2bcd8
     return swiper.slideTo(prevIndex, speed, runCallbacks, internal);
 }
 
-});
-
-parcelRegister("lD3VQ", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $fbf04a480ae694e0$export$2e2bcd8739ae039);
-/* eslint no-unused-vars: "off" */ function $fbf04a480ae694e0$export$2e2bcd8739ae039(speed, runCallbacks, internal) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ipBTM":[function(require,module,exports,__globalThis) {
+/* eslint no-unused-vars: "off" */ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>slideReset);
+function slideReset(speed, runCallbacks, internal) {
     if (speed === void 0) speed = this.params.speed;
     if (runCallbacks === void 0) runCallbacks = true;
     var swiper = this;
     return swiper.slideTo(swiper.activeIndex, speed, runCallbacks, internal);
 }
 
-});
-
-parcelRegister("f7Wuh", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $b034e0da3e53918b$export$2e2bcd8739ae039);
-/* eslint no-unused-vars: "off" */ function $b034e0da3e53918b$export$2e2bcd8739ae039(speed, runCallbacks, internal, threshold) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"35vDI":[function(require,module,exports,__globalThis) {
+/* eslint no-unused-vars: "off" */ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>slideToClosest);
+function slideToClosest(speed, runCallbacks, internal, threshold) {
     if (speed === void 0) speed = this.params.speed;
     if (runCallbacks === void 0) runCallbacks = true;
     if (threshold === void 0) threshold = 0.5;
@@ -3835,16 +4608,14 @@ $parcel$export(module.exports, "default", () => $b034e0da3e53918b$export$2e2bcd8
     return swiper.slideTo(index, speed, runCallbacks, internal);
 }
 
-});
-
-parcelRegister("c9wSJ", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $8d8fd4f263d8a04d$export$2e2bcd8739ae039);
-
-var $kyDhW = parcelRequire("kyDhW");
-
-var $g4qc9 = parcelRequire("g4qc9");
-function $8d8fd4f263d8a04d$export$2e2bcd8739ae039() {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"5JIMc":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>slideToClickedSlide);
+var _dom = require("../../../utils/dom");
+var _domDefault = parcelHelpers.interopDefault(_dom);
+var _utils = require("../../../utils/utils");
+function slideToClickedSlide() {
     var swiper = this;
     var params = swiper.params, $wrapperEl = swiper.$wrapperEl;
     var slidesPerView = params.slidesPerView === 'auto' ? swiper.slidesPerViewDynamic() : params.slidesPerView;
@@ -3852,54 +4623,50 @@ function $8d8fd4f263d8a04d$export$2e2bcd8739ae039() {
     var realIndex;
     if (params.loop) {
         if (swiper.animating) return;
-        realIndex = parseInt((0, $kyDhW.default)(swiper.clickedSlide).attr('data-swiper-slide-index'), 10);
+        realIndex = parseInt((0, _domDefault.default)(swiper.clickedSlide).attr('data-swiper-slide-index'), 10);
         if (params.centeredSlides) {
             if (slideToIndex < swiper.loopedSlides - slidesPerView / 2 || slideToIndex > swiper.slides.length - swiper.loopedSlides + slidesPerView / 2) {
                 swiper.loopFix();
                 slideToIndex = $wrapperEl.children("." + params.slideClass + "[data-swiper-slide-index=\"" + realIndex + "\"]:not(." + params.slideDuplicateClass + ")").eq(0).index();
-                (0, $g4qc9.nextTick)(function() {
+                (0, _utils.nextTick)(function() {
                     swiper.slideTo(slideToIndex);
                 });
             } else swiper.slideTo(slideToIndex);
         } else if (slideToIndex > swiper.slides.length - slidesPerView) {
             swiper.loopFix();
             slideToIndex = $wrapperEl.children("." + params.slideClass + "[data-swiper-slide-index=\"" + realIndex + "\"]:not(." + params.slideDuplicateClass + ")").eq(0).index();
-            (0, $g4qc9.nextTick)(function() {
+            (0, _utils.nextTick)(function() {
                 swiper.slideTo(slideToIndex);
             });
         } else swiper.slideTo(slideToIndex);
     } else swiper.slideTo(slideToIndex);
 }
 
-});
-
-
-parcelRegister("4xdfA", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $34d485c00a08f7fa$export$2e2bcd8739ae039);
-
-var $iqE7d = parcelRequire("iqE7d");
-
-var $6sGNK = parcelRequire("6sGNK");
-
-var $bQ8x9 = parcelRequire("bQ8x9");
-var $34d485c00a08f7fa$export$2e2bcd8739ae039 = {
-    loopCreate: (0, $iqE7d.default),
-    loopFix: (0, $6sGNK.default),
-    loopDestroy: (0, $bQ8x9.default)
+},{"../../../utils/dom":"iauJ2","../../../utils/utils":"3PNrL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gEbbO":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _loopCreate = require("./loopCreate");
+var _loopCreateDefault = parcelHelpers.interopDefault(_loopCreate);
+var _loopFix = require("./loopFix");
+var _loopFixDefault = parcelHelpers.interopDefault(_loopFix);
+var _loopDestroy = require("./loopDestroy");
+var _loopDestroyDefault = parcelHelpers.interopDefault(_loopDestroy);
+exports.default = {
+    loopCreate: (0, _loopCreateDefault.default),
+    loopFix: (0, _loopFixDefault.default),
+    loopDestroy: (0, _loopDestroyDefault.default)
 };
 
-});
-parcelRegister("iqE7d", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $d6a9c5cb08c60a20$export$2e2bcd8739ae039);
-
-var $dvVIK = parcelRequire("dvVIK");
-
-var $kyDhW = parcelRequire("kyDhW");
-function $d6a9c5cb08c60a20$export$2e2bcd8739ae039() {
+},{"./loopCreate":"4yKxc","./loopFix":"dAsPt","./loopDestroy":"ciMwR","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"4yKxc":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>loopCreate);
+var _ssrWindow = require("ssr-window");
+var _dom = require("../../../utils/dom");
+var _domDefault = parcelHelpers.interopDefault(_dom);
+function loopCreate() {
     var swiper = this;
-    var document = (0, $dvVIK.getDocument)();
+    var document = (0, _ssrWindow.getDocument)();
     var params = swiper.params, $wrapperEl = swiper.$wrapperEl; // Remove duplicated slides
     $wrapperEl.children("." + params.slideClass + "." + params.slideDuplicateClass).remove();
     var slides = $wrapperEl.children("." + params.slideClass);
@@ -3907,7 +4674,7 @@ function $d6a9c5cb08c60a20$export$2e2bcd8739ae039() {
         var blankSlidesNum = params.slidesPerGroup - slides.length % params.slidesPerGroup;
         if (blankSlidesNum !== params.slidesPerGroup) {
             for(var i = 0; i < blankSlidesNum; i += 1){
-                var blankNode = (0, $kyDhW.default)(document.createElement('div')).addClass(params.slideClass + " " + params.slideBlankClass);
+                var blankNode = (0, _domDefault.default)(document.createElement('div')).addClass(params.slideClass + " " + params.slideBlankClass);
                 $wrapperEl.append(blankNode);
             }
             slides = $wrapperEl.children("." + params.slideClass);
@@ -3920,21 +4687,20 @@ function $d6a9c5cb08c60a20$export$2e2bcd8739ae039() {
     var prependSlides = [];
     var appendSlides = [];
     slides.each(function(el, index) {
-        var slide = (0, $kyDhW.default)(el);
+        var slide = (0, _domDefault.default)(el);
         if (index < swiper.loopedSlides) appendSlides.push(el);
         if (index < slides.length && index >= slides.length - swiper.loopedSlides) prependSlides.push(el);
         slide.attr('data-swiper-slide-index', index);
     });
-    for(var _i = 0; _i < appendSlides.length; _i += 1)$wrapperEl.append((0, $kyDhW.default)(appendSlides[_i].cloneNode(true)).addClass(params.slideDuplicateClass));
-    for(var _i2 = prependSlides.length - 1; _i2 >= 0; _i2 -= 1)$wrapperEl.prepend((0, $kyDhW.default)(prependSlides[_i2].cloneNode(true)).addClass(params.slideDuplicateClass));
+    for(var _i = 0; _i < appendSlides.length; _i += 1)$wrapperEl.append((0, _domDefault.default)(appendSlides[_i].cloneNode(true)).addClass(params.slideDuplicateClass));
+    for(var _i2 = prependSlides.length - 1; _i2 >= 0; _i2 -= 1)$wrapperEl.prepend((0, _domDefault.default)(prependSlides[_i2].cloneNode(true)).addClass(params.slideDuplicateClass));
 }
 
-});
-
-parcelRegister("6sGNK", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $4b468f1663d418e4$export$2e2bcd8739ae039);
-function $4b468f1663d418e4$export$2e2bcd8739ae039() {
+},{"ssr-window":"3lyfI","../../../utils/dom":"iauJ2","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dAsPt":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>loopFix);
+function loopFix() {
     var swiper = this;
     swiper.emit('beforeLoopFix');
     var activeIndex = swiper.activeIndex, slides = swiper.slides, loopedSlides = swiper.loopedSlides, allowSlidePrev = swiper.allowSlidePrev, allowSlideNext = swiper.allowSlideNext, snapGrid = swiper.snapGrid, rtl = swiper.rtlTranslate;
@@ -3960,38 +4726,34 @@ function $4b468f1663d418e4$export$2e2bcd8739ae039() {
     swiper.emit('loopFix');
 }
 
-});
-
-parcelRegister("bQ8x9", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $89eb2ba7c64a4173$export$2e2bcd8739ae039);
-function $89eb2ba7c64a4173$export$2e2bcd8739ae039() {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ciMwR":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>loopDestroy);
+function loopDestroy() {
     var swiper = this;
     var $wrapperEl = swiper.$wrapperEl, params = swiper.params, slides = swiper.slides;
     $wrapperEl.children("." + params.slideClass + "." + params.slideDuplicateClass + ",." + params.slideClass + "." + params.slideBlankClass).remove();
     slides.removeAttr('data-swiper-slide-index');
 }
 
-});
-
-
-parcelRegister("gygd4", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $c0cc653f91bbc099$export$2e2bcd8739ae039);
-
-var $bjm0f = parcelRequire("bjm0f");
-
-var $oWsR9 = parcelRequire("oWsR9");
-var $c0cc653f91bbc099$export$2e2bcd8739ae039 = {
-    setGrabCursor: (0, $bjm0f.default),
-    unsetGrabCursor: (0, $oWsR9.default)
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ed0Gp":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _setGrabCursor = require("./setGrabCursor");
+var _setGrabCursorDefault = parcelHelpers.interopDefault(_setGrabCursor);
+var _unsetGrabCursor = require("./unsetGrabCursor");
+var _unsetGrabCursorDefault = parcelHelpers.interopDefault(_unsetGrabCursor);
+exports.default = {
+    setGrabCursor: (0, _setGrabCursorDefault.default),
+    unsetGrabCursor: (0, _unsetGrabCursorDefault.default)
 };
 
-});
-parcelRegister("bjm0f", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $83c28964c5269306$export$2e2bcd8739ae039);
-function $83c28964c5269306$export$2e2bcd8739ae039(moving) {
+},{"./setGrabCursor":"lE3Ak","./unsetGrabCursor":"8OLaP","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"lE3Ak":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>setGrabCursor);
+function setGrabCursor(moving) {
     var swiper = this;
     if (swiper.support.touch || !swiper.params.simulateTouch || swiper.params.watchOverflow && swiper.isLocked || swiper.params.cssMode) return;
     var el = swiper.el;
@@ -4001,46 +4763,42 @@ function $83c28964c5269306$export$2e2bcd8739ae039(moving) {
     el.style.cursor = moving ? 'grabbing' : 'grab';
 }
 
-});
-
-parcelRegister("oWsR9", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $04af97d282091c3a$export$2e2bcd8739ae039);
-function $04af97d282091c3a$export$2e2bcd8739ae039() {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8OLaP":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>unsetGrabCursor);
+function unsetGrabCursor() {
     var swiper = this;
     if (swiper.support.touch || swiper.params.watchOverflow && swiper.isLocked || swiper.params.cssMode) return;
     swiper.el.style.cursor = '';
 }
 
-});
-
-
-parcelRegister("Wnf62", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $0af7725e64cc858a$export$2e2bcd8739ae039);
-
-var $lSWmL = parcelRequire("lSWmL");
-
-var $2IKbn = parcelRequire("2IKbn");
-
-var $8p9NV = parcelRequire("8p9NV");
-
-var $jtyi1 = parcelRequire("jtyi1");
-
-var $8kmPt = parcelRequire("8kmPt");
-var $0af7725e64cc858a$export$2e2bcd8739ae039 = {
-    appendSlide: (0, $lSWmL.default),
-    prependSlide: (0, $2IKbn.default),
-    addSlide: (0, $8p9NV.default),
-    removeSlide: (0, $jtyi1.default),
-    removeAllSlides: (0, $8kmPt.default)
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"k6osq":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _appendSlide = require("./appendSlide");
+var _appendSlideDefault = parcelHelpers.interopDefault(_appendSlide);
+var _prependSlide = require("./prependSlide");
+var _prependSlideDefault = parcelHelpers.interopDefault(_prependSlide);
+var _addSlide = require("./addSlide");
+var _addSlideDefault = parcelHelpers.interopDefault(_addSlide);
+var _removeSlide = require("./removeSlide");
+var _removeSlideDefault = parcelHelpers.interopDefault(_removeSlide);
+var _removeAllSlides = require("./removeAllSlides");
+var _removeAllSlidesDefault = parcelHelpers.interopDefault(_removeAllSlides);
+exports.default = {
+    appendSlide: (0, _appendSlideDefault.default),
+    prependSlide: (0, _prependSlideDefault.default),
+    addSlide: (0, _addSlideDefault.default),
+    removeSlide: (0, _removeSlideDefault.default),
+    removeAllSlides: (0, _removeAllSlidesDefault.default)
 };
 
-});
-parcelRegister("lSWmL", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $feebea7080ab29cb$export$2e2bcd8739ae039);
-function $feebea7080ab29cb$export$2e2bcd8739ae039(slides) {
+},{"./appendSlide":"2y0lY","./prependSlide":"2looy","./addSlide":"h3WNL","./removeSlide":"3BlKY","./removeAllSlides":"5N6bK","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2y0lY":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>appendSlide);
+function appendSlide(slides) {
     var swiper = this;
     var $wrapperEl = swiper.$wrapperEl, params = swiper.params;
     if (params.loop) swiper.loopDestroy();
@@ -4051,12 +4809,11 @@ function $feebea7080ab29cb$export$2e2bcd8739ae039(slides) {
     if (!(params.observer && swiper.support.observer)) swiper.update();
 }
 
-});
-
-parcelRegister("2IKbn", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $1fb383bc0df304cd$export$2e2bcd8739ae039);
-function $1fb383bc0df304cd$export$2e2bcd8739ae039(slides) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2looy":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>prependSlide);
+function prependSlide(slides) {
     var swiper = this;
     var params = swiper.params, $wrapperEl = swiper.$wrapperEl, activeIndex = swiper.activeIndex;
     if (params.loop) swiper.loopDestroy();
@@ -4070,12 +4827,11 @@ function $1fb383bc0df304cd$export$2e2bcd8739ae039(slides) {
     swiper.slideTo(newActiveIndex, 0, false);
 }
 
-});
-
-parcelRegister("8p9NV", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $61e84371da6d708b$export$2e2bcd8739ae039);
-function $61e84371da6d708b$export$2e2bcd8739ae039(index, slides) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"h3WNL":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>addSlide);
+function addSlide(index, slides) {
     var swiper = this;
     var $wrapperEl = swiper.$wrapperEl, params = swiper.params, activeIndex = swiper.activeIndex;
     var activeIndexBuffer = activeIndex;
@@ -4111,12 +4867,11 @@ function $61e84371da6d708b$export$2e2bcd8739ae039(index, slides) {
     else swiper.slideTo(newActiveIndex, 0, false);
 }
 
-});
-
-parcelRegister("jtyi1", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $e2db52fb2d7a4e1e$export$2e2bcd8739ae039);
-function $e2db52fb2d7a4e1e$export$2e2bcd8739ae039(slidesIndexes) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3BlKY":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>removeSlide);
+function removeSlide(slidesIndexes) {
     var swiper = this;
     var params = swiper.params, $wrapperEl = swiper.$wrapperEl, activeIndex = swiper.activeIndex;
     var activeIndexBuffer = activeIndex;
@@ -4146,49 +4901,44 @@ function $e2db52fb2d7a4e1e$export$2e2bcd8739ae039(slidesIndexes) {
     else swiper.slideTo(newActiveIndex, 0, false);
 }
 
-});
-
-parcelRegister("8kmPt", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $6101e6636acc91df$export$2e2bcd8739ae039);
-function $6101e6636acc91df$export$2e2bcd8739ae039() {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"5N6bK":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>removeAllSlides);
+function removeAllSlides() {
     var swiper = this;
     var slidesIndexes = [];
     for(var i = 0; i < swiper.slides.length; i += 1)slidesIndexes.push(i);
     swiper.removeSlide(slidesIndexes);
 }
 
-});
-
-
-parcelRegister("4S440", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $38bf5b89f8dd9b87$export$2e2bcd8739ae039);
-
-var $dvVIK = parcelRequire("dvVIK");
-
-var $gxr3K = parcelRequire("gxr3K");
-
-var $d37N1 = parcelRequire("d37N1");
-
-var $lOb4S = parcelRequire("lOb4S");
-
-var $c33A9 = parcelRequire("c33A9");
-
-var $6L0Ep = parcelRequire("6L0Ep");
-
-var $f7b97 = parcelRequire("f7b97");
-var $38bf5b89f8dd9b87$var$dummyEventAttached = false;
-function $38bf5b89f8dd9b87$var$dummyEventListener() {}
-function $38bf5b89f8dd9b87$var$attachEvents() {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"bXnoL":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _ssrWindow = require("ssr-window");
+var _onTouchStart = require("./onTouchStart");
+var _onTouchStartDefault = parcelHelpers.interopDefault(_onTouchStart);
+var _onTouchMove = require("./onTouchMove");
+var _onTouchMoveDefault = parcelHelpers.interopDefault(_onTouchMove);
+var _onTouchEnd = require("./onTouchEnd");
+var _onTouchEndDefault = parcelHelpers.interopDefault(_onTouchEnd);
+var _onResize = require("./onResize");
+var _onResizeDefault = parcelHelpers.interopDefault(_onResize);
+var _onClick = require("./onClick");
+var _onClickDefault = parcelHelpers.interopDefault(_onClick);
+var _onScroll = require("./onScroll");
+var _onScrollDefault = parcelHelpers.interopDefault(_onScroll);
+var dummyEventAttached = false;
+function dummyEventListener() {}
+function attachEvents() {
     var swiper = this;
-    var document = (0, $dvVIK.getDocument)();
+    var document = (0, _ssrWindow.getDocument)();
     var params = swiper.params, touchEvents = swiper.touchEvents, el = swiper.el, wrapperEl = swiper.wrapperEl, device = swiper.device, support = swiper.support;
-    swiper.onTouchStart = (0, $gxr3K.default).bind(swiper);
-    swiper.onTouchMove = (0, $d37N1.default).bind(swiper);
-    swiper.onTouchEnd = (0, $lOb4S.default).bind(swiper);
-    if (params.cssMode) swiper.onScroll = (0, $f7b97.default).bind(swiper);
-    swiper.onClick = (0, $6L0Ep.default).bind(swiper);
+    swiper.onTouchStart = (0, _onTouchStartDefault.default).bind(swiper);
+    swiper.onTouchMove = (0, _onTouchMoveDefault.default).bind(swiper);
+    swiper.onTouchEnd = (0, _onTouchEndDefault.default).bind(swiper);
+    if (params.cssMode) swiper.onScroll = (0, _onScrollDefault.default).bind(swiper);
+    swiper.onClick = (0, _onClickDefault.default).bind(swiper);
     var capture = !!params.nested; // Touch Events
     if (!support.touch && support.pointerEvents) {
         el.addEventListener(touchEvents.start, swiper.onTouchStart, false);
@@ -4207,9 +4957,9 @@ function $38bf5b89f8dd9b87$var$attachEvents() {
             } : capture);
             el.addEventListener(touchEvents.end, swiper.onTouchEnd, passiveListener);
             if (touchEvents.cancel) el.addEventListener(touchEvents.cancel, swiper.onTouchEnd, passiveListener);
-            if (!$38bf5b89f8dd9b87$var$dummyEventAttached) {
-                document.addEventListener('touchstart', $38bf5b89f8dd9b87$var$dummyEventListener);
-                $38bf5b89f8dd9b87$var$dummyEventAttached = true;
+            if (!dummyEventAttached) {
+                document.addEventListener('touchstart', dummyEventListener);
+                dummyEventAttached = true;
             }
         }
         if (params.simulateTouch && !device.ios && !device.android || params.simulateTouch && !support.touch && device.ios) {
@@ -4221,12 +4971,12 @@ function $38bf5b89f8dd9b87$var$attachEvents() {
     if (params.preventClicks || params.preventClicksPropagation) el.addEventListener('click', swiper.onClick, true);
     if (params.cssMode) wrapperEl.addEventListener('scroll', swiper.onScroll);
      // Resize handler
-    if (params.updateOnWindowResize) swiper.on(device.ios || device.android ? 'resize orientationchange observerUpdate' : 'resize observerUpdate', (0, $c33A9.default), true);
-    else swiper.on('observerUpdate', (0, $c33A9.default), true);
+    if (params.updateOnWindowResize) swiper.on(device.ios || device.android ? 'resize orientationchange observerUpdate' : 'resize observerUpdate', (0, _onResizeDefault.default), true);
+    else swiper.on('observerUpdate', (0, _onResizeDefault.default), true);
 }
-function $38bf5b89f8dd9b87$var$detachEvents() {
+function detachEvents() {
     var swiper = this;
-    var document = (0, $dvVIK.getDocument)();
+    var document = (0, _ssrWindow.getDocument)();
     var params = swiper.params, touchEvents = swiper.touchEvents, el = swiper.el, wrapperEl = swiper.wrapperEl, device = swiper.device, support = swiper.support;
     var capture = !!params.nested; // Touch Events
     if (!support.touch && support.pointerEvents) {
@@ -4253,44 +5003,42 @@ function $38bf5b89f8dd9b87$var$detachEvents() {
     if (params.preventClicks || params.preventClicksPropagation) el.removeEventListener('click', swiper.onClick, true);
     if (params.cssMode) wrapperEl.removeEventListener('scroll', swiper.onScroll);
      // Resize handler
-    swiper.off(device.ios || device.android ? 'resize orientationchange observerUpdate' : 'resize observerUpdate', (0, $c33A9.default));
+    swiper.off(device.ios || device.android ? 'resize orientationchange observerUpdate' : 'resize observerUpdate', (0, _onResizeDefault.default));
 }
-var $38bf5b89f8dd9b87$export$2e2bcd8739ae039 = {
-    attachEvents: $38bf5b89f8dd9b87$var$attachEvents,
-    detachEvents: $38bf5b89f8dd9b87$var$detachEvents
+exports.default = {
+    attachEvents: attachEvents,
+    detachEvents: detachEvents
 };
 
-});
-parcelRegister("gxr3K", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $c0a4b7df8bcf4286$export$2e2bcd8739ae039);
-
-var $dvVIK = parcelRequire("dvVIK");
-
-var $kyDhW = parcelRequire("kyDhW");
-
-var $g4qc9 = parcelRequire("g4qc9");
-function $c0a4b7df8bcf4286$var$closestElement(selector, base) {
+},{"ssr-window":"3lyfI","./onTouchStart":"cOu9E","./onTouchMove":"dFBiA","./onTouchEnd":"la3ns","./onResize":"dVwPK","./onClick":"3WTav","./onScroll":"ic0Cw","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"cOu9E":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>onTouchStart);
+var _ssrWindow = require("ssr-window");
+var _dom = require("../../../utils/dom");
+var _domDefault = parcelHelpers.interopDefault(_dom);
+var _utils = require("../../../utils/utils"); // Modified from https://stackoverflow.com/questions/54520554/custom-element-getrootnode-closest-function-crossing-multiple-parent-shadowd
+function closestElement(selector, base) {
     if (base === void 0) base = this;
     function __closestFrom(el) {
-        if (!el || el === (0, $dvVIK.getDocument)() || el === (0, $dvVIK.getWindow)()) return null;
+        if (!el || el === (0, _ssrWindow.getDocument)() || el === (0, _ssrWindow.getWindow)()) return null;
         if (el.assignedSlot) el = el.assignedSlot;
         var found = el.closest(selector);
         return found || __closestFrom(el.getRootNode().host);
     }
     return __closestFrom(base);
 }
-function $c0a4b7df8bcf4286$export$2e2bcd8739ae039(event) {
+function onTouchStart(event) {
     var swiper = this;
-    var document = (0, $dvVIK.getDocument)();
-    var window = (0, $dvVIK.getWindow)();
+    var document = (0, _ssrWindow.getDocument)();
+    var window = (0, _ssrWindow.getWindow)();
     var data = swiper.touchEventsData;
     var params = swiper.params, touches = swiper.touches, enabled = swiper.enabled;
     if (!enabled) return;
     if (swiper.animating && params.preventInteractionOnTransition) return;
     var e = event;
     if (e.originalEvent) e = e.originalEvent;
-    var $targetEl = (0, $kyDhW.default)(e.target);
+    var $targetEl = (0, _domDefault.default)(e.target);
     if (params.touchEventsTarget === 'wrapper') {
         if (!$targetEl.closest(swiper.wrapperEl).length) return;
     }
@@ -4299,10 +5047,10 @@ function $c0a4b7df8bcf4286$export$2e2bcd8739ae039(event) {
     if (!data.isTouchEvent && 'button' in e && e.button > 0) return;
     if (data.isTouched && data.isMoved) return; // change target el for shadow root component
     var swipingClassHasValue = !!params.noSwipingClass && params.noSwipingClass !== '';
-    if (swipingClassHasValue && e.target && e.target.shadowRoot && event.path && event.path[0]) $targetEl = (0, $kyDhW.default)(event.path[0]);
+    if (swipingClassHasValue && e.target && e.target.shadowRoot && event.path && event.path[0]) $targetEl = (0, _domDefault.default)(event.path[0]);
     var noSwipingSelector = params.noSwipingSelector ? params.noSwipingSelector : "." + params.noSwipingClass;
     var isTargetShadow = !!(e.target && e.target.shadowRoot); // use closestElement for shadow root element to get the actual closest for nested shadow root element
-    if (params.noSwiping && (isTargetShadow ? $c0a4b7df8bcf4286$var$closestElement(noSwipingSelector, e.target) : $targetEl.closest(noSwipingSelector)[0])) {
+    if (params.noSwiping && (isTargetShadow ? closestElement(noSwipingSelector, e.target) : $targetEl.closest(noSwipingSelector)[0])) {
         swiper.allowClick = true;
         return;
     }
@@ -4319,7 +5067,7 @@ function $c0a4b7df8bcf4286$export$2e2bcd8739ae039(event) {
         if (edgeSwipeDetection === 'prevent') event.preventDefault();
         else return;
     }
-    (0, $g4qc9.extend)(data, {
+    (0, _utils.extend)(data, {
         isTouched: true,
         isMoved: false,
         allowTouchCallbacks: true,
@@ -4328,7 +5076,7 @@ function $c0a4b7df8bcf4286$export$2e2bcd8739ae039(event) {
     });
     touches.startX = startX;
     touches.startY = startY;
-    data.touchStartTime = (0, $g4qc9.now)();
+    data.touchStartTime = (0, _utils.now)();
     swiper.allowClick = true;
     swiper.updateSize();
     swiper.swipeDirection = undefined;
@@ -4336,26 +5084,23 @@ function $c0a4b7df8bcf4286$export$2e2bcd8739ae039(event) {
     if (e.type !== 'touchstart') {
         var preventDefault = true;
         if ($targetEl.is(data.focusableElements)) preventDefault = false;
-        if (document.activeElement && (0, $kyDhW.default)(document.activeElement).is(data.focusableElements) && document.activeElement !== $targetEl[0]) document.activeElement.blur();
+        if (document.activeElement && (0, _domDefault.default)(document.activeElement).is(data.focusableElements) && document.activeElement !== $targetEl[0]) document.activeElement.blur();
         var shouldPreventDefault = preventDefault && swiper.allowTouchMove && params.touchStartPreventDefault;
         if ((params.touchStartForcePreventDefault || shouldPreventDefault) && !$targetEl[0].isContentEditable) e.preventDefault();
     }
     swiper.emit('touchStart', e);
 }
 
-});
-
-parcelRegister("d37N1", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $9801990d6a56c12f$export$2e2bcd8739ae039);
-
-var $dvVIK = parcelRequire("dvVIK");
-
-var $kyDhW = parcelRequire("kyDhW");
-
-var $g4qc9 = parcelRequire("g4qc9");
-function $9801990d6a56c12f$export$2e2bcd8739ae039(event) {
-    var document = (0, $dvVIK.getDocument)();
+},{"ssr-window":"3lyfI","../../../utils/dom":"iauJ2","../../../utils/utils":"3PNrL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dFBiA":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>onTouchMove);
+var _ssrWindow = require("ssr-window");
+var _dom = require("../../../utils/dom");
+var _domDefault = parcelHelpers.interopDefault(_dom);
+var _utils = require("../../../utils/utils");
+function onTouchMove(event) {
+    var document = (0, _ssrWindow.getDocument)();
     var swiper = this;
     var data = swiper.touchEventsData;
     var params = swiper.params, touches = swiper.touches, rtl = swiper.rtlTranslate, enabled = swiper.enabled;
@@ -4379,13 +5124,13 @@ function $9801990d6a56c12f$export$2e2bcd8739ae039(event) {
         // isMoved = true;
         swiper.allowClick = false;
         if (data.isTouched) {
-            (0, $g4qc9.extend)(touches, {
+            (0, _utils.extend)(touches, {
                 startX: pageX,
                 startY: pageY,
                 currentX: pageX,
                 currentY: pageY
             });
-            data.touchStartTime = (0, $g4qc9.now)();
+            data.touchStartTime = (0, _utils.now)();
         }
         return;
     }
@@ -4400,7 +5145,7 @@ function $9801990d6a56c12f$export$2e2bcd8739ae039(event) {
         } else if (pageX < touches.startX && swiper.translate <= swiper.maxTranslate() || pageX > touches.startX && swiper.translate >= swiper.minTranslate()) return;
     }
     if (data.isTouchEvent && document.activeElement) {
-        if (e.target === document.activeElement && (0, $kyDhW.default)(e.target).is(data.focusableElements)) {
+        if (e.target === document.activeElement && (0, _domDefault.default)(e.target).is(data.focusableElements)) {
             data.isMoved = true;
             swiper.allowClick = false;
             return;
@@ -4495,21 +5240,19 @@ function $9801990d6a56c12f$export$2e2bcd8739ae039(event) {
         });
         data.velocities.push({
             position: touches[swiper.isHorizontal() ? 'currentX' : 'currentY'],
-            time: (0, $g4qc9.now)()
+            time: (0, _utils.now)()
         });
     } // Update progress
     swiper.updateProgress(data.currentTranslate); // Update translate
     swiper.setTranslate(data.currentTranslate);
 }
 
-});
-
-parcelRegister("lOb4S", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $fe06dc46fe841021$export$2e2bcd8739ae039);
-
-var $g4qc9 = parcelRequire("g4qc9");
-function $fe06dc46fe841021$export$2e2bcd8739ae039(event) {
+},{"ssr-window":"3lyfI","../../../utils/dom":"iauJ2","../../../utils/utils":"3PNrL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"la3ns":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>onTouchEnd);
+var _utils = require("../../../utils/utils");
+function onTouchEnd(event) {
     var swiper = this;
     var data = swiper.touchEventsData;
     var params = swiper.params, touches = swiper.touches, rtl = swiper.rtlTranslate, $wrapperEl = swiper.$wrapperEl, slidesGrid = swiper.slidesGrid, snapGrid = swiper.snapGrid, enabled = swiper.enabled;
@@ -4526,15 +5269,15 @@ function $fe06dc46fe841021$export$2e2bcd8739ae039(event) {
     } // Return Grab Cursor
     if (params.grabCursor && data.isMoved && data.isTouched && (swiper.allowSlideNext === true || swiper.allowSlidePrev === true)) swiper.setGrabCursor(false);
      // Time diff
-    var touchEndTime = (0, $g4qc9.now)();
+    var touchEndTime = (0, _utils.now)();
     var timeDiff = touchEndTime - data.touchStartTime; // Tap, doubleTap, Click
     if (swiper.allowClick) {
         swiper.updateClickedSlide(e);
         swiper.emit('tap click', e);
         if (timeDiff < 300 && touchEndTime - data.lastClickTime < 300) swiper.emit('doubleTap doubleClick', e);
     }
-    data.lastClickTime = (0, $g4qc9.now)();
-    (0, $g4qc9.nextTick)(function() {
+    data.lastClickTime = (0, _utils.now)();
+    (0, _utils.nextTick)(function() {
         if (!swiper.destroyed) swiper.allowClick = true;
     });
     if (!data.isTouched || !data.isMoved || !swiper.swipeDirection || touches.diff === 0 || data.currentTranslate === data.startTranslate) {
@@ -4571,7 +5314,7 @@ function $fe06dc46fe841021$export$2e2bcd8739ae039(event) {
                 if (Math.abs(swiper.velocity) < params.freeModeMinimumVelocity) swiper.velocity = 0;
                  // this implies that the user stopped moving a finger then released.
                 // There would be no events with distance zero, so the last event is stale.
-                if (time > 150 || (0, $g4qc9.now)() - lastMoveEvent.time > 300) swiper.velocity = 0;
+                if (time > 150 || (0, _utils.now)() - lastMoveEvent.time > 300) swiper.velocity = 0;
             } else swiper.velocity = 0;
             swiper.velocity *= params.freeModeMomentumVelocityRatio;
             data.velocities.length = 0;
@@ -4726,12 +5469,11 @@ function $fe06dc46fe841021$export$2e2bcd8739ae039(event) {
     }
 }
 
-});
-
-parcelRegister("c33A9", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $8c588b2e01f597a0$export$2e2bcd8739ae039);
-function $8c588b2e01f597a0$export$2e2bcd8739ae039() {
+},{"../../../utils/utils":"3PNrL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dVwPK":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>onResize);
+function onResize() {
     var swiper = this;
     var params = swiper.params, el = swiper.el;
     if (el && el.offsetWidth === 0) return; // Breakpoints
@@ -4752,12 +5494,11 @@ function $8c588b2e01f597a0$export$2e2bcd8739ae039() {
     if (swiper.params.watchOverflow && snapGrid !== swiper.snapGrid) swiper.checkOverflow();
 }
 
-});
-
-parcelRegister("6L0Ep", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $4eb7a31558b5909c$export$2e2bcd8739ae039);
-function $4eb7a31558b5909c$export$2e2bcd8739ae039(e) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3WTav":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>onClick);
+function onClick(e) {
     var swiper = this;
     if (!swiper.enabled) return;
     if (!swiper.allowClick) {
@@ -4769,12 +5510,11 @@ function $4eb7a31558b5909c$export$2e2bcd8739ae039(e) {
     }
 }
 
-});
-
-parcelRegister("f7b97", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $b01027dd11e091fb$export$2e2bcd8739ae039);
-function $b01027dd11e091fb$export$2e2bcd8739ae039() {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ic0Cw":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>onScroll);
+function onScroll() {
     var swiper = this;
     var wrapperEl = swiper.wrapperEl, rtlTranslate = swiper.rtlTranslate, enabled = swiper.enabled;
     if (!enabled) return;
@@ -4795,28 +5535,24 @@ function $b01027dd11e091fb$export$2e2bcd8739ae039() {
     swiper.emit('setTranslate', swiper.translate, false);
 }
 
-});
-
-
-parcelRegister("l3CFJ", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $f547e04191049659$export$2e2bcd8739ae039);
-
-var $jXRQb = parcelRequire("jXRQb");
-
-var $aQJXm = parcelRequire("aQJXm");
-var $f547e04191049659$export$2e2bcd8739ae039 = {
-    setBreakpoint: (0, $jXRQb.default),
-    getBreakpoint: (0, $aQJXm.default)
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"7ONH6":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _setBreakpoint = require("./setBreakpoint");
+var _setBreakpointDefault = parcelHelpers.interopDefault(_setBreakpoint);
+var _getBreakpoint = require("./getBreakpoint");
+var _getBreakpointDefault = parcelHelpers.interopDefault(_getBreakpoint);
+exports.default = {
+    setBreakpoint: (0, _setBreakpointDefault.default),
+    getBreakpoint: (0, _getBreakpointDefault.default)
 };
 
-});
-parcelRegister("jXRQb", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $e88d4aa6a602cb17$export$2e2bcd8739ae039);
-
-var $g4qc9 = parcelRequire("g4qc9");
-function $e88d4aa6a602cb17$export$2e2bcd8739ae039() {
+},{"./setBreakpoint":"5uWvt","./getBreakpoint":"lvM2g","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"5uWvt":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>setBreakpoint);
+var _utils = require("../../../utils/utils");
+function setBreakpoint() {
     var swiper = this;
     var activeIndex = swiper.activeIndex, initialized = swiper.initialized, _swiper$loopedSlides = swiper.loopedSlides, loopedSlides = _swiper$loopedSlides === void 0 ? 0 : _swiper$loopedSlides, params = swiper.params, $el = swiper.$el;
     var breakpoints = params.breakpoints;
@@ -4852,9 +5588,9 @@ function $e88d4aa6a602cb17$export$2e2bcd8739ae039() {
     var directionChanged = breakpointParams.direction && breakpointParams.direction !== params.direction;
     var needsReLoop = params.loop && (breakpointParams.slidesPerView !== params.slidesPerView || directionChanged);
     if (directionChanged && initialized) swiper.changeDirection();
-    (0, $g4qc9.extend)(swiper.params, breakpointParams);
+    (0, _utils.extend)(swiper.params, breakpointParams);
     var isEnabled = swiper.params.enabled;
-    (0, $g4qc9.extend)(swiper, {
+    (0, _utils.extend)(swiper, {
         allowTouchMove: swiper.params.allowTouchMove,
         allowSlideNext: swiper.params.allowSlideNext,
         allowSlidePrev: swiper.params.allowSlidePrev
@@ -4872,18 +5608,16 @@ function $e88d4aa6a602cb17$export$2e2bcd8739ae039() {
     swiper.emit('breakpoint', breakpointParams);
 }
 
-});
-
-parcelRegister("aQJXm", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $7e6268adf49a9f45$export$2e2bcd8739ae039);
-
-var $dvVIK = parcelRequire("dvVIK");
-function $7e6268adf49a9f45$export$2e2bcd8739ae039(breakpoints, base, containerEl) {
+},{"../../../utils/utils":"3PNrL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"lvM2g":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>getBreakpoint);
+var _ssrWindow = require("ssr-window");
+function getBreakpoint(breakpoints, base, containerEl) {
     if (base === void 0) base = 'window';
     if (!breakpoints || base === 'container' && !containerEl) return undefined;
     var breakpoint = false;
-    var window = (0, $dvVIK.getWindow)();
+    var window = (0, _ssrWindow.getWindow)();
     var currentHeight = base === 'window' ? window.innerHeight : containerEl.clientHeight;
     var points = Object.keys(breakpoints).map(function(point) {
         if (typeof point === 'string' && point.indexOf('@') === 0) {
@@ -4911,26 +5645,23 @@ function $7e6268adf49a9f45$export$2e2bcd8739ae039(breakpoints, base, containerEl
     return breakpoint || 'max';
 }
 
-});
-
-
-parcelRegister("3nFqM", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $2763a863491e923b$export$2e2bcd8739ae039);
-
-var $llTua = parcelRequire("llTua");
-
-var $aXi18 = parcelRequire("aXi18");
-var $2763a863491e923b$export$2e2bcd8739ae039 = {
-    addClasses: (0, $llTua.default),
-    removeClasses: (0, $aXi18.default)
+},{"ssr-window":"3lyfI","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dHj2w":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _addClasses = require("./addClasses");
+var _addClassesDefault = parcelHelpers.interopDefault(_addClasses);
+var _removeClasses = require("./removeClasses");
+var _removeClassesDefault = parcelHelpers.interopDefault(_removeClasses);
+exports.default = {
+    addClasses: (0, _addClassesDefault.default),
+    removeClasses: (0, _removeClassesDefault.default)
 };
 
-});
-parcelRegister("llTua", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $f8b699689a8bf0b6$export$2e2bcd8739ae039);
-function $f8b699689a8bf0b6$var$prepareClasses(entries, prefix) {
+},{"./addClasses":"6eO6f","./removeClasses":"sYvFR","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"6eO6f":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>addClasses);
+function prepareClasses(entries, prefix) {
     var resultClasses = [];
     entries.forEach(function(item) {
         if (typeof item === 'object') Object.keys(item).forEach(function(classNames) {
@@ -4940,10 +5671,10 @@ function $f8b699689a8bf0b6$var$prepareClasses(entries, prefix) {
     });
     return resultClasses;
 }
-function $f8b699689a8bf0b6$export$2e2bcd8739ae039() {
+function addClasses() {
     var swiper = this;
     var classNames = swiper.classNames, params = swiper.params, rtl = swiper.rtl, $el = swiper.$el, device = swiper.device, support = swiper.support; // prettier-ignore
-    var suffixes = $f8b699689a8bf0b6$var$prepareClasses([
+    var suffixes = prepareClasses([
         'initialized',
         params.direction,
         {
@@ -4979,48 +5710,43 @@ function $f8b699689a8bf0b6$export$2e2bcd8739ae039() {
     swiper.emitContainerClasses();
 }
 
-});
-
-parcelRegister("aXi18", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $7f9d63eec3f9d1eb$export$2e2bcd8739ae039);
-function $7f9d63eec3f9d1eb$export$2e2bcd8739ae039() {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"sYvFR":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>removeClasses);
+function removeClasses() {
     var swiper = this;
     var $el = swiper.$el, classNames = swiper.classNames;
     $el.removeClass(classNames.join(' '));
     swiper.emitContainerClasses();
 }
 
-});
-
-
-parcelRegister("4LNBQ", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $37920894165d92b7$export$2e2bcd8739ae039);
-
-var $dBgh9 = parcelRequire("dBgh9");
-
-var $6B9tS = parcelRequire("6B9tS");
-var $37920894165d92b7$export$2e2bcd8739ae039 = {
-    loadImage: (0, $dBgh9.default),
-    preloadImages: (0, $6B9tS.default)
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3ttxd":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _loadImage = require("./loadImage");
+var _loadImageDefault = parcelHelpers.interopDefault(_loadImage);
+var _preloadImages = require("./preloadImages");
+var _preloadImagesDefault = parcelHelpers.interopDefault(_preloadImages);
+exports.default = {
+    loadImage: (0, _loadImageDefault.default),
+    preloadImages: (0, _preloadImagesDefault.default)
 };
 
-});
-parcelRegister("dBgh9", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $9e6b5b1084200e25$export$2e2bcd8739ae039);
-
-var $dvVIK = parcelRequire("dvVIK");
-
-var $kyDhW = parcelRequire("kyDhW");
-function $9e6b5b1084200e25$export$2e2bcd8739ae039(imageEl, src, srcset, sizes, checkForComplete, callback) {
-    var window = (0, $dvVIK.getWindow)();
+},{"./loadImage":"dLKHh","./preloadImages":"k0XeN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dLKHh":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>loadImage);
+var _ssrWindow = require("ssr-window");
+var _dom = require("../../../utils/dom");
+var _domDefault = parcelHelpers.interopDefault(_dom);
+function loadImage(imageEl, src, srcset, sizes, checkForComplete, callback) {
+    var window = (0, _ssrWindow.getWindow)();
     var image;
     function onReady() {
         if (callback) callback();
     }
-    var isPicture = (0, $kyDhW.default)(imageEl).parent('picture')[0];
+    var isPicture = (0, _domDefault.default)(imageEl).parent('picture')[0];
     if (!isPicture && (!imageEl.complete || !checkForComplete)) {
         if (src) {
             image = new window.Image();
@@ -5034,12 +5760,11 @@ function $9e6b5b1084200e25$export$2e2bcd8739ae039(imageEl, src, srcset, sizes, c
     onReady();
 }
 
-});
-
-parcelRegister("6B9tS", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $4cdd8d825a753918$export$2e2bcd8739ae039);
-function $4cdd8d825a753918$export$2e2bcd8739ae039() {
+},{"ssr-window":"3lyfI","../../../utils/dom":"iauJ2","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"k0XeN":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>preloadImages);
+function preloadImages() {
     var swiper = this;
     swiper.imagesToLoad = swiper.$el.find('img');
     function onReady() {
@@ -5056,13 +5781,10 @@ function $4cdd8d825a753918$export$2e2bcd8739ae039() {
     }
 }
 
-});
-
-
-parcelRegister("3fuBM", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $25da8404c4c7d71f$export$2e2bcd8739ae039);
-function $25da8404c4c7d71f$var$checkOverflow() {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"en17n":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+function checkOverflow() {
     var swiper = this;
     var params = swiper.params;
     var wasLocked = swiper.isLocked;
@@ -5077,16 +5799,14 @@ function $25da8404c4c7d71f$var$checkOverflow() {
         if (swiper.navigation) swiper.navigation.update();
     }
 }
-var $25da8404c4c7d71f$export$2e2bcd8739ae039 = {
-    checkOverflow: $25da8404c4c7d71f$var$checkOverflow
+exports.default = {
+    checkOverflow: checkOverflow
 };
 
-});
-
-parcelRegister("dvDfq", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $9d5c9d673bb54573$export$2e2bcd8739ae039);
-var $9d5c9d673bb54573$export$2e2bcd8739ae039 = {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"j2iqF":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+exports.default = {
     init: true,
     direction: 'horizontal',
     touchEventsTarget: 'container',
@@ -5218,27 +5938,23 @@ var $9d5c9d673bb54573$export$2e2bcd8739ae039 = {
     _emitClasses: false
 };
 
-});
-
-
-parcelRegister("cxv2b", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $9210a3d659a57241$export$2e2bcd8739ae039);
-
-var $kyDhW = parcelRequire("kyDhW");
-
-var $g4qc9 = parcelRequire("g4qc9");
-function $9210a3d659a57241$var$_extends() {
-    $9210a3d659a57241$var$_extends = Object.assign || function(target) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3kjgr":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _dom = require("../../utils/dom");
+var _domDefault = parcelHelpers.interopDefault(_dom);
+var _utils = require("../../utils/utils");
+function _extends() {
+    _extends = Object.assign || function(target) {
         for(var i = 1; i < arguments.length; i++){
             var source = arguments[i];
             for(var key in source)if (Object.prototype.hasOwnProperty.call(source, key)) target[key] = source[key];
         }
         return target;
     };
-    return $9210a3d659a57241$var$_extends.apply(this, arguments);
+    return _extends.apply(this, arguments);
 }
-var $9210a3d659a57241$var$Virtual = {
+var Virtual = {
     update: function update(force) {
         var swiper = this;
         var _swiper$params = swiper.params, slidesPerView = _swiper$params.slidesPerView, slidesPerGroup = _swiper$params.slidesPerGroup, centeredSlides = _swiper$params.centeredSlides;
@@ -5261,7 +5977,7 @@ var $9210a3d659a57241$var$Virtual = {
         var from = Math.max((activeIndex || 0) - slidesBefore, 0);
         var to = Math.min((activeIndex || 0) + slidesAfter, slides.length - 1);
         var offset = (swiper.slidesGrid[from] || 0) - (swiper.slidesGrid[0] || 0);
-        (0, $g4qc9.extend)(swiper.virtual, {
+        (0, _utils.extend)(swiper.virtual, {
             from: from,
             to: to,
             offset: offset,
@@ -5320,7 +6036,7 @@ var $9210a3d659a57241$var$Virtual = {
         var swiper = this;
         var params = swiper.params.virtual;
         if (params.cache && swiper.virtual.cache[index]) return swiper.virtual.cache[index];
-        var $slideEl = params.renderSlide ? (0, $kyDhW.default)(params.renderSlide.call(swiper, slide, index)) : (0, $kyDhW.default)("<div class=\"" + swiper.params.slideClass + "\" data-swiper-slide-index=\"" + index + "\">" + slide + "</div>");
+        var $slideEl = params.renderSlide ? (0, _domDefault.default)(params.renderSlide.call(swiper, slide, index)) : (0, _domDefault.default)("<div class=\"" + swiper.params.slideClass + "\" data-swiper-slide-index=\"" + index + "\">" + slide + "</div>");
         if (!$slideEl.attr('data-swiper-slide-index')) $slideEl.attr('data-swiper-slide-index', index);
         if (params.cache) swiper.virtual.cache[index] = $slideEl;
         return $slideEl;
@@ -5383,7 +6099,7 @@ var $9210a3d659a57241$var$Virtual = {
         swiper.slideTo(0, 0);
     }
 };
-var $9210a3d659a57241$export$2e2bcd8739ae039 = {
+exports.default = {
     name: 'virtual',
     params: {
         virtual: {
@@ -5399,8 +6115,8 @@ var $9210a3d659a57241$export$2e2bcd8739ae039 = {
     },
     create: function create() {
         var swiper = this;
-        (0, $g4qc9.bindModuleMethods)(swiper, {
-            virtual: $9210a3d659a57241$var$_extends({}, $9210a3d659a57241$var$Virtual, {
+        (0, _utils.bindModuleMethods)(swiper, {
+            virtual: _extends({}, Virtual, {
                 slides: swiper.params.virtual.slides,
                 cache: {}
             })
@@ -5413,8 +6129,8 @@ var $9210a3d659a57241$export$2e2bcd8739ae039 = {
             var overwriteParams = {
                 watchSlidesProgress: true
             };
-            (0, $g4qc9.extend)(swiper.params, overwriteParams);
-            (0, $g4qc9.extend)(swiper.originalParams, overwriteParams);
+            (0, _utils.extend)(swiper.params, overwriteParams);
+            (0, _utils.extend)(swiper.originalParams, overwriteParams);
             if (!swiper.params.initialSlide) swiper.virtual.update();
         },
         setTranslate: function setTranslate(swiper) {
@@ -5424,33 +6140,29 @@ var $9210a3d659a57241$export$2e2bcd8739ae039 = {
     }
 };
 
-});
-
-parcelRegister("7aWs4", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $5396cee1d95c3e76$export$2e2bcd8739ae039);
-
-var $dvVIK = parcelRequire("dvVIK");
-
-var $kyDhW = parcelRequire("kyDhW");
-
-var $g4qc9 = parcelRequire("g4qc9");
-function $5396cee1d95c3e76$var$_extends() {
-    $5396cee1d95c3e76$var$_extends = Object.assign || function(target) {
+},{"../../utils/dom":"iauJ2","../../utils/utils":"3PNrL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"9Y3eU":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+/* eslint-disable consistent-return */ var _ssrWindow = require("ssr-window");
+var _dom = require("../../utils/dom");
+var _domDefault = parcelHelpers.interopDefault(_dom);
+var _utils = require("../../utils/utils");
+function _extends() {
+    _extends = Object.assign || function(target) {
         for(var i = 1; i < arguments.length; i++){
             var source = arguments[i];
             for(var key in source)if (Object.prototype.hasOwnProperty.call(source, key)) target[key] = source[key];
         }
         return target;
     };
-    return $5396cee1d95c3e76$var$_extends.apply(this, arguments);
+    return _extends.apply(this, arguments);
 }
-var $5396cee1d95c3e76$var$Keyboard = {
+var Keyboard = {
     handle: function handle(event) {
         var swiper = this;
         if (!swiper.enabled) return;
-        var window = (0, $dvVIK.getWindow)();
-        var document = (0, $dvVIK.getDocument)();
+        var window = (0, _ssrWindow.getWindow)();
+        var document = (0, _ssrWindow.getDocument)();
         var rtl = swiper.rtlTranslate;
         var e = event;
         if (e.originalEvent) e = e.originalEvent; // jquery fix
@@ -5523,20 +6235,20 @@ var $5396cee1d95c3e76$var$Keyboard = {
     },
     enable: function enable() {
         var swiper = this;
-        var document = (0, $dvVIK.getDocument)();
+        var document = (0, _ssrWindow.getDocument)();
         if (swiper.keyboard.enabled) return;
-        (0, $kyDhW.default)(document).on('keydown', swiper.keyboard.handle);
+        (0, _domDefault.default)(document).on('keydown', swiper.keyboard.handle);
         swiper.keyboard.enabled = true;
     },
     disable: function disable() {
         var swiper = this;
-        var document = (0, $dvVIK.getDocument)();
+        var document = (0, _ssrWindow.getDocument)();
         if (!swiper.keyboard.enabled) return;
-        (0, $kyDhW.default)(document).off('keydown', swiper.keyboard.handle);
+        (0, _domDefault.default)(document).off('keydown', swiper.keyboard.handle);
         swiper.keyboard.enabled = false;
     }
 };
-var $5396cee1d95c3e76$export$2e2bcd8739ae039 = {
+exports.default = {
     name: 'keyboard',
     params: {
         keyboard: {
@@ -5547,10 +6259,10 @@ var $5396cee1d95c3e76$export$2e2bcd8739ae039 = {
     },
     create: function create() {
         var swiper = this;
-        (0, $g4qc9.bindModuleMethods)(swiper, {
-            keyboard: $5396cee1d95c3e76$var$_extends({
+        (0, _utils.bindModuleMethods)(swiper, {
+            keyboard: _extends({
                 enabled: false
-            }, $5396cee1d95c3e76$var$Keyboard)
+            }, Keyboard)
         });
     },
     on: {
@@ -5563,19 +6275,15 @@ var $5396cee1d95c3e76$export$2e2bcd8739ae039 = {
     }
 };
 
-});
-
-parcelRegister("7UJKp", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $5c313fe2acc58d49$export$2e2bcd8739ae039);
-/* eslint-disable consistent-return */ 
-var $dvVIK = parcelRequire("dvVIK");
-
-var $kyDhW = parcelRequire("kyDhW");
-
-var $g4qc9 = parcelRequire("g4qc9");
-function $5c313fe2acc58d49$var$isEventSupported() {
-    var document = (0, $dvVIK.getDocument)();
+},{"ssr-window":"3lyfI","../../utils/dom":"iauJ2","../../utils/utils":"3PNrL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"4nfgT":[function(require,module,exports,__globalThis) {
+/* eslint-disable consistent-return */ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _ssrWindow = require("ssr-window");
+var _dom = require("../../utils/dom");
+var _domDefault = parcelHelpers.interopDefault(_dom);
+var _utils = require("../../utils/utils");
+function isEventSupported() {
+    var document = (0, _ssrWindow.getDocument)();
     var eventName = 'onwheel';
     var isSupported = eventName in document;
     if (!isSupported) {
@@ -5589,14 +6297,14 @@ function $5c313fe2acc58d49$var$isEventSupported() {
     isSupported = document.implementation.hasFeature('Events.wheel', '3.0');
     return isSupported;
 }
-var $5c313fe2acc58d49$var$Mousewheel = {
-    lastScrollTime: (0, $g4qc9.now)(),
+var Mousewheel = {
+    lastScrollTime: (0, _utils.now)(),
     lastEventBeforeSnap: undefined,
     recentWheelEvents: [],
     event: function event() {
-        var window = (0, $dvVIK.getWindow)();
+        var window = (0, _ssrWindow.getWindow)();
         if (window.navigator.userAgent.indexOf('firefox') > -1) return 'DOMMouseScroll';
-        return $5c313fe2acc58d49$var$isEventSupported() ? 'wheel' : 'mousewheel';
+        return isEventSupported() ? 'wheel' : 'mousewheel';
     },
     normalize: function normalize(e) {
         // Reasonable defaults
@@ -5664,12 +6372,12 @@ var $5c313fe2acc58d49$var$Mousewheel = {
         var params = swiper.params.mousewheel;
         if (swiper.params.cssMode) e.preventDefault();
         var target = swiper.$el;
-        if (swiper.params.mousewheel.eventsTarget !== 'container') target = (0, $kyDhW.default)(swiper.params.mousewheel.eventsTarget);
+        if (swiper.params.mousewheel.eventsTarget !== 'container') target = (0, _domDefault.default)(swiper.params.mousewheel.eventsTarget);
         if (!swiper.mouseEntered && !target[0].contains(e.target) && !params.releaseOnEdges) return true;
         if (e.originalEvent) e = e.originalEvent; // jquery fix
         var delta = 0;
         var rtlFactor = swiper.rtlTranslate ? -1 : 1;
-        var data = $5c313fe2acc58d49$var$Mousewheel.normalize(e);
+        var data = Mousewheel.normalize(e);
         if (params.forceToAxis) {
             if (swiper.isHorizontal()) {
                 if (Math.abs(data.pixelX) > Math.abs(data.pixelY)) delta = -data.pixelX * rtlFactor;
@@ -5693,7 +6401,7 @@ var $5c313fe2acc58d49$var$Mousewheel = {
         if (!swiper.params.freeMode) {
             // Register the new event in a variable which stores the relevant data
             var newEvent = {
-                time: (0, $g4qc9.now)(),
+                time: (0, _utils.now)(),
                 delta: Math.abs(delta),
                 direction: Math.sign(delta),
                 raw: event
@@ -5720,7 +6428,7 @@ var $5c313fe2acc58d49$var$Mousewheel = {
             // or if it's a new scroll (larger delta or inverse sign as last event before
             // an end-of-momentum snap).
             var _newEvent = {
-                time: (0, $g4qc9.now)(),
+                time: (0, _utils.now)(),
                 delta: Math.abs(delta),
                 direction: Math.sign(delta)
             };
@@ -5771,14 +6479,14 @@ var $5c313fe2acc58d49$var$Mousewheel = {
                         var snapToThreshold = delta > 0 ? 0.8 : 0.2;
                         swiper.mousewheel.lastEventBeforeSnap = _newEvent;
                         _recentWheelEvents.splice(0);
-                        swiper.mousewheel.timeout = (0, $g4qc9.nextTick)(function() {
+                        swiper.mousewheel.timeout = (0, _utils.nextTick)(function() {
                             swiper.slideToClosest(swiper.params.speed, true, undefined, snapToThreshold);
                         }, 0); // no delay; move on next tick
                     }
                     if (!swiper.mousewheel.timeout) // if we get here, then we haven't detected the end of a momentum scroll, so
                     // we'll consider a scroll "complete" when there haven't been any wheel events
                     // for 500ms.
-                    swiper.mousewheel.timeout = (0, $g4qc9.nextTick)(function() {
+                    swiper.mousewheel.timeout = (0, _utils.nextTick)(function() {
                         var snapToThreshold = 0.5;
                         swiper.mousewheel.lastEventBeforeSnap = _newEvent;
                         _recentWheelEvents.splice(0);
@@ -5796,15 +6504,15 @@ var $5c313fe2acc58d49$var$Mousewheel = {
     },
     animateSlider: function animateSlider(newEvent) {
         var swiper = this;
-        var window = (0, $dvVIK.getWindow)();
+        var window = (0, _ssrWindow.getWindow)();
         if (this.params.mousewheel.thresholdDelta && newEvent.delta < this.params.mousewheel.thresholdDelta) // Prevent if delta of wheel scroll delta is below configured threshold
         return false;
-        if (this.params.mousewheel.thresholdTime && (0, $g4qc9.now)() - swiper.mousewheel.lastScrollTime < this.params.mousewheel.thresholdTime) // Prevent if time between scrolls is below configured threshold
+        if (this.params.mousewheel.thresholdTime && (0, _utils.now)() - swiper.mousewheel.lastScrollTime < this.params.mousewheel.thresholdTime) // Prevent if time between scrolls is below configured threshold
         return false;
          // If the movement is NOT big enough and
         // if the last time the user scrolled was too close to the current one (avoid continuously triggering the slider):
         //   Don't go any further (avoid insignificant scroll movement).
-        if (newEvent.delta >= 6 && (0, $g4qc9.now)() - swiper.mousewheel.lastScrollTime < 60) // Return false as a default
+        if (newEvent.delta >= 6 && (0, _utils.now)() - swiper.mousewheel.lastScrollTime < 60) // Return false as a default
         return true;
          // If user is scrolling towards the end:
         //   If the slider hasn't hit the latest slide or
@@ -5842,7 +6550,7 @@ var $5c313fe2acc58d49$var$Mousewheel = {
     },
     enable: function enable() {
         var swiper = this;
-        var event = $5c313fe2acc58d49$var$Mousewheel.event();
+        var event = Mousewheel.event();
         if (swiper.params.cssMode) {
             swiper.wrapperEl.removeEventListener(event, swiper.mousewheel.handle);
             return true;
@@ -5850,7 +6558,7 @@ var $5c313fe2acc58d49$var$Mousewheel = {
         if (!event) return false;
         if (swiper.mousewheel.enabled) return false;
         var target = swiper.$el;
-        if (swiper.params.mousewheel.eventsTarget !== 'container') target = (0, $kyDhW.default)(swiper.params.mousewheel.eventsTarget);
+        if (swiper.params.mousewheel.eventsTarget !== 'container') target = (0, _domDefault.default)(swiper.params.mousewheel.eventsTarget);
         target.on('mouseenter', swiper.mousewheel.handleMouseEnter);
         target.on('mouseleave', swiper.mousewheel.handleMouseLeave);
         target.on(event, swiper.mousewheel.handle);
@@ -5859,7 +6567,7 @@ var $5c313fe2acc58d49$var$Mousewheel = {
     },
     disable: function disable() {
         var swiper = this;
-        var event = $5c313fe2acc58d49$var$Mousewheel.event();
+        var event = Mousewheel.event();
         if (swiper.params.cssMode) {
             swiper.wrapperEl.addEventListener(event, swiper.mousewheel.handle);
             return true;
@@ -5867,13 +6575,13 @@ var $5c313fe2acc58d49$var$Mousewheel = {
         if (!event) return false;
         if (!swiper.mousewheel.enabled) return false;
         var target = swiper.$el;
-        if (swiper.params.mousewheel.eventsTarget !== 'container') target = (0, $kyDhW.default)(swiper.params.mousewheel.eventsTarget);
+        if (swiper.params.mousewheel.eventsTarget !== 'container') target = (0, _domDefault.default)(swiper.params.mousewheel.eventsTarget);
         target.off(event, swiper.mousewheel.handle);
         swiper.mousewheel.enabled = false;
         return true;
     }
 };
-var $5c313fe2acc58d49$export$2e2bcd8739ae039 = {
+exports.default = {
     name: 'mousewheel',
     params: {
         mousewheel: {
@@ -5889,19 +6597,19 @@ var $5c313fe2acc58d49$export$2e2bcd8739ae039 = {
     },
     create: function create() {
         var swiper = this;
-        (0, $g4qc9.bindModuleMethods)(swiper, {
+        (0, _utils.bindModuleMethods)(swiper, {
             mousewheel: {
                 enabled: false,
-                lastScrollTime: (0, $g4qc9.now)(),
+                lastScrollTime: (0, _utils.now)(),
                 lastEventBeforeSnap: undefined,
                 recentWheelEvents: [],
-                enable: $5c313fe2acc58d49$var$Mousewheel.enable,
-                disable: $5c313fe2acc58d49$var$Mousewheel.disable,
-                handle: $5c313fe2acc58d49$var$Mousewheel.handle,
-                handleMouseEnter: $5c313fe2acc58d49$var$Mousewheel.handleMouseEnter,
-                handleMouseLeave: $5c313fe2acc58d49$var$Mousewheel.handleMouseLeave,
-                animateSlider: $5c313fe2acc58d49$var$Mousewheel.animateSlider,
-                releaseScroll: $5c313fe2acc58d49$var$Mousewheel.releaseScroll
+                enable: Mousewheel.enable,
+                disable: Mousewheel.disable,
+                handle: Mousewheel.handle,
+                handleMouseEnter: Mousewheel.handleMouseEnter,
+                handleMouseLeave: Mousewheel.handleMouseLeave,
+                animateSlider: Mousewheel.animateSlider,
+                releaseScroll: Mousewheel.releaseScroll
             }
         });
     },
@@ -5917,26 +6625,23 @@ var $5c313fe2acc58d49$export$2e2bcd8739ae039 = {
     }
 };
 
-});
-
-parcelRegister("l8x4G", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $f6340037c83fe266$export$2e2bcd8739ae039);
-
-var $kyDhW = parcelRequire("kyDhW");
-
-var $g4qc9 = parcelRequire("g4qc9");
-function $f6340037c83fe266$var$_extends() {
-    $f6340037c83fe266$var$_extends = Object.assign || function(target) {
+},{"ssr-window":"3lyfI","../../utils/dom":"iauJ2","../../utils/utils":"3PNrL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"9LHy0":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _dom = require("../../utils/dom");
+var _domDefault = parcelHelpers.interopDefault(_dom);
+var _utils = require("../../utils/utils");
+function _extends() {
+    _extends = Object.assign || function(target) {
         for(var i = 1; i < arguments.length; i++){
             var source = arguments[i];
             for(var key in source)if (Object.prototype.hasOwnProperty.call(source, key)) target[key] = source[key];
         }
         return target;
     };
-    return $f6340037c83fe266$var$_extends.apply(this, arguments);
+    return _extends.apply(this, arguments);
 }
-var $f6340037c83fe266$var$Navigation = {
+var Navigation = {
     toggleEl: function toggleEl($el, disabled) {
         $el[disabled ? 'addClass' : 'removeClass'](this.params.navigation.disabledClass);
         if ($el[0] && $el[0].tagName === 'BUTTON') $el[0].disabled = disabled;
@@ -5974,7 +6679,7 @@ var $f6340037c83fe266$var$Navigation = {
     init: function init() {
         var swiper = this;
         var params = swiper.params.navigation;
-        swiper.params.navigation = (0, $g4qc9.createElementIfNotDefined)(swiper.$el, swiper.params.navigation, swiper.params.createElements, {
+        swiper.params.navigation = (0, _utils.createElementIfNotDefined)(swiper.$el, swiper.params.navigation, swiper.params.createElements, {
             nextEl: 'swiper-button-next',
             prevEl: 'swiper-button-prev'
         });
@@ -5982,16 +6687,16 @@ var $f6340037c83fe266$var$Navigation = {
         var $nextEl;
         var $prevEl;
         if (params.nextEl) {
-            $nextEl = (0, $kyDhW.default)(params.nextEl);
+            $nextEl = (0, _domDefault.default)(params.nextEl);
             if (swiper.params.uniqueNavElements && typeof params.nextEl === 'string' && $nextEl.length > 1 && swiper.$el.find(params.nextEl).length === 1) $nextEl = swiper.$el.find(params.nextEl);
         }
         if (params.prevEl) {
-            $prevEl = (0, $kyDhW.default)(params.prevEl);
+            $prevEl = (0, _domDefault.default)(params.prevEl);
             if (swiper.params.uniqueNavElements && typeof params.prevEl === 'string' && $prevEl.length > 1 && swiper.$el.find(params.prevEl).length === 1) $prevEl = swiper.$el.find(params.prevEl);
         }
         if ($nextEl && $nextEl.length > 0) $nextEl.on('click', swiper.navigation.onNextClick);
         if ($prevEl && $prevEl.length > 0) $prevEl.on('click', swiper.navigation.onPrevClick);
-        (0, $g4qc9.extend)(swiper.navigation, {
+        (0, _utils.extend)(swiper.navigation, {
             $nextEl: $nextEl,
             nextEl: $nextEl && $nextEl[0],
             $prevEl: $prevEl,
@@ -6015,7 +6720,7 @@ var $f6340037c83fe266$var$Navigation = {
         }
     }
 };
-var $f6340037c83fe266$export$2e2bcd8739ae039 = {
+exports.default = {
     name: 'navigation',
     params: {
         navigation: {
@@ -6029,8 +6734,8 @@ var $f6340037c83fe266$export$2e2bcd8739ae039 = {
     },
     create: function create() {
         var swiper = this;
-        (0, $g4qc9.bindModuleMethods)(swiper, {
-            navigation: $f6340037c83fe266$var$_extends({}, $f6340037c83fe266$var$Navigation)
+        (0, _utils.bindModuleMethods)(swiper, {
+            navigation: _extends({}, Navigation)
         });
     },
     on: {
@@ -6055,7 +6760,7 @@ var $f6340037c83fe266$export$2e2bcd8739ae039 = {
         click: function click(swiper, e) {
             var _swiper$navigation4 = swiper.navigation, $nextEl = _swiper$navigation4.$nextEl, $prevEl = _swiper$navigation4.$prevEl;
             var targetEl = e.target;
-            if (swiper.params.navigation.hideOnClick && !(0, $kyDhW.default)(targetEl).is($prevEl) && !(0, $kyDhW.default)(targetEl).is($nextEl)) {
+            if (swiper.params.navigation.hideOnClick && !(0, _domDefault.default)(targetEl).is($prevEl) && !(0, _domDefault.default)(targetEl).is($nextEl)) {
                 if (swiper.pagination && swiper.params.pagination && swiper.params.pagination.clickable && (swiper.pagination.el === targetEl || swiper.pagination.el.contains(targetEl))) return;
                 var isHidden;
                 if ($nextEl) isHidden = $nextEl.hasClass(swiper.params.navigation.hiddenClass);
@@ -6069,26 +6774,23 @@ var $f6340037c83fe266$export$2e2bcd8739ae039 = {
     }
 };
 
-});
-
-parcelRegister("iaiPE", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $d397c4d6e18f4239$export$2e2bcd8739ae039);
-
-var $kyDhW = parcelRequire("kyDhW");
-
-var $g4qc9 = parcelRequire("g4qc9");
-function $d397c4d6e18f4239$var$_extends() {
-    $d397c4d6e18f4239$var$_extends = Object.assign || function(target) {
+},{"../../utils/dom":"iauJ2","../../utils/utils":"3PNrL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3kQpw":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _dom = require("../../utils/dom");
+var _domDefault = parcelHelpers.interopDefault(_dom);
+var _utils = require("../../utils/utils");
+function _extends() {
+    _extends = Object.assign || function(target) {
         for(var i = 1; i < arguments.length; i++){
             var source = arguments[i];
             for(var key in source)if (Object.prototype.hasOwnProperty.call(source, key)) target[key] = source[key];
         }
         return target;
     };
-    return $d397c4d6e18f4239$var$_extends.apply(this, arguments);
+    return _extends.apply(this, arguments);
 }
-var $d397c4d6e18f4239$var$Pagination = {
+var Pagination = {
     update: function update() {
         // Render || Update Pagination bullets/items
         var swiper = this;
@@ -6126,7 +6828,7 @@ var $d397c4d6e18f4239$var$Pagination = {
             }
             bullets.removeClass(params.bulletActiveClass + " " + params.bulletActiveClass + "-next " + params.bulletActiveClass + "-next-next " + params.bulletActiveClass + "-prev " + params.bulletActiveClass + "-prev-prev " + params.bulletActiveClass + "-main");
             if ($el.length > 1) bullets.each(function(bullet) {
-                var $bullet = (0, $kyDhW.default)(bullet);
+                var $bullet = (0, _domDefault.default)(bullet);
                 var bulletIndex = $bullet.index();
                 if (bulletIndex === current) $bullet.addClass(params.bulletActiveClass);
                 if (params.dynamicBullets) {
@@ -6165,8 +6867,8 @@ var $d397c4d6e18f4239$var$Pagination = {
             }
         }
         if (params.type === 'fraction') {
-            $el.find((0, $g4qc9.classesToSelector)(params.currentClass)).text(params.formatFractionCurrent(current + 1));
-            $el.find((0, $g4qc9.classesToSelector)(params.totalClass)).text(params.formatFractionTotal(total));
+            $el.find((0, _utils.classesToSelector)(params.currentClass)).text(params.formatFractionCurrent(current + 1));
+            $el.find((0, _utils.classesToSelector)(params.totalClass)).text(params.formatFractionTotal(total));
         }
         if (params.type === 'progressbar') {
             var progressbarDirection;
@@ -6177,7 +6879,7 @@ var $d397c4d6e18f4239$var$Pagination = {
             var scaleY = 1;
             if (progressbarDirection === 'horizontal') scaleX = scale;
             else scaleY = scale;
-            $el.find((0, $g4qc9.classesToSelector)(params.progressbarFillClass)).transform("translate3d(0,0,0) scaleX(" + scaleX + ") scaleY(" + scaleY + ")").transition(swiper.params.speed);
+            $el.find((0, _utils.classesToSelector)(params.progressbarFillClass)).transform("translate3d(0,0,0) scaleX(" + scaleX + ") scaleY(" + scaleY + ")").transition(swiper.params.speed);
         }
         if (params.type === 'custom' && params.renderCustom) {
             $el.html(params.renderCustom(swiper, current + 1, total));
@@ -6199,7 +6901,7 @@ var $d397c4d6e18f4239$var$Pagination = {
             for(var i = 0; i < numberOfBullets; i += 1)if (params.renderBullet) paginationHTML += params.renderBullet.call(swiper, i, params.bulletClass);
             else paginationHTML += "<" + params.bulletElement + " class=\"" + params.bulletClass + "\"></" + params.bulletElement + ">";
             $el.html(paginationHTML);
-            swiper.pagination.bullets = $el.find((0, $g4qc9.classesToSelector)(params.bulletClass));
+            swiper.pagination.bullets = $el.find((0, _utils.classesToSelector)(params.bulletClass));
         }
         if (params.type === 'fraction') {
             if (params.renderFraction) paginationHTML = params.renderFraction.call(swiper, params.currentClass, params.totalClass);
@@ -6215,12 +6917,12 @@ var $d397c4d6e18f4239$var$Pagination = {
     },
     init: function init() {
         var swiper = this;
-        swiper.params.pagination = (0, $g4qc9.createElementIfNotDefined)(swiper.$el, swiper.params.pagination, swiper.params.createElements, {
+        swiper.params.pagination = (0, _utils.createElementIfNotDefined)(swiper.$el, swiper.params.pagination, swiper.params.createElements, {
             el: 'swiper-pagination'
         });
         var params = swiper.params.pagination;
         if (!params.el) return;
-        var $el = (0, $kyDhW.default)(params.el);
+        var $el = (0, _domDefault.default)(params.el);
         if ($el.length === 0) return;
         if (swiper.params.uniqueNavElements && typeof params.el === 'string' && $el.length > 1) $el = swiper.$el.find(params.el);
         if (params.type === 'bullets' && params.clickable) $el.addClass(params.clickableClass);
@@ -6231,13 +6933,13 @@ var $d397c4d6e18f4239$var$Pagination = {
             if (params.dynamicMainBullets < 1) params.dynamicMainBullets = 1;
         }
         if (params.type === 'progressbar' && params.progressbarOpposite) $el.addClass(params.progressbarOppositeClass);
-        if (params.clickable) $el.on('click', (0, $g4qc9.classesToSelector)(params.bulletClass), function onClick(e) {
+        if (params.clickable) $el.on('click', (0, _utils.classesToSelector)(params.bulletClass), function onClick(e) {
             e.preventDefault();
-            var index = (0, $kyDhW.default)(this).index() * swiper.params.slidesPerGroup;
+            var index = (0, _domDefault.default)(this).index() * swiper.params.slidesPerGroup;
             if (swiper.params.loop) index += swiper.loopedSlides;
             swiper.slideTo(index);
         });
-        (0, $g4qc9.extend)(swiper.pagination, {
+        (0, _utils.extend)(swiper.pagination, {
             $el: $el,
             el: $el[0]
         });
@@ -6251,10 +6953,10 @@ var $d397c4d6e18f4239$var$Pagination = {
         $el.removeClass(params.hiddenClass);
         $el.removeClass(params.modifierClass + params.type);
         if (swiper.pagination.bullets) swiper.pagination.bullets.removeClass(params.bulletActiveClass);
-        if (params.clickable) $el.off('click', (0, $g4qc9.classesToSelector)(params.bulletClass));
+        if (params.clickable) $el.off('click', (0, _utils.classesToSelector)(params.bulletClass));
     }
 };
-var $d397c4d6e18f4239$export$2e2bcd8739ae039 = {
+exports.default = {
     name: 'pagination',
     params: {
         pagination: {
@@ -6293,10 +6995,10 @@ var $d397c4d6e18f4239$export$2e2bcd8739ae039 = {
     },
     create: function create() {
         var swiper = this;
-        (0, $g4qc9.bindModuleMethods)(swiper, {
-            pagination: $d397c4d6e18f4239$var$_extends({
+        (0, _utils.bindModuleMethods)(swiper, {
+            pagination: _extends({
                 dynamicBulletIndex: 0
-            }, $d397c4d6e18f4239$var$Pagination)
+            }, Pagination)
         });
     },
     on: {
@@ -6333,7 +7035,7 @@ var $d397c4d6e18f4239$export$2e2bcd8739ae039 = {
         },
         click: function click(swiper, e) {
             var targetEl = e.target;
-            if (swiper.params.pagination.el && swiper.params.pagination.hideOnClick && swiper.pagination.$el.length > 0 && !(0, $kyDhW.default)(targetEl).hasClass(swiper.params.pagination.bulletClass)) {
+            if (swiper.params.pagination.el && swiper.params.pagination.hideOnClick && swiper.pagination.$el.length > 0 && !(0, _domDefault.default)(targetEl).hasClass(swiper.params.pagination.bulletClass)) {
                 if (swiper.navigation && (swiper.navigation.nextEl && targetEl === swiper.navigation.nextEl || swiper.navigation.prevEl && targetEl === swiper.navigation.prevEl)) return;
                 var isHidden = swiper.pagination.$el.hasClass(swiper.params.pagination.hiddenClass);
                 if (isHidden === true) swiper.emit('paginationShow');
@@ -6344,28 +7046,24 @@ var $d397c4d6e18f4239$export$2e2bcd8739ae039 = {
     }
 };
 
-});
-
-parcelRegister("74LIF", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $526dec3299d8ec7a$export$2e2bcd8739ae039);
-
-var $dvVIK = parcelRequire("dvVIK");
-
-var $kyDhW = parcelRequire("kyDhW");
-
-var $g4qc9 = parcelRequire("g4qc9");
-function $526dec3299d8ec7a$var$_extends() {
-    $526dec3299d8ec7a$var$_extends = Object.assign || function(target) {
+},{"../../utils/dom":"iauJ2","../../utils/utils":"3PNrL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3Sxdu":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _ssrWindow = require("ssr-window");
+var _dom = require("../../utils/dom");
+var _domDefault = parcelHelpers.interopDefault(_dom);
+var _utils = require("../../utils/utils");
+function _extends() {
+    _extends = Object.assign || function(target) {
         for(var i = 1; i < arguments.length; i++){
             var source = arguments[i];
             for(var key in source)if (Object.prototype.hasOwnProperty.call(source, key)) target[key] = source[key];
         }
         return target;
     };
-    return $526dec3299d8ec7a$var$_extends.apply(this, arguments);
+    return _extends.apply(this, arguments);
 }
-var $526dec3299d8ec7a$var$Scrollbar = {
+var Scrollbar = {
     setTranslate: function setTranslate() {
         var swiper = this;
         if (!swiper.params.scrollbar.el || !swiper.scrollbar.el) return;
@@ -6423,7 +7121,7 @@ var $526dec3299d8ec7a$var$Scrollbar = {
         if (divider >= 1) $el[0].style.display = 'none';
         else $el[0].style.display = '';
         if (swiper.params.scrollbar.hide) $el[0].style.opacity = 0;
-        (0, $g4qc9.extend)(scrollbar, {
+        (0, _utils.extend)(scrollbar, {
             trackSize: trackSize,
             divider: divider,
             moveDivider: moveDivider,
@@ -6494,7 +7192,7 @@ var $526dec3299d8ec7a$var$Scrollbar = {
         }
         if (params.hide) {
             clearTimeout(swiper.scrollbar.dragTimeout);
-            swiper.scrollbar.dragTimeout = (0, $g4qc9.nextTick)(function() {
+            swiper.scrollbar.dragTimeout = (0, _utils.nextTick)(function() {
                 $el.css('opacity', 0);
                 $el.transition(400);
             }, 1000);
@@ -6505,7 +7203,7 @@ var $526dec3299d8ec7a$var$Scrollbar = {
     enableDraggable: function enableDraggable() {
         var swiper = this;
         if (!swiper.params.scrollbar.el) return;
-        var document = (0, $dvVIK.getDocument)();
+        var document = (0, _ssrWindow.getDocument)();
         var scrollbar = swiper.scrollbar, touchEventsTouch = swiper.touchEventsTouch, touchEventsDesktop = swiper.touchEventsDesktop, params = swiper.params, support = swiper.support;
         var $el = scrollbar.$el;
         var target = $el[0];
@@ -6531,7 +7229,7 @@ var $526dec3299d8ec7a$var$Scrollbar = {
     disableDraggable: function disableDraggable() {
         var swiper = this;
         if (!swiper.params.scrollbar.el) return;
-        var document = (0, $dvVIK.getDocument)();
+        var document = (0, _ssrWindow.getDocument)();
         var scrollbar = swiper.scrollbar, touchEventsTouch = swiper.touchEventsTouch, touchEventsDesktop = swiper.touchEventsDesktop, params = swiper.params, support = swiper.support;
         var $el = scrollbar.$el;
         var target = $el[0];
@@ -6557,19 +7255,19 @@ var $526dec3299d8ec7a$var$Scrollbar = {
     init: function init() {
         var swiper = this;
         var scrollbar = swiper.scrollbar, $swiperEl = swiper.$el;
-        swiper.params.scrollbar = (0, $g4qc9.createElementIfNotDefined)($swiperEl, swiper.params.scrollbar, swiper.params.createElements, {
+        swiper.params.scrollbar = (0, _utils.createElementIfNotDefined)($swiperEl, swiper.params.scrollbar, swiper.params.createElements, {
             el: 'swiper-scrollbar'
         });
         var params = swiper.params.scrollbar;
         if (!params.el) return;
-        var $el = (0, $kyDhW.default)(params.el);
+        var $el = (0, _domDefault.default)(params.el);
         if (swiper.params.uniqueNavElements && typeof params.el === 'string' && $el.length > 1 && $swiperEl.find(params.el).length === 1) $el = $swiperEl.find(params.el);
         var $dragEl = $el.find("." + swiper.params.scrollbar.dragClass);
         if ($dragEl.length === 0) {
-            $dragEl = (0, $kyDhW.default)("<div class=\"" + swiper.params.scrollbar.dragClass + "\"></div>");
+            $dragEl = (0, _domDefault.default)("<div class=\"" + swiper.params.scrollbar.dragClass + "\"></div>");
             $el.append($dragEl);
         }
-        (0, $g4qc9.extend)(scrollbar, {
+        (0, _utils.extend)(scrollbar, {
             $el: $el,
             el: $el[0],
             $dragEl: $dragEl,
@@ -6583,7 +7281,7 @@ var $526dec3299d8ec7a$var$Scrollbar = {
         swiper.scrollbar.disableDraggable();
     }
 };
-var $526dec3299d8ec7a$export$2e2bcd8739ae039 = {
+exports.default = {
     name: 'scrollbar',
     params: {
         scrollbar: {
@@ -6598,12 +7296,12 @@ var $526dec3299d8ec7a$export$2e2bcd8739ae039 = {
     },
     create: function create() {
         var swiper = this;
-        (0, $g4qc9.bindModuleMethods)(swiper, {
-            scrollbar: $526dec3299d8ec7a$var$_extends({
+        (0, _utils.bindModuleMethods)(swiper, {
+            scrollbar: _extends({
                 isTouched: false,
                 timeout: null,
                 dragTimeout: null
-            }, $526dec3299d8ec7a$var$Scrollbar)
+            }, Scrollbar)
         });
     },
     on: {
@@ -6637,30 +7335,27 @@ var $526dec3299d8ec7a$export$2e2bcd8739ae039 = {
     }
 };
 
-});
-
-parcelRegister("lwT3x", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $fac74b1dc875ed62$export$2e2bcd8739ae039);
-
-var $kyDhW = parcelRequire("kyDhW");
-
-var $g4qc9 = parcelRequire("g4qc9");
-function $fac74b1dc875ed62$var$_extends() {
-    $fac74b1dc875ed62$var$_extends = Object.assign || function(target) {
+},{"ssr-window":"3lyfI","../../utils/dom":"iauJ2","../../utils/utils":"3PNrL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"1pCfw":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _dom = require("../../utils/dom");
+var _domDefault = parcelHelpers.interopDefault(_dom);
+var _utils = require("../../utils/utils");
+function _extends() {
+    _extends = Object.assign || function(target) {
         for(var i = 1; i < arguments.length; i++){
             var source = arguments[i];
             for(var key in source)if (Object.prototype.hasOwnProperty.call(source, key)) target[key] = source[key];
         }
         return target;
     };
-    return $fac74b1dc875ed62$var$_extends.apply(this, arguments);
+    return _extends.apply(this, arguments);
 }
-var $fac74b1dc875ed62$var$Parallax = {
+var Parallax = {
     setTransform: function setTransform(el, progress) {
         var swiper = this;
         var rtl = swiper.rtl;
-        var $el = (0, $kyDhW.default)(el);
+        var $el = (0, _domDefault.default)(el);
         var rtlFactor = rtl ? -1 : 1;
         var p = $el.attr('data-swiper-parallax') || '0';
         var x = $el.attr('data-swiper-parallax-x');
@@ -6701,7 +7396,7 @@ var $fac74b1dc875ed62$var$Parallax = {
             var slideProgress = slideEl.progress;
             if (swiper.params.slidesPerGroup > 1 && swiper.params.slidesPerView !== 'auto') slideProgress += Math.ceil(slideIndex / 2) - progress * (snapGrid.length - 1);
             slideProgress = Math.min(Math.max(slideProgress, -1), 1);
-            (0, $kyDhW.default)(slideEl).find('[data-swiper-parallax], [data-swiper-parallax-x], [data-swiper-parallax-y], [data-swiper-parallax-opacity], [data-swiper-parallax-scale]').each(function(el) {
+            (0, _domDefault.default)(slideEl).find('[data-swiper-parallax], [data-swiper-parallax-x], [data-swiper-parallax-y], [data-swiper-parallax-opacity], [data-swiper-parallax-scale]').each(function(el) {
                 swiper.parallax.setTransform(el, slideProgress);
             });
         });
@@ -6711,14 +7406,14 @@ var $fac74b1dc875ed62$var$Parallax = {
         var swiper = this;
         var $el = swiper.$el;
         $el.find('[data-swiper-parallax], [data-swiper-parallax-x], [data-swiper-parallax-y], [data-swiper-parallax-opacity], [data-swiper-parallax-scale]').each(function(parallaxEl) {
-            var $parallaxEl = (0, $kyDhW.default)(parallaxEl);
+            var $parallaxEl = (0, _domDefault.default)(parallaxEl);
             var parallaxDuration = parseInt($parallaxEl.attr('data-swiper-parallax-duration'), 10) || duration;
             if (duration === 0) parallaxDuration = 0;
             $parallaxEl.transition(parallaxDuration);
         });
     }
 };
-var $fac74b1dc875ed62$export$2e2bcd8739ae039 = {
+exports.default = {
     name: 'parallax',
     params: {
         parallax: {
@@ -6727,8 +7422,8 @@ var $fac74b1dc875ed62$export$2e2bcd8739ae039 = {
     },
     create: function create() {
         var swiper = this;
-        (0, $g4qc9.bindModuleMethods)(swiper, {
-            parallax: $fac74b1dc875ed62$var$_extends({}, $fac74b1dc875ed62$var$Parallax)
+        (0, _utils.bindModuleMethods)(swiper, {
+            parallax: _extends({}, Parallax)
         });
     },
     on: {
@@ -6752,28 +7447,24 @@ var $fac74b1dc875ed62$export$2e2bcd8739ae039 = {
     }
 };
 
-});
-
-parcelRegister("53z2i", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $3ae868fc2287075a$export$2e2bcd8739ae039);
-
-var $dvVIK = parcelRequire("dvVIK");
-
-var $kyDhW = parcelRequire("kyDhW");
-
-var $g4qc9 = parcelRequire("g4qc9");
-function $3ae868fc2287075a$var$_extends() {
-    $3ae868fc2287075a$var$_extends = Object.assign || function(target) {
+},{"../../utils/dom":"iauJ2","../../utils/utils":"3PNrL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"bpYrN":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _ssrWindow = require("ssr-window");
+var _dom = require("../../utils/dom");
+var _domDefault = parcelHelpers.interopDefault(_dom);
+var _utils = require("../../utils/utils");
+function _extends() {
+    _extends = Object.assign || function(target) {
         for(var i = 1; i < arguments.length; i++){
             var source = arguments[i];
             for(var key in source)if (Object.prototype.hasOwnProperty.call(source, key)) target[key] = source[key];
         }
         return target;
     };
-    return $3ae868fc2287075a$var$_extends.apply(this, arguments);
+    return _extends.apply(this, arguments);
 }
-var $3ae868fc2287075a$var$Zoom = {
+var Zoom = {
     // Calc Scale From Multi-touches
     getDistanceBetweenTouches: function getDistanceBetweenTouches(e) {
         if (e.targetTouches.length < 2) return 1;
@@ -6796,10 +7487,10 @@ var $3ae868fc2287075a$var$Zoom = {
         if (!support.gestures) {
             if (e.type !== 'touchstart' || e.type === 'touchstart' && e.targetTouches.length < 2) return;
             zoom.fakeGestureTouched = true;
-            gesture.scaleStart = $3ae868fc2287075a$var$Zoom.getDistanceBetweenTouches(e);
+            gesture.scaleStart = Zoom.getDistanceBetweenTouches(e);
         }
         if (!gesture.$slideEl || !gesture.$slideEl.length) {
-            gesture.$slideEl = (0, $kyDhW.default)(e.target).closest("." + swiper.params.slideClass);
+            gesture.$slideEl = (0, _domDefault.default)(e.target).closest("." + swiper.params.slideClass);
             if (gesture.$slideEl.length === 0) gesture.$slideEl = swiper.slides.eq(swiper.activeIndex);
             gesture.$imageEl = gesture.$slideEl.find('img, svg, canvas, picture, .swiper-zoom-target');
             gesture.$imageWrapEl = gesture.$imageEl.parent("." + params.containerClass);
@@ -6821,7 +7512,7 @@ var $3ae868fc2287075a$var$Zoom = {
         if (!support.gestures) {
             if (e.type !== 'touchmove' || e.type === 'touchmove' && e.targetTouches.length < 2) return;
             zoom.fakeGestureMoved = true;
-            gesture.scaleMove = $3ae868fc2287075a$var$Zoom.getDistanceBetweenTouches(e);
+            gesture.scaleMove = Zoom.getDistanceBetweenTouches(e);
         }
         if (!gesture.$imageEl || gesture.$imageEl.length === 0) {
             if (e.type === 'gesturechange') zoom.onGestureStart(e);
@@ -6875,8 +7566,8 @@ var $3ae868fc2287075a$var$Zoom = {
         if (!image.isMoved) {
             image.width = gesture.$imageEl[0].offsetWidth;
             image.height = gesture.$imageEl[0].offsetHeight;
-            image.startX = (0, $g4qc9.getTranslate)(gesture.$imageWrapEl[0], 'x') || 0;
-            image.startY = (0, $g4qc9.getTranslate)(gesture.$imageWrapEl[0], 'y') || 0;
+            image.startX = (0, _utils.getTranslate)(gesture.$imageWrapEl[0], 'x') || 0;
+            image.startY = (0, _utils.getTranslate)(gesture.$imageWrapEl[0], 'y') || 0;
             gesture.slideWidth = gesture.$slideEl[0].offsetWidth;
             gesture.slideHeight = gesture.$slideEl[0].offsetHeight;
             gesture.$imageWrapEl.transition(0);
@@ -6980,12 +7671,12 @@ var $3ae868fc2287075a$var$Zoom = {
     },
     in: function _in(e) {
         var swiper = this;
-        var window = (0, $dvVIK.getWindow)();
+        var window = (0, _ssrWindow.getWindow)();
         var zoom = swiper.zoom;
         var params = swiper.params.zoom;
         var gesture = zoom.gesture, image = zoom.image;
         if (!gesture.$slideEl) {
-            if (e && e.target) gesture.$slideEl = (0, $kyDhW.default)(e.target).closest("." + swiper.params.slideClass);
+            if (e && e.target) gesture.$slideEl = (0, _domDefault.default)(e.target).closest("." + swiper.params.slideClass);
             if (!gesture.$slideEl) {
                 if (swiper.params.virtual && swiper.params.virtual.enabled && swiper.virtual) gesture.$slideEl = swiper.$wrapperEl.children("." + swiper.params.slideActiveClass);
                 else gesture.$slideEl = swiper.slides.eq(swiper.activeIndex);
@@ -7143,7 +7834,7 @@ var $3ae868fc2287075a$var$Zoom = {
         swiper.$wrapperEl.off(swiper.touchEvents.move, "." + swiper.params.zoom.containerClass, zoom.onTouchMove, activeListenerWithCapture);
     }
 };
-var $3ae868fc2287075a$export$2e2bcd8739ae039 = {
+exports.default = {
     name: 'zoom',
     params: {
         zoom: {
@@ -7157,8 +7848,8 @@ var $3ae868fc2287075a$export$2e2bcd8739ae039 = {
     },
     create: function create() {
         var swiper = this;
-        (0, $g4qc9.bindModuleMethods)(swiper, {
-            zoom: $3ae868fc2287075a$var$_extends({
+        (0, _utils.bindModuleMethods)(swiper, {
+            zoom: _extends({
                 enabled: false,
                 scale: 1,
                 currentScale: 1,
@@ -7194,7 +7885,7 @@ var $3ae868fc2287075a$export$2e2bcd8739ae039 = {
                     prevPositionY: undefined,
                     prevTime: undefined
                 }
-            }, $3ae868fc2287075a$var$Zoom)
+            }, Zoom)
         });
         var scale = 1;
         Object.defineProperty(swiper.zoom, 'scale', {
@@ -7238,28 +7929,24 @@ var $3ae868fc2287075a$export$2e2bcd8739ae039 = {
     }
 };
 
-});
-
-parcelRegister("gtVlH", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $bffbd71b6fce9057$export$2e2bcd8739ae039);
-
-var $dvVIK = parcelRequire("dvVIK");
-
-var $kyDhW = parcelRequire("kyDhW");
-
-var $g4qc9 = parcelRequire("g4qc9");
-function $bffbd71b6fce9057$var$_extends() {
-    $bffbd71b6fce9057$var$_extends = Object.assign || function(target) {
+},{"ssr-window":"3lyfI","../../utils/dom":"iauJ2","../../utils/utils":"3PNrL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"a339R":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _ssrWindow = require("ssr-window");
+var _dom = require("../../utils/dom");
+var _domDefault = parcelHelpers.interopDefault(_dom);
+var _utils = require("../../utils/utils");
+function _extends() {
+    _extends = Object.assign || function(target) {
         for(var i = 1; i < arguments.length; i++){
             var source = arguments[i];
             for(var key in source)if (Object.prototype.hasOwnProperty.call(source, key)) target[key] = source[key];
         }
         return target;
     };
-    return $bffbd71b6fce9057$var$_extends.apply(this, arguments);
+    return _extends.apply(this, arguments);
 }
-var $bffbd71b6fce9057$var$Lazy = {
+var Lazy = {
     loadInSlide: function loadInSlide(index, loadInDuplicate) {
         if (loadInDuplicate === void 0) loadInDuplicate = true;
         var swiper = this;
@@ -7272,7 +7959,7 @@ var $bffbd71b6fce9057$var$Lazy = {
         if ($slideEl.hasClass(params.elementClass) && !$slideEl.hasClass(params.loadedClass) && !$slideEl.hasClass(params.loadingClass)) $images.push($slideEl[0]);
         if ($images.length === 0) return;
         $images.each(function(imageEl) {
-            var $imageEl = (0, $kyDhW.default)(imageEl);
+            var $imageEl = (0, _domDefault.default)(imageEl);
             $imageEl.addClass(params.loadingClass);
             var background = $imageEl.attr('data-background');
             var src = $imageEl.attr('data-src');
@@ -7294,7 +7981,7 @@ var $bffbd71b6fce9057$var$Lazy = {
                         $imageEl.removeAttr('data-sizes');
                     }
                     if ($pictureEl.length) $pictureEl.children('source').each(function(sourceEl) {
-                        var $source = (0, $kyDhW.default)(sourceEl);
+                        var $source = (0, _domDefault.default)(sourceEl);
                         if ($source.attr('data-srcset')) {
                             $source.attr('srcset', $source.attr('data-srcset'));
                             $source.removeAttr('data-srcset');
@@ -7337,12 +8024,12 @@ var $bffbd71b6fce9057$var$Lazy = {
             return false;
         }
         function slideIndex(slideEl) {
-            if (isVirtual) return (0, $kyDhW.default)(slideEl).attr('data-swiper-slide-index');
-            return (0, $kyDhW.default)(slideEl).index();
+            if (isVirtual) return (0, _domDefault.default)(slideEl).attr('data-swiper-slide-index');
+            return (0, _domDefault.default)(slideEl).index();
         }
         if (!swiper.lazy.initialImageLoaded) swiper.lazy.initialImageLoaded = true;
         if (swiper.params.watchSlidesVisibility) $wrapperEl.children("." + swiperParams.slideVisibleClass).each(function(slideEl) {
-            var index = isVirtual ? (0, $kyDhW.default)(slideEl).attr('data-swiper-slide-index') : (0, $kyDhW.default)(slideEl).index();
+            var index = isVirtual ? (0, _domDefault.default)(slideEl).attr('data-swiper-slide-index') : (0, _domDefault.default)(slideEl).index();
             swiper.lazy.loadInSlide(index);
         });
         else if (slidesPerView > 1) {
@@ -7366,10 +8053,10 @@ var $bffbd71b6fce9057$var$Lazy = {
         }
     },
     checkInViewOnLoad: function checkInViewOnLoad() {
-        var window = (0, $dvVIK.getWindow)();
+        var window = (0, _ssrWindow.getWindow)();
         var swiper = this;
         if (!swiper || swiper.destroyed) return;
-        var $scrollElement = swiper.params.lazy.scrollingElement ? (0, $kyDhW.default)(swiper.params.lazy.scrollingElement) : (0, $kyDhW.default)(window);
+        var $scrollElement = swiper.params.lazy.scrollingElement ? (0, _domDefault.default)(swiper.params.lazy.scrollingElement) : (0, _domDefault.default)(window);
         var isWindow = $scrollElement[0] === window;
         var scrollElementWidth = isWindow ? window.innerWidth : $scrollElement[0].offsetWidth;
         var scrollElementHeight = isWindow ? window.innerHeight : $scrollElement[0].offsetHeight;
@@ -7415,7 +8102,7 @@ var $bffbd71b6fce9057$var$Lazy = {
         }
     }
 };
-var $bffbd71b6fce9057$export$2e2bcd8739ae039 = {
+exports.default = {
     name: 'lazy',
     params: {
         lazy: {
@@ -7433,10 +8120,10 @@ var $bffbd71b6fce9057$export$2e2bcd8739ae039 = {
     },
     create: function create() {
         var swiper = this;
-        (0, $g4qc9.bindModuleMethods)(swiper, {
-            lazy: $bffbd71b6fce9057$var$_extends({
+        (0, _utils.bindModuleMethods)(swiper, {
+            lazy: _extends({
                 initialImageLoaded: false
-            }, $bffbd71b6fce9057$var$Lazy)
+            }, Lazy)
         });
     },
     on: {
@@ -7470,24 +8157,21 @@ var $bffbd71b6fce9057$export$2e2bcd8739ae039 = {
     }
 };
 
-});
-
-parcelRegister("1qtEJ", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $109f393b9d8dc7ed$export$2e2bcd8739ae039);
-
-var $g4qc9 = parcelRequire("g4qc9");
-function $109f393b9d8dc7ed$var$_extends() {
-    $109f393b9d8dc7ed$var$_extends = Object.assign || function(target) {
+},{"ssr-window":"3lyfI","../../utils/dom":"iauJ2","../../utils/utils":"3PNrL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aJSY4":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+/* eslint no-bitwise: ["error", { "allow": [">>"] }] */ var _utils = require("../../utils/utils");
+function _extends() {
+    _extends = Object.assign || function(target) {
         for(var i = 1; i < arguments.length; i++){
             var source = arguments[i];
             for(var key in source)if (Object.prototype.hasOwnProperty.call(source, key)) target[key] = source[key];
         }
         return target;
     };
-    return $109f393b9d8dc7ed$var$_extends.apply(this, arguments);
+    return _extends.apply(this, arguments);
 }
-var $109f393b9d8dc7ed$var$Controller = {
+var Controller = {
     LinearSpline: function LinearSpline(x, y) {
         var binarySearch = function search() {
             var maxIndex;
@@ -7523,7 +8207,7 @@ var $109f393b9d8dc7ed$var$Controller = {
     // xxx: for now i will just save one spline function to to
     getInterpolateFunction: function getInterpolateFunction(c) {
         var swiper = this;
-        if (!swiper.controller.spline) swiper.controller.spline = swiper.params.loop ? new $109f393b9d8dc7ed$var$Controller.LinearSpline(swiper.slidesGrid, c.slidesGrid) : new $109f393b9d8dc7ed$var$Controller.LinearSpline(swiper.snapGrid, c.snapGrid);
+        if (!swiper.controller.spline) swiper.controller.spline = swiper.params.loop ? new Controller.LinearSpline(swiper.slidesGrid, c.slidesGrid) : new Controller.LinearSpline(swiper.snapGrid, c.snapGrid);
     },
     setTranslate: function setTranslate(_setTranslate, byController) {
         var swiper = this;
@@ -7565,7 +8249,7 @@ var $109f393b9d8dc7ed$var$Controller = {
             c.setTransition(duration, swiper);
             if (duration !== 0) {
                 c.transitionStart();
-                if (c.params.autoHeight) (0, $g4qc9.nextTick)(function() {
+                if (c.params.autoHeight) (0, _utils.nextTick)(function() {
                     c.updateAutoHeight();
                 });
                 c.$wrapperEl.transitionEnd(function() {
@@ -7580,7 +8264,7 @@ var $109f393b9d8dc7ed$var$Controller = {
         } else if (controlled instanceof Swiper && byController !== controlled) setControlledTransition(controlled);
     }
 };
-var $109f393b9d8dc7ed$export$2e2bcd8739ae039 = {
+exports.default = {
     name: 'controller',
     params: {
         controller: {
@@ -7591,10 +8275,10 @@ var $109f393b9d8dc7ed$export$2e2bcd8739ae039 = {
     },
     create: function create() {
         var swiper = this;
-        (0, $g4qc9.bindModuleMethods)(swiper, {
-            controller: $109f393b9d8dc7ed$var$_extends({
+        (0, _utils.bindModuleMethods)(swiper, {
+            controller: _extends({
                 control: swiper.params.controller.control
-            }, $109f393b9d8dc7ed$var$Controller)
+            }, Controller)
         });
     },
     on: {
@@ -7630,26 +8314,23 @@ var $109f393b9d8dc7ed$export$2e2bcd8739ae039 = {
     }
 };
 
-});
-
-parcelRegister("4yGaX", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $351b0da1800315ba$export$2e2bcd8739ae039);
-
-var $kyDhW = parcelRequire("kyDhW");
-
-var $g4qc9 = parcelRequire("g4qc9");
-function $351b0da1800315ba$var$_extends() {
-    $351b0da1800315ba$var$_extends = Object.assign || function(target) {
+},{"../../utils/utils":"3PNrL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"kChVS":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _dom = require("../../utils/dom");
+var _domDefault = parcelHelpers.interopDefault(_dom);
+var _utils = require("../../utils/utils");
+function _extends() {
+    _extends = Object.assign || function(target) {
         for(var i = 1; i < arguments.length; i++){
             var source = arguments[i];
             for(var key in source)if (Object.prototype.hasOwnProperty.call(source, key)) target[key] = source[key];
         }
         return target;
     };
-    return $351b0da1800315ba$var$_extends.apply(this, arguments);
+    return _extends.apply(this, arguments);
 }
-var $351b0da1800315ba$var$A11y = {
+var A11y = {
     getRandomNumber: function getRandomNumber(size) {
         if (size === void 0) size = 16;
         var randomChar = function randomChar() {
@@ -7701,7 +8382,7 @@ var $351b0da1800315ba$var$A11y = {
         if (e.keyCode !== 13 && e.keyCode !== 32) return;
         var swiper = this;
         var params = swiper.params.a11y;
-        var $targetEl = (0, $kyDhW.default)(e.target);
+        var $targetEl = (0, _domDefault.default)(e.target);
         if (swiper.navigation && swiper.navigation.$nextEl && $targetEl.is(swiper.navigation.$nextEl)) {
             if (!(swiper.isEnd && !swiper.params.loop)) swiper.slideNext();
             if (swiper.isEnd) swiper.a11y.notify(params.lastSlideMessage);
@@ -7712,7 +8393,7 @@ var $351b0da1800315ba$var$A11y = {
             if (swiper.isBeginning) swiper.a11y.notify(params.firstSlideMessage);
             else swiper.a11y.notify(params.prevSlideMessage);
         }
-        if (swiper.pagination && $targetEl.is((0, $g4qc9.classesToSelector)(swiper.params.pagination.bulletClass))) $targetEl[0].click();
+        if (swiper.pagination && $targetEl.is((0, _utils.classesToSelector)(swiper.params.pagination.bulletClass))) $targetEl[0].click();
     },
     notify: function notify(message) {
         var swiper = this;
@@ -7748,7 +8429,7 @@ var $351b0da1800315ba$var$A11y = {
         var swiper = this;
         var params = swiper.params.a11y;
         if (swiper.pagination && swiper.params.pagination.clickable && swiper.pagination.bullets && swiper.pagination.bullets.length) swiper.pagination.bullets.each(function(bulletEl) {
-            var $bulletEl = (0, $kyDhW.default)(bulletEl);
+            var $bulletEl = (0, _domDefault.default)(bulletEl);
             swiper.a11y.makeElFocusable($bulletEl);
             if (!swiper.params.pagination.renderBullet) {
                 swiper.a11y.addElRole($bulletEl, 'button');
@@ -7769,13 +8450,13 @@ var $351b0da1800315ba$var$A11y = {
         var live = swiper.params.autoplay && swiper.params.autoplay.enabled ? 'off' : 'polite';
         swiper.a11y.addElId($wrapperEl, wrapperId);
         swiper.a11y.addElLive($wrapperEl, live); // Slide
-        if (params.itemRoleDescriptionMessage) swiper.a11y.addElRoleDescription((0, $kyDhW.default)(swiper.slides), params.itemRoleDescriptionMessage);
-        swiper.a11y.addElRole((0, $kyDhW.default)(swiper.slides), params.slideRole);
+        if (params.itemRoleDescriptionMessage) swiper.a11y.addElRoleDescription((0, _domDefault.default)(swiper.slides), params.itemRoleDescriptionMessage);
+        swiper.a11y.addElRole((0, _domDefault.default)(swiper.slides), params.slideRole);
         var slidesLength = swiper.params.loop ? swiper.slides.filter(function(el) {
             return !el.classList.contains(swiper.params.slideDuplicateClass);
         }).length : swiper.slides.length;
         swiper.slides.each(function(slideEl, index) {
-            var $slideEl = (0, $kyDhW.default)(slideEl);
+            var $slideEl = (0, _domDefault.default)(slideEl);
             var slideIndex = swiper.params.loop ? parseInt($slideEl.attr('data-swiper-slide-index'), 10) : index;
             var ariaLabelMessage = params.slideLabelMessage.replace(/\{\{index\}\}/, slideIndex + 1).replace(/\{\{slidesLength\}\}/, slidesLength);
             swiper.a11y.addElLabel($slideEl, ariaLabelMessage);
@@ -7802,7 +8483,7 @@ var $351b0da1800315ba$var$A11y = {
             swiper.a11y.addElLabel($prevEl, params.prevSlideMessage);
             swiper.a11y.addElControls($prevEl, wrapperId);
         } // Pagination
-        if (swiper.pagination && swiper.params.pagination.clickable && swiper.pagination.bullets && swiper.pagination.bullets.length) swiper.pagination.$el.on('keydown', (0, $g4qc9.classesToSelector)(swiper.params.pagination.bulletClass), swiper.a11y.onEnterOrSpaceKey);
+        if (swiper.pagination && swiper.params.pagination.clickable && swiper.pagination.bullets && swiper.pagination.bullets.length) swiper.pagination.$el.on('keydown', (0, _utils.classesToSelector)(swiper.params.pagination.bulletClass), swiper.a11y.onEnterOrSpaceKey);
     },
     destroy: function destroy() {
         var swiper = this;
@@ -7814,10 +8495,10 @@ var $351b0da1800315ba$var$A11y = {
         if ($nextEl) $nextEl.off('keydown', swiper.a11y.onEnterOrSpaceKey);
         if ($prevEl) $prevEl.off('keydown', swiper.a11y.onEnterOrSpaceKey);
          // Pagination
-        if (swiper.pagination && swiper.params.pagination.clickable && swiper.pagination.bullets && swiper.pagination.bullets.length) swiper.pagination.$el.off('keydown', (0, $g4qc9.classesToSelector)(swiper.params.pagination.bulletClass), swiper.a11y.onEnterOrSpaceKey);
+        if (swiper.pagination && swiper.params.pagination.clickable && swiper.pagination.bullets && swiper.pagination.bullets.length) swiper.pagination.$el.off('keydown', (0, _utils.classesToSelector)(swiper.params.pagination.bulletClass), swiper.a11y.onEnterOrSpaceKey);
     }
 };
-var $351b0da1800315ba$export$2e2bcd8739ae039 = {
+exports.default = {
     name: 'a11y',
     params: {
         a11y: {
@@ -7837,9 +8518,9 @@ var $351b0da1800315ba$export$2e2bcd8739ae039 = {
     },
     create: function create() {
         var swiper = this;
-        (0, $g4qc9.bindModuleMethods)(swiper, {
-            a11y: $351b0da1800315ba$var$_extends({}, $351b0da1800315ba$var$A11y, {
-                liveRegion: (0, $kyDhW.default)("<span class=\"" + swiper.params.a11y.notificationClass + "\" aria-live=\"assertive\" aria-atomic=\"true\"></span>")
+        (0, _utils.bindModuleMethods)(swiper, {
+            a11y: _extends({}, A11y, {
+                liveRegion: (0, _domDefault.default)("<span class=\"" + swiper.params.a11y.notificationClass + "\" aria-live=\"assertive\" aria-atomic=\"true\"></span>")
             })
         });
     },
@@ -7868,29 +8549,25 @@ var $351b0da1800315ba$export$2e2bcd8739ae039 = {
     }
 };
 
-});
-
-parcelRegister("h7e8Z", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $c75e0fce8270664d$export$2e2bcd8739ae039);
-
-var $dvVIK = parcelRequire("dvVIK");
-
-var $g4qc9 = parcelRequire("g4qc9");
-function $c75e0fce8270664d$var$_extends() {
-    $c75e0fce8270664d$var$_extends = Object.assign || function(target) {
+},{"../../utils/dom":"iauJ2","../../utils/utils":"3PNrL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2EUyR":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _ssrWindow = require("ssr-window");
+var _utils = require("../../utils/utils");
+function _extends() {
+    _extends = Object.assign || function(target) {
         for(var i = 1; i < arguments.length; i++){
             var source = arguments[i];
             for(var key in source)if (Object.prototype.hasOwnProperty.call(source, key)) target[key] = source[key];
         }
         return target;
     };
-    return $c75e0fce8270664d$var$_extends.apply(this, arguments);
+    return _extends.apply(this, arguments);
 }
-var $c75e0fce8270664d$var$History = {
+var History = {
     init: function init() {
         var swiper = this;
-        var window = (0, $dvVIK.getWindow)();
+        var window = (0, _ssrWindow.getWindow)();
         if (!swiper.params.history) return;
         if (!window.history || !window.history.pushState) {
             swiper.params.history.enabled = false;
@@ -7899,23 +8576,23 @@ var $c75e0fce8270664d$var$History = {
         }
         var history = swiper.history;
         history.initialized = true;
-        history.paths = $c75e0fce8270664d$var$History.getPathValues(swiper.params.url);
+        history.paths = History.getPathValues(swiper.params.url);
         if (!history.paths.key && !history.paths.value) return;
         history.scrollToSlide(0, history.paths.value, swiper.params.runCallbacksOnInit);
         if (!swiper.params.history.replaceState) window.addEventListener('popstate', swiper.history.setHistoryPopState);
     },
     destroy: function destroy() {
         var swiper = this;
-        var window = (0, $dvVIK.getWindow)();
+        var window = (0, _ssrWindow.getWindow)();
         if (!swiper.params.history.replaceState) window.removeEventListener('popstate', swiper.history.setHistoryPopState);
     },
     setHistoryPopState: function setHistoryPopState() {
         var swiper = this;
-        swiper.history.paths = $c75e0fce8270664d$var$History.getPathValues(swiper.params.url);
+        swiper.history.paths = History.getPathValues(swiper.params.url);
         swiper.history.scrollToSlide(swiper.params.speed, swiper.history.paths.value, false);
     },
     getPathValues: function getPathValues(urlOverride) {
-        var window = (0, $dvVIK.getWindow)();
+        var window = (0, _ssrWindow.getWindow)();
         var location;
         if (urlOverride) location = new URL(urlOverride);
         else location = window.location;
@@ -7932,13 +8609,13 @@ var $c75e0fce8270664d$var$History = {
     },
     setHistory: function setHistory(key, index) {
         var swiper = this;
-        var window = (0, $dvVIK.getWindow)();
+        var window = (0, _ssrWindow.getWindow)();
         if (!swiper.history.initialized || !swiper.params.history.enabled) return;
         var location;
         if (swiper.params.url) location = new URL(swiper.params.url);
         else location = window.location;
         var slide = swiper.slides.eq(index);
-        var value = $c75e0fce8270664d$var$History.slugify(slide.attr('data-history'));
+        var value = History.slugify(slide.attr('data-history'));
         if (swiper.params.history.root.length > 0) {
             var root = swiper.params.history.root;
             if (root[root.length - 1] === '/') root = root.slice(0, root.length - 1);
@@ -7960,7 +8637,7 @@ var $c75e0fce8270664d$var$History = {
         var swiper = this;
         if (value) for(var i = 0, length = swiper.slides.length; i < length; i += 1){
             var slide = swiper.slides.eq(i);
-            var slideHistory = $c75e0fce8270664d$var$History.slugify(slide.attr('data-history'));
+            var slideHistory = History.slugify(slide.attr('data-history'));
             if (slideHistory === value && !slide.hasClass(swiper.params.slideDuplicateClass)) {
                 var index = slide.index();
                 swiper.slideTo(index, speed, runCallbacks);
@@ -7969,7 +8646,7 @@ var $c75e0fce8270664d$var$History = {
         else swiper.slideTo(0, speed, runCallbacks);
     }
 };
-var $c75e0fce8270664d$export$2e2bcd8739ae039 = {
+exports.default = {
     name: 'history',
     params: {
         history: {
@@ -7981,8 +8658,8 @@ var $c75e0fce8270664d$export$2e2bcd8739ae039 = {
     },
     create: function create() {
         var swiper = this;
-        (0, $g4qc9.bindModuleMethods)(swiper, {
-            history: $c75e0fce8270664d$var$_extends({}, $c75e0fce8270664d$var$History)
+        (0, _utils.bindModuleMethods)(swiper, {
+            history: _extends({}, History)
         });
     },
     on: {
@@ -8001,31 +8678,27 @@ var $c75e0fce8270664d$export$2e2bcd8739ae039 = {
     }
 };
 
-});
-
-parcelRegister("8qe5j", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $621bad6272f0d9f2$export$2e2bcd8739ae039);
-
-var $dvVIK = parcelRequire("dvVIK");
-
-var $kyDhW = parcelRequire("kyDhW");
-
-var $g4qc9 = parcelRequire("g4qc9");
-function $621bad6272f0d9f2$var$_extends() {
-    $621bad6272f0d9f2$var$_extends = Object.assign || function(target) {
+},{"ssr-window":"3lyfI","../../utils/utils":"3PNrL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"4N8Ge":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _ssrWindow = require("ssr-window");
+var _dom = require("../../utils/dom");
+var _domDefault = parcelHelpers.interopDefault(_dom);
+var _utils = require("../../utils/utils");
+function _extends() {
+    _extends = Object.assign || function(target) {
         for(var i = 1; i < arguments.length; i++){
             var source = arguments[i];
             for(var key in source)if (Object.prototype.hasOwnProperty.call(source, key)) target[key] = source[key];
         }
         return target;
     };
-    return $621bad6272f0d9f2$var$_extends.apply(this, arguments);
+    return _extends.apply(this, arguments);
 }
-var $621bad6272f0d9f2$var$HashNavigation = {
+var HashNavigation = {
     onHashChange: function onHashChange() {
         var swiper = this;
-        var document = (0, $dvVIK.getDocument)();
+        var document = (0, _ssrWindow.getDocument)();
         swiper.emit('hashChange');
         var newHash = document.location.hash.replace('#', '');
         var activeSlideHash = swiper.slides.eq(swiper.activeIndex).attr('data-hash');
@@ -8037,8 +8710,8 @@ var $621bad6272f0d9f2$var$HashNavigation = {
     },
     setHash: function setHash() {
         var swiper = this;
-        var window = (0, $dvVIK.getWindow)();
-        var document = (0, $dvVIK.getDocument)();
+        var window = (0, _ssrWindow.getWindow)();
+        var document = (0, _ssrWindow.getDocument)();
         if (!swiper.hashNavigation.initialized || !swiper.params.hashNavigation.enabled) return;
         if (swiper.params.hashNavigation.replaceState && window.history && window.history.replaceState) {
             window.history.replaceState(null, null, "#" + swiper.slides.eq(swiper.activeIndex).attr('data-hash'));
@@ -8052,8 +8725,8 @@ var $621bad6272f0d9f2$var$HashNavigation = {
     },
     init: function init() {
         var swiper = this;
-        var document = (0, $dvVIK.getDocument)();
-        var window = (0, $dvVIK.getWindow)();
+        var document = (0, _ssrWindow.getDocument)();
+        var window = (0, _ssrWindow.getWindow)();
         if (!swiper.params.hashNavigation.enabled || swiper.params.history && swiper.params.history.enabled) return;
         swiper.hashNavigation.initialized = true;
         var hash = document.location.hash.replace('#', '');
@@ -8068,15 +8741,15 @@ var $621bad6272f0d9f2$var$HashNavigation = {
                 }
             }
         }
-        if (swiper.params.hashNavigation.watchState) (0, $kyDhW.default)(window).on('hashchange', swiper.hashNavigation.onHashChange);
+        if (swiper.params.hashNavigation.watchState) (0, _domDefault.default)(window).on('hashchange', swiper.hashNavigation.onHashChange);
     },
     destroy: function destroy() {
         var swiper = this;
-        var window = (0, $dvVIK.getWindow)();
-        if (swiper.params.hashNavigation.watchState) (0, $kyDhW.default)(window).off('hashchange', swiper.hashNavigation.onHashChange);
+        var window = (0, _ssrWindow.getWindow)();
+        if (swiper.params.hashNavigation.watchState) (0, _domDefault.default)(window).off('hashchange', swiper.hashNavigation.onHashChange);
     }
 };
-var $621bad6272f0d9f2$export$2e2bcd8739ae039 = {
+exports.default = {
     name: 'hash-navigation',
     params: {
         hashNavigation: {
@@ -8087,10 +8760,10 @@ var $621bad6272f0d9f2$export$2e2bcd8739ae039 = {
     },
     create: function create() {
         var swiper = this;
-        (0, $g4qc9.bindModuleMethods)(swiper, {
-            hashNavigation: $621bad6272f0d9f2$var$_extends({
+        (0, _utils.bindModuleMethods)(swiper, {
+            hashNavigation: _extends({
                 initialized: false
-            }, $621bad6272f0d9f2$var$HashNavigation)
+            }, HashNavigation)
         });
     },
     on: {
@@ -8109,33 +8782,29 @@ var $621bad6272f0d9f2$export$2e2bcd8739ae039 = {
     }
 };
 
-});
-
-parcelRegister("cH8Hi", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $93e03f4bec8be9eb$export$2e2bcd8739ae039);
-
-var $dvVIK = parcelRequire("dvVIK");
-
-var $g4qc9 = parcelRequire("g4qc9");
-function $93e03f4bec8be9eb$var$_extends() {
-    $93e03f4bec8be9eb$var$_extends = Object.assign || function(target) {
+},{"ssr-window":"3lyfI","../../utils/dom":"iauJ2","../../utils/utils":"3PNrL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"1tdH8":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+/* eslint no-underscore-dangle: "off" */ var _ssrWindow = require("ssr-window");
+var _utils = require("../../utils/utils");
+function _extends() {
+    _extends = Object.assign || function(target) {
         for(var i = 1; i < arguments.length; i++){
             var source = arguments[i];
             for(var key in source)if (Object.prototype.hasOwnProperty.call(source, key)) target[key] = source[key];
         }
         return target;
     };
-    return $93e03f4bec8be9eb$var$_extends.apply(this, arguments);
+    return _extends.apply(this, arguments);
 }
-var $93e03f4bec8be9eb$var$Autoplay = {
+var Autoplay = {
     run: function run() {
         var swiper = this;
         var $activeSlideEl = swiper.slides.eq(swiper.activeIndex);
         var delay = swiper.params.autoplay.delay;
         if ($activeSlideEl.attr('data-swiper-autoplay')) delay = $activeSlideEl.attr('data-swiper-autoplay') || swiper.params.autoplay.delay;
         clearTimeout(swiper.autoplay.timeout);
-        swiper.autoplay.timeout = (0, $g4qc9.nextTick)(function() {
+        swiper.autoplay.timeout = (0, _utils.nextTick)(function() {
             var autoplayResult;
             if (swiper.params.autoplay.reverseDirection) {
                 if (swiper.params.loop) {
@@ -8203,7 +8872,7 @@ var $93e03f4bec8be9eb$var$Autoplay = {
     },
     onVisibilityChange: function onVisibilityChange() {
         var swiper = this;
-        var document = (0, $dvVIK.getDocument)();
+        var document = (0, _ssrWindow.getDocument)();
         if (document.visibilityState === 'hidden' && swiper.autoplay.running) swiper.autoplay.pause();
         if (document.visibilityState === 'visible' && swiper.autoplay.paused) {
             swiper.autoplay.run();
@@ -8254,7 +8923,7 @@ var $93e03f4bec8be9eb$var$Autoplay = {
         swiper.$el.off('mouseleave', swiper.autoplay.onMouseLeave);
     }
 };
-var $93e03f4bec8be9eb$export$2e2bcd8739ae039 = {
+exports.default = {
     name: 'autoplay',
     params: {
         autoplay: {
@@ -8269,8 +8938,8 @@ var $93e03f4bec8be9eb$export$2e2bcd8739ae039 = {
     },
     create: function create() {
         var swiper = this;
-        (0, $g4qc9.bindModuleMethods)(swiper, {
-            autoplay: $93e03f4bec8be9eb$var$_extends({}, $93e03f4bec8be9eb$var$Autoplay, {
+        (0, _utils.bindModuleMethods)(swiper, {
+            autoplay: _extends({}, Autoplay, {
                 running: false,
                 paused: false
             })
@@ -8280,7 +8949,7 @@ var $93e03f4bec8be9eb$export$2e2bcd8739ae039 = {
         init: function init(swiper) {
             if (swiper.params.autoplay.enabled) {
                 swiper.autoplay.start();
-                var document = (0, $dvVIK.getDocument)();
+                var document = (0, _ssrWindow.getDocument)();
                 document.addEventListener('visibilitychange', swiper.autoplay.onVisibilityChange);
                 swiper.autoplay.attachMouseEvents();
             }
@@ -8303,30 +8972,27 @@ var $93e03f4bec8be9eb$export$2e2bcd8739ae039 = {
         destroy: function destroy(swiper) {
             swiper.autoplay.detachMouseEvents();
             if (swiper.autoplay.running) swiper.autoplay.stop();
-            var document = (0, $dvVIK.getDocument)();
+            var document = (0, _ssrWindow.getDocument)();
             document.removeEventListener('visibilitychange', swiper.autoplay.onVisibilityChange);
         }
     }
 };
 
-});
-
-parcelRegister("agDIj", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $779a3453e3f684e1$export$2e2bcd8739ae039);
-
-var $g4qc9 = parcelRequire("g4qc9");
-function $779a3453e3f684e1$var$_extends() {
-    $779a3453e3f684e1$var$_extends = Object.assign || function(target) {
+},{"ssr-window":"3lyfI","../../utils/utils":"3PNrL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"al8Hp":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _utils = require("../../utils/utils");
+function _extends() {
+    _extends = Object.assign || function(target) {
         for(var i = 1; i < arguments.length; i++){
             var source = arguments[i];
             for(var key in source)if (Object.prototype.hasOwnProperty.call(source, key)) target[key] = source[key];
         }
         return target;
     };
-    return $779a3453e3f684e1$var$_extends.apply(this, arguments);
+    return _extends.apply(this, arguments);
 }
-var $779a3453e3f684e1$var$Fade = {
+var Fade = {
     setTranslate: function setTranslate() {
         var swiper = this;
         var slides = swiper.slides;
@@ -8366,7 +9032,7 @@ var $779a3453e3f684e1$var$Fade = {
         }
     }
 };
-var $779a3453e3f684e1$export$2e2bcd8739ae039 = {
+exports.default = {
     name: 'effect-fade',
     params: {
         fadeEffect: {
@@ -8375,8 +9041,8 @@ var $779a3453e3f684e1$export$2e2bcd8739ae039 = {
     },
     create: function create() {
         var swiper = this;
-        (0, $g4qc9.bindModuleMethods)(swiper, {
-            fadeEffect: $779a3453e3f684e1$var$_extends({}, $779a3453e3f684e1$var$Fade)
+        (0, _utils.bindModuleMethods)(swiper, {
+            fadeEffect: _extends({}, Fade)
         });
     },
     on: {
@@ -8391,8 +9057,8 @@ var $779a3453e3f684e1$export$2e2bcd8739ae039 = {
                 spaceBetween: 0,
                 virtualTranslate: true
             };
-            (0, $g4qc9.extend)(swiper.params, overwriteParams);
-            (0, $g4qc9.extend)(swiper.originalParams, overwriteParams);
+            (0, _utils.extend)(swiper.params, overwriteParams);
+            (0, _utils.extend)(swiper.originalParams, overwriteParams);
         },
         setTranslate: function setTranslate(swiper) {
             if (swiper.params.effect !== 'fade') return;
@@ -8405,26 +9071,23 @@ var $779a3453e3f684e1$export$2e2bcd8739ae039 = {
     }
 };
 
-});
-
-parcelRegister("gmU7T", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $beaa3cf4686bf270$export$2e2bcd8739ae039);
-
-var $kyDhW = parcelRequire("kyDhW");
-
-var $g4qc9 = parcelRequire("g4qc9");
-function $beaa3cf4686bf270$var$_extends() {
-    $beaa3cf4686bf270$var$_extends = Object.assign || function(target) {
+},{"../../utils/utils":"3PNrL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"bD6Yd":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _dom = require("../../utils/dom");
+var _domDefault = parcelHelpers.interopDefault(_dom);
+var _utils = require("../../utils/utils");
+function _extends() {
+    _extends = Object.assign || function(target) {
         for(var i = 1; i < arguments.length; i++){
             var source = arguments[i];
             for(var key in source)if (Object.prototype.hasOwnProperty.call(source, key)) target[key] = source[key];
         }
         return target;
     };
-    return $beaa3cf4686bf270$var$_extends.apply(this, arguments);
+    return _extends.apply(this, arguments);
 }
-var $beaa3cf4686bf270$var$Cube = {
+var Cube = {
     setTranslate: function setTranslate() {
         var swiper = this;
         var $el = swiper.$el, $wrapperEl = swiper.$wrapperEl, slides = swiper.slides, swiperWidth = swiper.width, swiperHeight = swiper.height, rtl = swiper.rtlTranslate, swiperSize = swiper.size, browser = swiper.browser;
@@ -8437,7 +9100,7 @@ var $beaa3cf4686bf270$var$Cube = {
             if (isHorizontal) {
                 $cubeShadowEl = $wrapperEl.find('.swiper-cube-shadow');
                 if ($cubeShadowEl.length === 0) {
-                    $cubeShadowEl = (0, $kyDhW.default)('<div class="swiper-cube-shadow"></div>');
+                    $cubeShadowEl = (0, _domDefault.default)('<div class="swiper-cube-shadow"></div>');
                     $wrapperEl.append($cubeShadowEl);
                 }
                 $cubeShadowEl.css({
@@ -8446,7 +9109,7 @@ var $beaa3cf4686bf270$var$Cube = {
             } else {
                 $cubeShadowEl = $el.find('.swiper-cube-shadow');
                 if ($cubeShadowEl.length === 0) {
-                    $cubeShadowEl = (0, $kyDhW.default)('<div class="swiper-cube-shadow"></div>');
+                    $cubeShadowEl = (0, _domDefault.default)('<div class="swiper-cube-shadow"></div>');
                     $el.append($cubeShadowEl);
                 }
             }
@@ -8494,11 +9157,11 @@ var $beaa3cf4686bf270$var$Cube = {
                 var shadowBefore = isHorizontal ? $slideEl.find('.swiper-slide-shadow-left') : $slideEl.find('.swiper-slide-shadow-top');
                 var shadowAfter = isHorizontal ? $slideEl.find('.swiper-slide-shadow-right') : $slideEl.find('.swiper-slide-shadow-bottom');
                 if (shadowBefore.length === 0) {
-                    shadowBefore = (0, $kyDhW.default)("<div class=\"swiper-slide-shadow-" + (isHorizontal ? 'left' : 'top') + "\"></div>");
+                    shadowBefore = (0, _domDefault.default)("<div class=\"swiper-slide-shadow-" + (isHorizontal ? 'left' : 'top') + "\"></div>");
                     $slideEl.append(shadowBefore);
                 }
                 if (shadowAfter.length === 0) {
-                    shadowAfter = (0, $kyDhW.default)("<div class=\"swiper-slide-shadow-" + (isHorizontal ? 'right' : 'bottom') + "\"></div>");
+                    shadowAfter = (0, _domDefault.default)("<div class=\"swiper-slide-shadow-" + (isHorizontal ? 'right' : 'bottom') + "\"></div>");
                     $slideEl.append(shadowAfter);
                 }
                 if (shadowBefore.length) shadowBefore[0].style.opacity = Math.max(-progress, 0);
@@ -8532,7 +9195,7 @@ var $beaa3cf4686bf270$var$Cube = {
         if (swiper.params.cubeEffect.shadow && !swiper.isHorizontal()) $el.find('.swiper-cube-shadow').transition(duration);
     }
 };
-var $beaa3cf4686bf270$export$2e2bcd8739ae039 = {
+exports.default = {
     name: 'effect-cube',
     params: {
         cubeEffect: {
@@ -8544,8 +9207,8 @@ var $beaa3cf4686bf270$export$2e2bcd8739ae039 = {
     },
     create: function create() {
         var swiper = this;
-        (0, $g4qc9.bindModuleMethods)(swiper, {
-            cubeEffect: $beaa3cf4686bf270$var$_extends({}, $beaa3cf4686bf270$var$Cube)
+        (0, _utils.bindModuleMethods)(swiper, {
+            cubeEffect: _extends({}, Cube)
         });
     },
     on: {
@@ -8563,8 +9226,8 @@ var $beaa3cf4686bf270$export$2e2bcd8739ae039 = {
                 centeredSlides: false,
                 virtualTranslate: true
             };
-            (0, $g4qc9.extend)(swiper.params, overwriteParams);
-            (0, $g4qc9.extend)(swiper.originalParams, overwriteParams);
+            (0, _utils.extend)(swiper.params, overwriteParams);
+            (0, _utils.extend)(swiper.originalParams, overwriteParams);
         },
         setTranslate: function setTranslate(swiper) {
             if (swiper.params.effect !== 'cube') return;
@@ -8577,26 +9240,23 @@ var $beaa3cf4686bf270$export$2e2bcd8739ae039 = {
     }
 };
 
-});
-
-parcelRegister("k7tgB", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $ea5b29e0e0be99e3$export$2e2bcd8739ae039);
-
-var $kyDhW = parcelRequire("kyDhW");
-
-var $g4qc9 = parcelRequire("g4qc9");
-function $ea5b29e0e0be99e3$var$_extends() {
-    $ea5b29e0e0be99e3$var$_extends = Object.assign || function(target) {
+},{"../../utils/dom":"iauJ2","../../utils/utils":"3PNrL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"bq5dw":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _dom = require("../../utils/dom");
+var _domDefault = parcelHelpers.interopDefault(_dom);
+var _utils = require("../../utils/utils");
+function _extends() {
+    _extends = Object.assign || function(target) {
         for(var i = 1; i < arguments.length; i++){
             var source = arguments[i];
             for(var key in source)if (Object.prototype.hasOwnProperty.call(source, key)) target[key] = source[key];
         }
         return target;
     };
-    return $ea5b29e0e0be99e3$var$_extends.apply(this, arguments);
+    return _extends.apply(this, arguments);
 }
-var $ea5b29e0e0be99e3$var$Flip = {
+var Flip = {
     setTranslate: function setTranslate() {
         var swiper = this;
         var slides = swiper.slides, rtl = swiper.rtlTranslate;
@@ -8622,11 +9282,11 @@ var $ea5b29e0e0be99e3$var$Flip = {
                 var shadowBefore = swiper.isHorizontal() ? $slideEl.find('.swiper-slide-shadow-left') : $slideEl.find('.swiper-slide-shadow-top');
                 var shadowAfter = swiper.isHorizontal() ? $slideEl.find('.swiper-slide-shadow-right') : $slideEl.find('.swiper-slide-shadow-bottom');
                 if (shadowBefore.length === 0) {
-                    shadowBefore = (0, $kyDhW.default)("<div class=\"swiper-slide-shadow-" + (swiper.isHorizontal() ? 'left' : 'top') + "\"></div>");
+                    shadowBefore = (0, _domDefault.default)("<div class=\"swiper-slide-shadow-" + (swiper.isHorizontal() ? 'left' : 'top') + "\"></div>");
                     $slideEl.append(shadowBefore);
                 }
                 if (shadowAfter.length === 0) {
-                    shadowAfter = (0, $kyDhW.default)("<div class=\"swiper-slide-shadow-" + (swiper.isHorizontal() ? 'right' : 'bottom') + "\"></div>");
+                    shadowAfter = (0, _domDefault.default)("<div class=\"swiper-slide-shadow-" + (swiper.isHorizontal() ? 'right' : 'bottom') + "\"></div>");
                     $slideEl.append(shadowAfter);
                 }
                 if (shadowBefore.length) shadowBefore[0].style.opacity = Math.max(-progress, 0);
@@ -8655,7 +9315,7 @@ var $ea5b29e0e0be99e3$var$Flip = {
         }
     }
 };
-var $ea5b29e0e0be99e3$export$2e2bcd8739ae039 = {
+exports.default = {
     name: 'effect-flip',
     params: {
         flipEffect: {
@@ -8665,8 +9325,8 @@ var $ea5b29e0e0be99e3$export$2e2bcd8739ae039 = {
     },
     create: function create() {
         var swiper = this;
-        (0, $g4qc9.bindModuleMethods)(swiper, {
-            flipEffect: $ea5b29e0e0be99e3$var$_extends({}, $ea5b29e0e0be99e3$var$Flip)
+        (0, _utils.bindModuleMethods)(swiper, {
+            flipEffect: _extends({}, Flip)
         });
     },
     on: {
@@ -8682,8 +9342,8 @@ var $ea5b29e0e0be99e3$export$2e2bcd8739ae039 = {
                 spaceBetween: 0,
                 virtualTranslate: true
             };
-            (0, $g4qc9.extend)(swiper.params, overwriteParams);
-            (0, $g4qc9.extend)(swiper.originalParams, overwriteParams);
+            (0, _utils.extend)(swiper.params, overwriteParams);
+            (0, _utils.extend)(swiper.originalParams, overwriteParams);
         },
         setTranslate: function setTranslate(swiper) {
             if (swiper.params.effect !== 'flip') return;
@@ -8696,26 +9356,23 @@ var $ea5b29e0e0be99e3$export$2e2bcd8739ae039 = {
     }
 };
 
-});
-
-parcelRegister("cguUs", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $8edef4aa92e6af54$export$2e2bcd8739ae039);
-
-var $kyDhW = parcelRequire("kyDhW");
-
-var $g4qc9 = parcelRequire("g4qc9");
-function $8edef4aa92e6af54$var$_extends() {
-    $8edef4aa92e6af54$var$_extends = Object.assign || function(target) {
+},{"../../utils/dom":"iauJ2","../../utils/utils":"3PNrL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dyxip":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _dom = require("../../utils/dom");
+var _domDefault = parcelHelpers.interopDefault(_dom);
+var _utils = require("../../utils/utils");
+function _extends() {
+    _extends = Object.assign || function(target) {
         for(var i = 1; i < arguments.length; i++){
             var source = arguments[i];
             for(var key in source)if (Object.prototype.hasOwnProperty.call(source, key)) target[key] = source[key];
         }
         return target;
     };
-    return $8edef4aa92e6af54$var$_extends.apply(this, arguments);
+    return _extends.apply(this, arguments);
 }
-var $8edef4aa92e6af54$var$Coverflow = {
+var Coverflow = {
     setTranslate: function setTranslate() {
         var swiper = this;
         var swiperWidth = swiper.width, swiperHeight = swiper.height, slides = swiper.slides, slidesSizesGrid = swiper.slidesSizesGrid;
@@ -8752,11 +9409,11 @@ var $8edef4aa92e6af54$var$Coverflow = {
                 var $shadowBeforeEl = isHorizontal ? $slideEl.find('.swiper-slide-shadow-left') : $slideEl.find('.swiper-slide-shadow-top');
                 var $shadowAfterEl = isHorizontal ? $slideEl.find('.swiper-slide-shadow-right') : $slideEl.find('.swiper-slide-shadow-bottom');
                 if ($shadowBeforeEl.length === 0) {
-                    $shadowBeforeEl = (0, $kyDhW.default)("<div class=\"swiper-slide-shadow-" + (isHorizontal ? 'left' : 'top') + "\"></div>");
+                    $shadowBeforeEl = (0, _domDefault.default)("<div class=\"swiper-slide-shadow-" + (isHorizontal ? 'left' : 'top') + "\"></div>");
                     $slideEl.append($shadowBeforeEl);
                 }
                 if ($shadowAfterEl.length === 0) {
-                    $shadowAfterEl = (0, $kyDhW.default)("<div class=\"swiper-slide-shadow-" + (isHorizontal ? 'right' : 'bottom') + "\"></div>");
+                    $shadowAfterEl = (0, _domDefault.default)("<div class=\"swiper-slide-shadow-" + (isHorizontal ? 'right' : 'bottom') + "\"></div>");
                     $slideEl.append($shadowAfterEl);
                 }
                 if ($shadowBeforeEl.length) $shadowBeforeEl[0].style.opacity = offsetMultiplier > 0 ? offsetMultiplier : 0;
@@ -8769,7 +9426,7 @@ var $8edef4aa92e6af54$var$Coverflow = {
         swiper.slides.transition(duration).find('.swiper-slide-shadow-top, .swiper-slide-shadow-right, .swiper-slide-shadow-bottom, .swiper-slide-shadow-left').transition(duration);
     }
 };
-var $8edef4aa92e6af54$export$2e2bcd8739ae039 = {
+exports.default = {
     name: 'effect-coverflow',
     params: {
         coverflowEffect: {
@@ -8783,8 +9440,8 @@ var $8edef4aa92e6af54$export$2e2bcd8739ae039 = {
     },
     create: function create() {
         var swiper = this;
-        (0, $g4qc9.bindModuleMethods)(swiper, {
-            coverflowEffect: $8edef4aa92e6af54$var$_extends({}, $8edef4aa92e6af54$var$Coverflow)
+        (0, _utils.bindModuleMethods)(swiper, {
+            coverflowEffect: _extends({}, Coverflow)
         });
     },
     on: {
@@ -8806,26 +9463,23 @@ var $8edef4aa92e6af54$export$2e2bcd8739ae039 = {
     }
 };
 
-});
-
-parcelRegister("9vgYl", function(module, exports) {
-
-$parcel$export(module.exports, "default", () => $6eb42ca47f672903$export$2e2bcd8739ae039);
-
-var $g4qc9 = parcelRequire("g4qc9");
-
-var $kyDhW = parcelRequire("kyDhW");
-function $6eb42ca47f672903$var$_extends() {
-    $6eb42ca47f672903$var$_extends = Object.assign || function(target) {
+},{"../../utils/dom":"iauJ2","../../utils/utils":"3PNrL","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"9CTBg":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _utils = require("../../utils/utils");
+var _dom = require("../../utils/dom");
+var _domDefault = parcelHelpers.interopDefault(_dom);
+function _extends() {
+    _extends = Object.assign || function(target) {
         for(var i = 1; i < arguments.length; i++){
             var source = arguments[i];
             for(var key in source)if (Object.prototype.hasOwnProperty.call(source, key)) target[key] = source[key];
         }
         return target;
     };
-    return $6eb42ca47f672903$var$_extends.apply(this, arguments);
+    return _extends.apply(this, arguments);
 }
-var $6eb42ca47f672903$var$Thumbs = {
+var Thumbs = {
     init: function init() {
         var swiper = this;
         var thumbsParams = swiper.params.thumbs;
@@ -8834,16 +9488,16 @@ var $6eb42ca47f672903$var$Thumbs = {
         var SwiperClass = swiper.constructor;
         if (thumbsParams.swiper instanceof SwiperClass) {
             swiper.thumbs.swiper = thumbsParams.swiper;
-            (0, $g4qc9.extend)(swiper.thumbs.swiper.originalParams, {
+            (0, _utils.extend)(swiper.thumbs.swiper.originalParams, {
                 watchSlidesProgress: true,
                 slideToClickedSlide: false
             });
-            (0, $g4qc9.extend)(swiper.thumbs.swiper.params, {
+            (0, _utils.extend)(swiper.thumbs.swiper.params, {
                 watchSlidesProgress: true,
                 slideToClickedSlide: false
             });
-        } else if ((0, $g4qc9.isObject)(thumbsParams.swiper)) {
-            swiper.thumbs.swiper = new SwiperClass((0, $g4qc9.extend)({}, thumbsParams.swiper, {
+        } else if ((0, _utils.isObject)(thumbsParams.swiper)) {
+            swiper.thumbs.swiper = new SwiperClass((0, _utils.extend)({}, thumbsParams.swiper, {
                 watchSlidesVisibility: true,
                 watchSlidesProgress: true,
                 slideToClickedSlide: false
@@ -8860,10 +9514,10 @@ var $6eb42ca47f672903$var$Thumbs = {
         if (!thumbsSwiper) return;
         var clickedIndex = thumbsSwiper.clickedIndex;
         var clickedSlide = thumbsSwiper.clickedSlide;
-        if (clickedSlide && (0, $kyDhW.default)(clickedSlide).hasClass(swiper.params.thumbs.slideThumbActiveClass)) return;
+        if (clickedSlide && (0, _domDefault.default)(clickedSlide).hasClass(swiper.params.thumbs.slideThumbActiveClass)) return;
         if (typeof clickedIndex === 'undefined' || clickedIndex === null) return;
         var slideToIndex;
-        if (thumbsSwiper.params.loop) slideToIndex = parseInt((0, $kyDhW.default)(thumbsSwiper.clickedSlide).attr('data-swiper-slide-index'), 10);
+        if (thumbsSwiper.params.loop) slideToIndex = parseInt((0, _domDefault.default)(thumbsSwiper.clickedSlide).attr('data-swiper-slide-index'), 10);
         else slideToIndex = clickedIndex;
         if (swiper.params.loop) {
             var currentIndex = swiper.activeIndex;
@@ -8929,7 +9583,7 @@ var $6eb42ca47f672903$var$Thumbs = {
         else for(var _i = 0; _i < thumbsToActivate; _i += 1)thumbsSwiper.slides.eq(swiper.realIndex + _i).addClass(thumbActiveClass);
     }
 };
-var $6eb42ca47f672903$export$2e2bcd8739ae039 = {
+exports.default = {
     name: 'thumbs',
     params: {
         thumbs: {
@@ -8942,11 +9596,11 @@ var $6eb42ca47f672903$export$2e2bcd8739ae039 = {
     },
     create: function create() {
         var swiper = this;
-        (0, $g4qc9.bindModuleMethods)(swiper, {
-            thumbs: $6eb42ca47f672903$var$_extends({
+        (0, _utils.bindModuleMethods)(swiper, {
+            thumbs: _extends({
                 swiper: null,
                 initialized: false
-            }, $6eb42ca47f672903$var$Thumbs)
+            }, Thumbs)
         });
     },
     on: {
@@ -8985,92 +9639,6 @@ var $6eb42ca47f672903$export$2e2bcd8739ae039 = {
     }
 };
 
-});
+},{"../../utils/utils":"3PNrL","../../utils/dom":"iauJ2","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["ikncZ","27fLx"], "27fLx", "parcelRequire4037", {})
 
-
-
-
-var $gcB2O = parcelRequire("gcB2O");
-
-var $epH6w = parcelRequire("epH6w");
-
-var $hvi9e = parcelRequire("hvi9e");
-class $c1b4cbd60dad4260$var$FeaturedListingsModal {
-    constructor(root){
-        this.root = root;
-        this.scroll_container = root.querySelector('.js-featured-listings-modal-scroller');
-        this.prev_btn = root.querySelector('.js-featured-listings-modal-prev');
-        this.next_btn = root.querySelector('.js-featured-listings-modal-next');
-        this.pagination_label = root.querySelector('.js-featured-listings-modal-pagination-label');
-        this.fields = {
-            image_slider: root.querySelector('.js-featured-listings-modal-image-slider'),
-            image_container: root.querySelector('.js-featured-listings-modal-image-container'),
-            price: root.querySelector('.js-featured-listings-modal-price'),
-            name: root.querySelector('.js-featured-listings-modal-name'),
-            bedrooms: root.querySelector('.js-featured-listings-modal-bedrooms'),
-            bathrooms: root.querySelector('.js-featured-listings-modal-bathrooms'),
-            sqft: root.querySelector('.js-featured-listings-modal-sqft'),
-            wysiwyg: root.querySelector('.js-featured-listings-modal-wysiwyg')
-        };
-        this.modal = new (0, $gcB2O.default)(this.root, (dataset)=>{
-            this.data = new (0, $epH6w.default)({
-                endpoint: 'get-property/' + dataset.propertyId,
-                callback: (data)=>{
-                    this.scroll_container.scrollTop = 0;
-                    this.fields.name.innerHTML = data.name;
-                    document.querySelector('.js-universal-modal-close').classList.add('--light');
-                    if (data.gallery && data.gallery.length > 0) {
-                        this.fields.image_slider.classList.remove('--hidden');
-                        this.fields.image_container.innerHTML = '';
-                        data.gallery.forEach((gallery_item)=>{
-                            this.fields.image_container.insertAdjacentHTML('beforeend', '<img class="modal-featured-listings__image-slider__slide swiper-slide" src="' + gallery_item.sizes.large + '" alt="' + gallery_item.alt + '"/>');
-                        });
-                        this.image_slider = new (0, $hvi9e.default)(this.fields.image_slider, {
-                            swiperOptions: {
-                                slidesPerView: 1,
-                                loop: false
-                            },
-                            prev_btn: this.prev_btn,
-                            next_btn: this.next_btn,
-                            pagination_label: this.pagination_label
-                        });
-                    } else this.fields.image_slider.classList.add('--hidden');
-                    if (data.price && data.price != '$') {
-                        this.fields.price.classList.remove('--hidden');
-                        this.fields.price.innerHTML = data.price;
-                    } else this.fields.price.classList.add('--hidden');
-                    if (data.bedrooms) {
-                        this.fields.bedrooms.parentElement.classList.remove('--hidden');
-                        this.fields.bedrooms.innerHTML = data.bedrooms;
-                    } else this.fields.bedrooms.parentElement.classList.add('--hidden');
-                    if (data.bathrooms) {
-                        this.fields.bathrooms.parentElement.classList.remove('--hidden');
-                        this.fields.bathrooms.innerHTML = data.bathrooms;
-                    } else this.fields.bathrooms.parentElement.classList.add('--hidden');
-                    if (data.sqft) {
-                        this.fields.sqft.parentElement.classList.remove('--hidden');
-                        this.fields.sqft.innerHTML = data.sqft;
-                    } else this.fields.sqft.parentElement.classList.add('--hidden');
-                    if (!data.bedrooms && !data.bathrooms && !data.sqft) this.fields.bedrooms.parentElement.parentElement.classList.add('--hidden');
-                    else this.fields.bedrooms.parentElement.parentElement.classList.remove('--hidden');
-                    if (data.content) {
-                        this.fields.wysiwyg.classList.remove('--hidden');
-                        this.fields.wysiwyg.innerHTML = data.content;
-                    } else this.fields.wysiwyg.classList.add('--hidden');
-                    this.root.classList.remove('--loading');
-                }
-            });
-        }, (dataset)=>{
-            document.querySelector('.js-universal-modal-close').classList.remove('--light');
-        });
-    }
-}
-document.addEventListener('DOMContentLoaded', ()=>{
-    var featured_listings_modals = document.querySelectorAll('.js-featured-listings-modal') ?? [];
-    featured_listings_modals.forEach((featured_listings_modal)=>{
-        new $c1b4cbd60dad4260$var$FeaturedListingsModal(featured_listings_modal);
-    });
-});
-
-})();
 //# sourceMappingURL=FeaturedListingsModal.js.map

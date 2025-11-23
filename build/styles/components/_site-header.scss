@@ -5,7 +5,7 @@
     z-index: 10;
 
     @include breakpoint(660px) {
-        min-height: 12em;
+        min-height: 10em;
     }
 
     .logged-in & {
@@ -14,7 +14,7 @@
 
     .--nav-scrolled & {
         background-color: $white;
-        border-bottom: 2px solid $light-grey;
+        border-bottom: 2px solid $white;
         box-shadow: box-shadow(medium);
     }
 
@@ -32,9 +32,10 @@
         gap: 3em;
         justify-content: center;
         padding: 2em 1em;
+        box-shadow: 0px 0px 10px 2dpx transparentize($black, 0.9);
 
         @include breakpoint(660px) {
-            background-color: white;
+            background-color: $light-grey;
             flex-direction: column;
             gap: 0em;
             margin-top: -10em;
@@ -44,7 +45,7 @@
             opacity: 0;
 
             .--active & {
-                padding: 14em 1em 3em;
+                padding: 13em 1em 3em;
                 max-height: 100em;
                 opacity: 1;
             }
@@ -95,6 +96,10 @@
                 }
 
                 @include breakpoint(660px) {
+                    width: 100%;
+                    text-align: center;
+                    display: inline-block;
+
                     .--active & {
                         color: $red;
                         @include link-reset($red);
@@ -126,6 +131,11 @@
                 pointer-events: all;
                 margin-top: 4em !important;
                 gap: 4em;
+                background-color: unset;
+
+                &::before {
+                    content: unset !important;
+                }
             }
 
             &::before {
@@ -145,7 +155,7 @@
                 width: fit-content;
 
                 @include breakpoint(660px) {
-                    color: $black;
+                    color: $red;
                     text-transform: uppercase;
                     letter-spacing: 0.125em;
                     font-size: 1.5625em;
@@ -162,7 +172,19 @@
                 display: none;
             }
 
-            .--nav-scrolled & {
+            // .--active & {
+            //     .site-header__navigation__logo__image.--main {
+            //         &.--cream {
+            //             display: none;
+            //         }
+
+            //         &.--red {
+            //             display: inline-block;
+            //         }
+            //     }
+            // }
+
+            .--nav-scrolled &, .--active & {
                 &.--cream {
                     display: none;
                 }
@@ -170,11 +192,25 @@
                 &.--red {
                     display: block;
                 }
+
+                .site-header__navigation__logo__image.--main {
+                    &.--cream {
+                        display: none;
+                    }
+
+                    &.--red {
+                        display: inline-block;
+                    }
+                }
+
+                .site-header__navigation__logo__label {
+                    color: $black;
+                }
             }
 
             &.--desktop {
                 @include breakpoint(660px) {
-                    display: none;
+                    display: none !important;
                 }
             }
 
@@ -191,12 +227,18 @@
 
             &__image {
                 width: 5em;
+
+                &.--main {
+                    &.--red {
+                        display: none;
+                    }
+                }
             }
 
             &__label {
                 @include h6 {
                     text-transform: uppercase;
-                    color: white;
+                    color: $white;
                     margin-top: 0.5em;
                     font-size: 1em;
                 }

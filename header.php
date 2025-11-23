@@ -12,7 +12,8 @@
 	<body class="<?= is_user_logged_in() ? 'logged-in' : null ?>">
 		<header class="site-header js-navigation">
 			<a class="site-header__navigation__logo --mobile js-navigation-mobile" href="#">
-				<img class="site-header__navigation__logo__image" src="<?= $the_theme->build ?>/svgs/logomark-cream.png"/>
+				<img class="site-header__navigation__logo__image --main --cream" src="<?= $the_theme->build ?>/svgs/logomark-cream.png"/>
+				<img class="site-header__navigation__logo__image --main --red" src="<?= $the_theme->build ?>/svgs/logomark-red.png"/>
 				<p class="site-header__navigation__logo__label">Menu</p>
 			</a>
 			<nav class="site-header__navigation">

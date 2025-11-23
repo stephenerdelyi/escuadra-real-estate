@@ -8,6 +8,10 @@
     background-size: cover;
     background-attachment: fixed;
 
+    @include breakpoint(660px) {
+        background-attachment: unset;
+    }
+
     .logged-in & {
         height: calc(100vh - 32px);
     }
