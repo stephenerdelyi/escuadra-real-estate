@@ -123,4 +123,14 @@
             ['script' => 'Reviews'],
         ]
     ]);
+
+    $the_theme->register_block([
+        'name' => 'post-listing',
+        'title' => 'Article Listing',
+        'description' => 'Insert your articles onto your page.',
+        'icon' => 'admin-post',
+        'assets' => [
+            ['script' => 'PostListing'],
+        ]
+    ]);
 ?>

@@ -1,0 +1,50 @@
+@import '../base';
+
+.block-post-agent {
+    &__container {
+        max-width: $condensed-content-width;
+        margin: 0em auto 6em !important;
+        padding: 2em 1.25em 0em;
+        display: flex;
+        gap: 2em;
+        align-items: flex-start;
+    }
+
+    &__name {
+        @include h5;
+        margin: 0em;
+    }
+
+    &__role {
+        @include h6;
+        font-size: 2em;
+    }
+
+    &__license {
+        @include p;
+    }
+
+    &__image {
+        width: 100px;
+        height: auto;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+        object-position: top;
+        border-radius: 200px;
+    }
+
+    &__buttons {
+        margin-top: 1.5em;
+        display: flex;
+        gap: 2.5em;
+    }
+
+    &__button {
+        @include button-light;
+
+        &::after {
+            background-color: #dfd1c6;
+            border-color: #dfd1c6;
+        }
+    }
+}

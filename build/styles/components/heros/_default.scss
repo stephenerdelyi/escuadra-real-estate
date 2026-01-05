@@ -49,6 +49,24 @@
         @include h2 {
             color: $white;
         }
+
+        &.--post {
+            @include h3 {
+                color: $white;
+            }
+        }
+
+        &.--post-long {
+            @include h4 {
+                color: $white;
+            }
+        }
+
+        &.--post-longer {
+            @include h5 {
+                color: $white;
+            }
+        }
     }
 
     &__excerpt {
@@ -57,6 +75,18 @@
             color: $light-grey;
             max-width: 20em;
             margin: 0em auto;
+        }
+
+        &.--wide {
+            max-width: 30em;
+        }
+
+        &.--meta {
+            font-style: italic;
+        }
+
+        & + & {
+            margin-top: 1em;
         }
     }
 

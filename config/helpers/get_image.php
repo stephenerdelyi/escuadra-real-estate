@@ -2,7 +2,7 @@
     function get_image($primary_image, $default_image, $alt = '') {
         global $the_theme;
 
-        $default_image = "{$the_theme->assets}/placeholders/{$default_image}.jpg";
+        $default_image = "{$the_theme->build}/placeholders/{$default_image}.jpg";
 
         $obj = new stdClass();
         $obj->sizes = new stdClass();

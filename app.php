@@ -13,6 +13,8 @@
             $this->build = get_template_directory_uri() . "/build";
             $this->modals = [];
             $this->keys = [];
+            $this->php_listing_per_page = 3;
+            $this->php_listing_limit = 4;
 
             $this->variables = [
                 'ajax_url' => admin_url('admin-ajax.php'),
