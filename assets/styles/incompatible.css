@@ -52,7 +52,7 @@
 
 @font-face {
   font-family: Kelin Eator;
-  src: url("../kelin-eator.57dbc27b.woff2") format("woff2"), url("../kelin-eator.7a402997.woff") format("woff"), url("../kelin-eator.c75b95a9.ttf") format("truetype");
+  src: url("../kelin-eator.c7bd1dcd.woff2") format("woff2"), url("../kelin-eator.cb0a9f41.woff") format("woff"), url("../kelin-eator.14eabcb3.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -72,7 +72,7 @@ html {
 }
 
 .incompatible-browser {
-  background-image: url("../red-granite.12f8fd93.png");
+  background-image: url("../red-granite.f90f0aff.png");
   background-repeat: no-repeat;
   background-size: cover;
   justify-content: center;
@@ -192,7 +192,7 @@ html {
 
 .incompatible-browser__card__cta:before {
   content: "";
-  background-image: url("../arrow.8d7c3709.svg");
+  background-image: url("../arrow.8acd8eae.svg");
   width: .8em;
   height: .8em;
   position: absolute;
@@ -216,7 +216,7 @@ html {
 }
 
 .--light .incompatible-browser__card__cta:before {
-  background-image: url("../arrow-red.ca9a3f95.svg");
+  background-image: url("../arrow-red.0552f0e3.svg");
 }
 
 .incompatible-browser__card {

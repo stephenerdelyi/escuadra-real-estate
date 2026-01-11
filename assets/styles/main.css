@@ -1,6 +1,6 @@
 @font-face {
   font-family: Kelin Eator;
-  src: url("../kelin-eator.57dbc27b.woff2") format("woff2"), url("../kelin-eator.7a402997.woff") format("woff"), url("../kelin-eator.c75b95a9.ttf") format("truetype");
+  src: url("../kelin-eator.c7bd1dcd.woff2") format("woff2"), url("../kelin-eator.cb0a9f41.woff") format("woff"), url("../kelin-eator.14eabcb3.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -316,7 +316,7 @@
 
 .default-hero {
   background-color: #111;
-  background-image: url("../red-granite.12f8fd93.png");
+  background-image: url("../red-granite.f90f0aff.png");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -619,7 +619,7 @@
 }
 
 .contact-us-hero {
-  background-image: url("../red-granite.12f8fd93.png");
+  background-image: url("../red-granite.f90f0aff.png");
   background-size: cover;
 }
 
@@ -812,7 +812,7 @@
 
 .modal-agent-detail.--loading:after {
   content: "";
-  background-image: url("../spinner.a26a7bde.gif");
+  background-image: url("../spinner.2ed4db45.gif");
   background-size: contain;
   width: 5em;
   height: 5em;
@@ -943,11 +943,11 @@
 }
 
 .modal-agent-detail__contact-option.--phone:before {
-  background-image: url("../phone.6247008f.svg");
+  background-image: url("../phone.e6c099a8.svg");
 }
 
 .modal-agent-detail__contact-option.--email:before {
-  background-image: url("../email.3ce4f51c.svg");
+  background-image: url("../email.226dd532.svg");
 }
 
 .modal-agent-detail__contact-option__link {
@@ -1146,7 +1146,7 @@
 
 .modal-featured-listings.--loading:after {
   content: "";
-  background-image: url("../spinner.a26a7bde.gif");
+  background-image: url("../spinner.2ed4db45.gif");
   background-size: contain;
   width: 5em;
   height: 5em;
@@ -1262,7 +1262,7 @@
 
 .modal-featured-listings__pagination__button:after {
   content: "";
-  background-image: url("../arrow-dark.9c880ca8.svg");
+  background-image: url("../arrow-dark.1fc3a590.svg");
   width: 1.25em;
   height: 1.25em;
   position: absolute;
@@ -1384,15 +1384,15 @@
 }
 
 .--bed .modal-featured-listings__stat__title:before {
-  background-image: url("../bedroom.3620bac0.svg");
+  background-image: url("../bedroom.4229c7a3.svg");
 }
 
 .--bath .modal-featured-listings__stat__title:before {
-  background-image: url("../bathroom.1da00d4d.svg");
+  background-image: url("../bathroom.f20d2f43.svg");
 }
 
 .--sq-ft .modal-featured-listings__stat__title:before {
-  background-image: url("../sq-ft.32edd926.svg");
+  background-image: url("../sq-ft.1549ba1c.svg");
 }
 
 .modal-featured-listings__stat__description {
@@ -2154,7 +2154,7 @@
 
 @font-face {
   font-family: Kelin Eator;
-  src: url("../kelin-eator.57dbc27b.woff2") format("woff2"), url("../kelin-eator.7a402997.woff") format("woff"), url("../kelin-eator.c75b95a9.ttf") format("truetype");
+  src: url("../kelin-eator.c7bd1dcd.woff2") format("woff2"), url("../kelin-eator.cb0a9f41.woff") format("woff"), url("../kelin-eator.14eabcb3.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -2329,7 +2329,7 @@
 
 .block-about-overview__content__card__cta:before {
   content: "";
-  background-image: url("../arrow.8d7c3709.svg");
+  background-image: url("../arrow.8acd8eae.svg");
   width: .8em;
   height: .8em;
   position: absolute;
@@ -2353,12 +2353,12 @@
 }
 
 .--light .block-about-overview__content__card__cta:before {
-  background-image: url("../arrow-red.ca9a3f95.svg");
+  background-image: url("../arrow-red.0552f0e3.svg");
 }
 
 .block-about-overview__content__card {
   z-index: 0;
-  background-image: url("../alligator-skin-red.3dff60ba.png");
+  background-image: url("../alligator-skin-red.7e2fb1ce.png");
   background-size: cover;
 }
 
@@ -2390,7 +2390,7 @@
 
 @font-face {
   font-family: Kelin Eator;
-  src: url("../kelin-eator.57dbc27b.woff2") format("woff2"), url("../kelin-eator.7a402997.woff") format("woff"), url("../kelin-eator.c75b95a9.ttf") format("truetype");
+  src: url("../kelin-eator.c7bd1dcd.woff2") format("woff2"), url("../kelin-eator.cb0a9f41.woff") format("woff"), url("../kelin-eator.14eabcb3.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -2556,7 +2556,7 @@
 
 .block-agent-listing__agent__card__cta:before {
   content: "";
-  background-image: url("../arrow.8d7c3709.svg");
+  background-image: url("../arrow.8acd8eae.svg");
   width: .8em;
   height: .8em;
   position: absolute;
@@ -2580,7 +2580,7 @@
 }
 
 .--light .block-agent-listing__agent__card__cta:before {
-  background-image: url("../arrow-red.ca9a3f95.svg");
+  background-image: url("../arrow-red.0552f0e3.svg");
 }
 
 .block-agent-listing__agent__card {
@@ -2655,7 +2655,7 @@
 
 @font-face {
   font-family: Kelin Eator;
-  src: url("../kelin-eator.57dbc27b.woff2") format("woff2"), url("../kelin-eator.7a402997.woff") format("woff"), url("../kelin-eator.c75b95a9.ttf") format("truetype");
+  src: url("../kelin-eator.c7bd1dcd.woff2") format("woff2"), url("../kelin-eator.cb0a9f41.woff") format("woff"), url("../kelin-eator.14eabcb3.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -2954,7 +2954,7 @@
 
 .block-areas-of-expertise__card__card__cta:before {
   content: "";
-  background-image: url("../arrow.8d7c3709.svg");
+  background-image: url("../arrow.8acd8eae.svg");
   width: .8em;
   height: .8em;
   position: absolute;
@@ -2978,7 +2978,7 @@
 }
 
 .--light .block-areas-of-expertise__card__card__cta:before {
-  background-image: url("../arrow-red.ca9a3f95.svg");
+  background-image: url("../arrow-red.0552f0e3.svg");
 }
 
 .block-areas-of-expertise__card__card {
@@ -2987,7 +2987,7 @@
 
 @font-face {
   font-family: Kelin Eator;
-  src: url("../kelin-eator.57dbc27b.woff2") format("woff2"), url("../kelin-eator.7a402997.woff") format("woff"), url("../kelin-eator.c75b95a9.ttf") format("truetype");
+  src: url("../kelin-eator.c7bd1dcd.woff2") format("woff2"), url("../kelin-eator.cb0a9f41.woff") format("woff"), url("../kelin-eator.14eabcb3.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -3183,7 +3183,7 @@
 
 .block-contact-info__card__cta:before {
   content: "";
-  background-image: url("../arrow.8d7c3709.svg");
+  background-image: url("../arrow.8acd8eae.svg");
   width: .8em;
   height: .8em;
   position: absolute;
@@ -3207,7 +3207,7 @@
 }
 
 .--light .block-contact-info__card__cta:before {
-  background-image: url("../arrow-red.ca9a3f95.svg");
+  background-image: url("../arrow-red.0552f0e3.svg");
 }
 
 .block-contact-info__card {
@@ -3221,14 +3221,14 @@
 
 @font-face {
   font-family: Kelin Eator;
-  src: url("../kelin-eator.57dbc27b.woff2") format("woff2"), url("../kelin-eator.7a402997.woff") format("woff"), url("../kelin-eator.c75b95a9.ttf") format("truetype");
+  src: url("../kelin-eator.c7bd1dcd.woff2") format("woff2"), url("../kelin-eator.cb0a9f41.woff") format("woff"), url("../kelin-eator.14eabcb3.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
 
 .block-contact-us {
-  background-image: url("../red-granite.12f8fd93.png");
+  background-image: url("../red-granite.f90f0aff.png");
   background-size: cover;
 }
 
@@ -3387,14 +3387,14 @@
 
 @font-face {
   font-family: Kelin Eator;
-  src: url("../kelin-eator.57dbc27b.woff2") format("woff2"), url("../kelin-eator.7a402997.woff") format("woff"), url("../kelin-eator.c75b95a9.ttf") format("truetype");
+  src: url("../kelin-eator.c7bd1dcd.woff2") format("woff2"), url("../kelin-eator.cb0a9f41.woff") format("woff"), url("../kelin-eator.14eabcb3.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
 
 .block-cta-banner {
-  background-image: url("../white-granite.55657489.jpg");
+  background-image: url("../white-granite.3e6e1454.jpg");
   background-position: center;
   background-size: cover;
   border-top: 1px solid #eaeaea;
@@ -3527,7 +3527,7 @@
 
 @font-face {
   font-family: Kelin Eator;
-  src: url("../kelin-eator.57dbc27b.woff2") format("woff2"), url("../kelin-eator.7a402997.woff") format("woff"), url("../kelin-eator.c75b95a9.ttf") format("truetype");
+  src: url("../kelin-eator.c7bd1dcd.woff2") format("woff2"), url("../kelin-eator.cb0a9f41.woff") format("woff"), url("../kelin-eator.14eabcb3.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -3639,7 +3639,7 @@
 
 @font-face {
   font-family: Kelin Eator;
-  src: url("../kelin-eator.57dbc27b.woff2") format("woff2"), url("../kelin-eator.7a402997.woff") format("woff"), url("../kelin-eator.c75b95a9.ttf") format("truetype");
+  src: url("../kelin-eator.c7bd1dcd.woff2") format("woff2"), url("../kelin-eator.cb0a9f41.woff") format("woff"), url("../kelin-eator.14eabcb3.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -3759,7 +3759,7 @@
 
 .block-developments__pagination__button:after {
   content: "";
-  background-image: url("../arrow-dark.9c880ca8.svg");
+  background-image: url("../arrow-dark.1fc3a590.svg");
   width: 1.25em;
   height: 1.25em;
   position: absolute;
@@ -3913,7 +3913,7 @@
 
 .block-developments__card__card__cta:before {
   content: "";
-  background-image: url("../arrow.8d7c3709.svg");
+  background-image: url("../arrow.8acd8eae.svg");
   width: .8em;
   height: .8em;
   position: absolute;
@@ -3937,7 +3937,7 @@
 }
 
 .--light .block-developments__card__card__cta:before {
-  background-image: url("../arrow-red.ca9a3f95.svg");
+  background-image: url("../arrow-red.0552f0e3.svg");
 }
 
 .block-developments__card__card {
@@ -4041,7 +4041,7 @@
 
 @font-face {
   font-family: Kelin Eator;
-  src: url("../kelin-eator.57dbc27b.woff2") format("woff2"), url("../kelin-eator.7a402997.woff") format("woff"), url("../kelin-eator.c75b95a9.ttf") format("truetype");
+  src: url("../kelin-eator.c7bd1dcd.woff2") format("woff2"), url("../kelin-eator.cb0a9f41.woff") format("woff"), url("../kelin-eator.14eabcb3.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -4132,7 +4132,7 @@
 
 .block-featured-listings__pagination__button:after {
   content: "";
-  background-image: url("../arrow-dark.9c880ca8.svg");
+  background-image: url("../arrow-dark.1fc3a590.svg");
   width: 1.25em;
   height: 1.25em;
   position: absolute;
@@ -4423,7 +4423,7 @@
 
 .block-featured-listings__card-slider__card__card__cta:before {
   content: "";
-  background-image: url("../arrow.8d7c3709.svg");
+  background-image: url("../arrow.8acd8eae.svg");
   width: .8em;
   height: .8em;
   position: absolute;
@@ -4447,7 +4447,7 @@
 }
 
 .--light .block-featured-listings__card-slider__card__card__cta:before {
-  background-image: url("../arrow-red.ca9a3f95.svg");
+  background-image: url("../arrow-red.0552f0e3.svg");
 }
 
 .block-featured-listings__card-slider__card__card {
@@ -4557,15 +4557,15 @@
 }
 
 .--bed .block-featured-listings__details-slider__slide__stat__title:before {
-  background-image: url("../bedroom.3620bac0.svg");
+  background-image: url("../bedroom.4229c7a3.svg");
 }
 
 .--bath .block-featured-listings__details-slider__slide__stat__title:before {
-  background-image: url("../bathroom.1da00d4d.svg");
+  background-image: url("../bathroom.f20d2f43.svg");
 }
 
 .--sq-ft .block-featured-listings__details-slider__slide__stat__title:before {
-  background-image: url("../sq-ft.32edd926.svg");
+  background-image: url("../sq-ft.1549ba1c.svg");
 }
 
 .block-featured-listings__details-slider__slide__stat__description {
@@ -4616,7 +4616,7 @@
 
 @font-face {
   font-family: Kelin Eator;
-  src: url("../kelin-eator.57dbc27b.woff2") format("woff2"), url("../kelin-eator.7a402997.woff") format("woff"), url("../kelin-eator.c75b95a9.ttf") format("truetype");
+  src: url("../kelin-eator.c7bd1dcd.woff2") format("woff2"), url("../kelin-eator.cb0a9f41.woff") format("woff"), url("../kelin-eator.14eabcb3.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -4703,7 +4703,7 @@
 
 @font-face {
   font-family: Kelin Eator;
-  src: url("../kelin-eator.57dbc27b.woff2") format("woff2"), url("../kelin-eator.7a402997.woff") format("woff"), url("../kelin-eator.c75b95a9.ttf") format("truetype");
+  src: url("../kelin-eator.c7bd1dcd.woff2") format("woff2"), url("../kelin-eator.cb0a9f41.woff") format("woff"), url("../kelin-eator.14eabcb3.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -4895,7 +4895,7 @@
 
 @font-face {
   font-family: Kelin Eator;
-  src: url("../kelin-eator.57dbc27b.woff2") format("woff2"), url("../kelin-eator.7a402997.woff") format("woff"), url("../kelin-eator.c75b95a9.ttf") format("truetype");
+  src: url("../kelin-eator.c7bd1dcd.woff2") format("woff2"), url("../kelin-eator.cb0a9f41.woff") format("woff"), url("../kelin-eator.14eabcb3.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -4996,7 +4996,7 @@
 
 .block-sold-homes__image-slider__pagination__button:after {
   content: "";
-  background-image: url("../arrow-dark.9c880ca8.svg");
+  background-image: url("../arrow-dark.1fc3a590.svg");
   width: 1.25em;
   height: 1.25em;
   position: absolute;
@@ -5221,7 +5221,7 @@
 
 .block-sold-homes__card-slider__card__card__cta:before {
   content: "";
-  background-image: url("../arrow.8d7c3709.svg");
+  background-image: url("../arrow.8acd8eae.svg");
   width: .8em;
   height: .8em;
   position: absolute;
@@ -5245,12 +5245,12 @@
 }
 
 .--light .block-sold-homes__card-slider__card__card__cta:before {
-  background-image: url("../arrow-red.ca9a3f95.svg");
+  background-image: url("../arrow-red.0552f0e3.svg");
 }
 
 @font-face {
   font-family: Kelin Eator;
-  src: url("../kelin-eator.57dbc27b.woff2") format("woff2"), url("../kelin-eator.7a402997.woff") format("woff"), url("../kelin-eator.c75b95a9.ttf") format("truetype");
+  src: url("../kelin-eator.c7bd1dcd.woff2") format("woff2"), url("../kelin-eator.cb0a9f41.woff") format("woff"), url("../kelin-eator.14eabcb3.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -5259,7 +5259,7 @@
 .block-statistic {
   z-index: 0;
   background-color: #111;
-  background-image: url("../alligator-skin-red.3dff60ba.png");
+  background-image: url("../alligator-skin-red.7e2fb1ce.png");
   background-size: cover;
   position: relative;
 }
@@ -5319,7 +5319,7 @@
 
 @font-face {
   font-family: Kelin Eator;
-  src: url("../kelin-eator.57dbc27b.woff2") format("woff2"), url("../kelin-eator.7a402997.woff") format("woff"), url("../kelin-eator.c75b95a9.ttf") format("truetype");
+  src: url("../kelin-eator.c7bd1dcd.woff2") format("woff2"), url("../kelin-eator.cb0a9f41.woff") format("woff"), url("../kelin-eator.14eabcb3.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -5401,7 +5401,7 @@
 
 .block-tabbed-content__buttons__pagination__button:after {
   content: "";
-  background-image: url("../arrow-dark.9c880ca8.svg");
+  background-image: url("../arrow-dark.1fc3a590.svg");
   width: 1.25em;
   height: 1.25em;
   position: absolute;
@@ -5569,7 +5569,7 @@
 
 @font-face {
   font-family: Kelin Eator;
-  src: url("../kelin-eator.57dbc27b.woff2") format("woff2"), url("../kelin-eator.7a402997.woff") format("woff"), url("../kelin-eator.c75b95a9.ttf") format("truetype");
+  src: url("../kelin-eator.c7bd1dcd.woff2") format("woff2"), url("../kelin-eator.cb0a9f41.woff") format("woff"), url("../kelin-eator.14eabcb3.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -5680,7 +5680,7 @@
 
 .block-reviews__slider__pagination__button:after {
   content: "";
-  background-image: url("../arrow-dark.9c880ca8.svg");
+  background-image: url("../arrow-dark.1fc3a590.svg");
   width: 1.25em;
   height: 1.25em;
   position: absolute;
@@ -5858,7 +5858,7 @@
 
 .block-reviews__slider__slide__card__cta:before {
   content: "";
-  background-image: url("../arrow.8d7c3709.svg");
+  background-image: url("../arrow.8acd8eae.svg");
   width: .8em;
   height: .8em;
   position: absolute;
@@ -5882,7 +5882,7 @@
 }
 
 .--light .block-reviews__slider__slide__card__cta:before {
-  background-image: url("../arrow-red.ca9a3f95.svg");
+  background-image: url("../arrow-red.0552f0e3.svg");
 }
 
 .block-reviews__slider__slide__card {
@@ -5900,7 +5900,7 @@
 
 @font-face {
   font-family: Kelin Eator;
-  src: url("../kelin-eator.57dbc27b.woff2") format("woff2"), url("../kelin-eator.7a402997.woff") format("woff"), url("../kelin-eator.c75b95a9.ttf") format("truetype");
+  src: url("../kelin-eator.c7bd1dcd.woff2") format("woff2"), url("../kelin-eator.cb0a9f41.woff") format("woff"), url("../kelin-eator.14eabcb3.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -6087,7 +6087,7 @@
 
 @font-face {
   font-family: Kelin Eator;
-  src: url("../kelin-eator.57dbc27b.woff2") format("woff2"), url("../kelin-eator.7a402997.woff") format("woff"), url("../kelin-eator.c75b95a9.ttf") format("truetype");
+  src: url("../kelin-eator.c7bd1dcd.woff2") format("woff2"), url("../kelin-eator.cb0a9f41.woff") format("woff"), url("../kelin-eator.14eabcb3.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -6132,7 +6132,9 @@ html {
 }
 
 .block-post-listing__image__img {
+  object-fit: cover;
   width: 100%;
+  height: 100%;
 }
 
 .block-post-listing__info {
